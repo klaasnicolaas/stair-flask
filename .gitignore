@@ -4,6 +4,7 @@ __pycache__
 .pytest_cache
 node_modules
 mysql/*
+emqx_data/*
 
 # Files
 server_settings.json
@@ -13,6 +14,8 @@ password.txt
 # File extensions
 *.log
 *.db
+*.sqlite3
 
 # Whitelist files
 !.gitkeep
+!emqx_data/.gitkeep
