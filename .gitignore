@@ -1,0 +1,18 @@
+# Folders
+venv
+__pycache__
+.pytest_cache
+node_modules
+mysql/*
+
+# Files
+server_settings.json
+password.txt
+.env
+
+# File extensions
+*.log
+*.db
+
+# Whitelist files
+!.gitkeep
