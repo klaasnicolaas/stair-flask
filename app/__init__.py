@@ -5,8 +5,13 @@ from app.mqtt_controller import MQTTClient
 from app.led_controller import LEDController
 from rpi_ws281x import Color
 from app.const import MQTT_TRIGGER_TOPIC
+from app.config import Config
 
 app = Flask(__name__)
+
+# Load config values from app/config.py
+config = Config()
+app.config.from_object(Config)
 
 # Initialize MQTT client
 mqtt_client = MQTTClient()
