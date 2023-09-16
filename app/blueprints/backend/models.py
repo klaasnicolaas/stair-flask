@@ -1,6 +1,7 @@
 """Backend models."""
 from app import db
 
+
 class Sensor(db.Model):
     __tablename__ = "sensors"
     id = db.Column(db.Integer, primary_key=True)

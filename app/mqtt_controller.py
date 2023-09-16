@@ -4,8 +4,10 @@ from app.exceptions import StairChallengeConnectionError
 from app.const import MQTT_TRIGGER_TOPIC, MQTT_TEST_TOPIC, MQTT_STATUS_TOPIC
 from app.config import Config
 
+
 class MQTTClient:
     """MQTT Client Class."""
+
     def __init__(self):
         self.client = mqtt.Client("Raspberry Pi")
         self.client.on_connect = self.on_connect
@@ -33,9 +35,13 @@ class MQTTClient:
     def connect(self):
         try:
             """Connect with MQTT Broker."""
-            self.client.connect(Config.MQTT_BROKER_URL, Config.MQTT_BROKER_PORT, Config.MQTT_KEEPALIVE)
+            self.client.connect(
+                Config.MQTT_BROKER_URL, Config.MQTT_BROKER_PORT, Config.MQTT_KEEPALIVE
+            )
         except ConnectionRefusedError as exception:
-            raise StairChallengeConnectionError("Could not connect to MQTT Broker") from exception
+            raise StairChallengeConnectionError(
+                "Could not connect to MQTT Broker"
+            ) from exception
 
         self.client.loop_start()
 

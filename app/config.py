@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 
 # Specificy a `.env` file containing key/value config values
 basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, '.env'))
+load_dotenv(path.join(basedir, ".env"))
+
 
 class Config:
     """Set Flask config variables."""
@@ -21,6 +22,6 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # MQTT
-    MQTT_BROKER_URL = environ.get('MQTT_BROKER_URL')
-    MQTT_BROKER_PORT = int(environ.get('MQTT_BROKER_PORT'))
-    MQTT_KEEPALIVE = int(environ.get('MQTT_KEEPALIVE'))
+    MQTT_BROKER_URL = environ.get("MQTT_BROKER_URL")
+    MQTT_BROKER_PORT = int(environ.get("MQTT_BROKER_PORT"))
+    MQTT_KEEPALIVE = int(environ.get("MQTT_KEEPALIVE"))

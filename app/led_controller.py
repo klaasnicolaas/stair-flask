@@ -1,8 +1,10 @@
 """LED strip module."""
 from rpi_ws281x import PixelStrip, Color
 
+
 class LEDController:
     """LED strip configuration"""
+
     def __init__(self, count, pin, freq_hz, dma, brightness, invert, channel):
         """Initialize LED strip.
 
@@ -19,9 +21,9 @@ class LEDController:
         try:
             self.strip.begin()
             self.set_color(Color(0, 0, 0))
-            print('LED strip initialized successfully')
+            print("LED strip initialized successfully")
         except Exception as e:
-            print(f'Error initializing LED strip: {str(e)}')
+            print(f"Error initializing LED strip: {str(e)}")
 
     def set_color(self, color):
         """Set the color of the LED strip.
