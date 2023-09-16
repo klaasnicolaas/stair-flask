@@ -1,7 +1,7 @@
 """MQTT Controller Module."""
 import paho.mqtt.client as mqtt
 from app.exceptions import StairChallengeConnectionError
-from app.const import MQTT_TRIGGER_TOPIC, MQTT_TEST_TOPIC
+from app.const import MQTT_TRIGGER_TOPIC, MQTT_TEST_TOPIC, MQTT_STATUS_TOPIC
 from app.config import Config
 
 class MQTTClient:
@@ -18,6 +18,7 @@ class MQTTClient:
             print("Connected successfully with MQTT Broker")
             client.subscribe(MQTT_TEST_TOPIC)
             client.subscribe(MQTT_TRIGGER_TOPIC, 1)
+            client.subscribe(MQTT_STATUS_TOPIC, 1)
         else:
             print("Connection problem with MQTT Broker!")
 

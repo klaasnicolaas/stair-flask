@@ -17,7 +17,7 @@ class Config:
     TEMPLATES_FOLDER = "templates"
 
     # Database
-    SQLALCHEMY_DATABASE_URI = environ.get('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{path.join(basedir, 'database.sqlite3')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # MQTT

@@ -12,7 +12,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 300M
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "/opt/emqx/bin/emqx", "ctl", "status"]
