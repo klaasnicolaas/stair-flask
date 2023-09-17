@@ -1,11 +1,12 @@
 """Flask App configuration."""
-from os import environ, path
+from os import environ
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 # Specificy a `.env` file containing key/value config values
-basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, ".env"))
+basedir = Path(__file__).resolve().parent
+load_dotenv(basedir / ".env")
 
 
 class Config:
@@ -19,7 +20,7 @@ class Config:
     TEMPLATES_FOLDER = "templates"
 
     # Database
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{path.join(basedir, 'database.sqlite3')}"
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{basedir / 'database.sqlite3'}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # MQTT

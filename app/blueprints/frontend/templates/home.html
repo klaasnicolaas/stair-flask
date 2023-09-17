@@ -1,0 +1,19 @@
+{% extends 'layout_frontend.html' %}
+
+{% block content %}
+<section>
+    <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+        <h1>WS2812 LED Control</h1>
+        <form action="/set_color">
+            <label for="red">Red:</label>
+            <input type="range" id="red" name="red" min="0" max="255" value="0"><br>
+            <label for="green">Green:</label>
+            <input type="range" id="green" name="green" min="0" max="255" value="0"><br>
+            <label for="blue">Blue:</label>
+            <input type="range" id="blue" name="blue" min="0" max="255" value="0"><br>
+            <button type="submit">Set color</button>
+        </form>
+        <a href="/turn_off">Turn off</a>
+    </div>
+</section>
+{% endblock %}

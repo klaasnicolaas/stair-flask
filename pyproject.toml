@@ -81,6 +81,9 @@ ignore-imports = true
 [tool.pylint.FORMAT]
 max-line-length = 88
 
+[tool.pylint.DESIGN]
+max-attributes = 12
+
 [tool.ruff]
 select = ["ALL"]
 extend-exclude = ["test_led.py"]

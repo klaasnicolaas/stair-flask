@@ -6,6 +6,7 @@ from app.const import MQTT_STATUS_TOPIC, MQTT_TEST_TOPIC, MQTT_TRIGGER_TOPIC
 from app.exceptions import StairChallengeConnectionError
 
 
+# ruff: noqa: ARG002
 class MQTTClient:
     """MQTT Client Class."""
 
@@ -16,7 +17,13 @@ class MQTTClient:
         # self.client.on_message = self.on_message
         self.client.on_disconnect = self.on_disconnect
 
-    def on_connect(self, client, userdata, flags, rc) -> None:
+    def on_connect(
+        self,
+        client: mqtt.Client,
+        userdata: dict,
+        flags: dict,
+        rc: int,
+    ) -> None:
         """Define on_publish event function.
 
         Args:
@@ -34,7 +41,12 @@ class MQTTClient:
         else:
             print("Connection problem with MQTT Broker!")
 
-    def on_disconnect(self, client, userdata, rc) -> None:
+    def on_disconnect(
+        self,
+        client: mqtt.Client,
+        userdata: dict,
+        rc: int,
+    ) -> None:
         """Define on_disconnect event function.
 
         Args:
@@ -46,14 +58,19 @@ class MQTTClient:
         if rc != 0:
             print("Unexpected disconnection.")
 
-    def on_message(self, client, userdata, message) -> None:
+    def on_message(
+        self,
+        client: mqtt.Client,
+        userdata: dict,
+        message: mqtt.MQTTMessage,
+    ) -> None:
         """Define on_message event function.
 
         Args:
         ----
             client: The client instance for this callback.
             userdata: The private user data as set in Client() or userdata_set().
-            message: An instance of MQTTMessage. This is a class with members topic, payload, qos, retain.
+            message: An instance of MQTTMessage.
         """
         print(f"Message Received from Others: {message.payload.decode()}")
 

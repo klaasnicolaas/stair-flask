@@ -1,9 +1,10 @@
 """Initialize Stair Challenge app."""
+# ruff: noqa: E402, ARG001
 import json
 import random
 from datetime import datetime
 
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
@@ -48,13 +49,21 @@ led_controller = LEDController(
 led_controller.turn_off()
 
 # Install the blueprints
+from app.blueprints.auth import bp as auth_bp
 from app.blueprints.backend import bp as backend_bp
 from app.blueprints.backend.models import Sensor
+from app.blueprints.frontend import bp as frontend_bp
 
-app.register_blueprint(backend_bp)
+app.register_blueprint(frontend_bp)
+app.register_blueprint(backend_bp, url_prefix="/admin")
+app.register_blueprint(auth_bp)
 
 
-def on_topic_trigger(client: MQTTClient, userdata: dict, message: dict) -> None:
+def on_topic_trigger(
+    client: MQTTClient,
+    userdata: dict,
+    message: dict,
+) -> None:
     """MQTT function to handle trigger messages.
 
     Args:
@@ -69,7 +78,11 @@ def on_topic_trigger(client: MQTTClient, userdata: dict, message: dict) -> None:
     print(f"Message Received from Others: {message.payload.decode()}")
 
 
-def on_topic_status(client: MQTTClient, userdata: dict, message: dict) -> None:
+def on_topic_status(
+    client: MQTTClient,
+    userdata: dict,
+    message: dict,
+) -> None:
     """MQTT Function to handle status messages.
 
     Args:
@@ -116,12 +129,6 @@ with app.app_context():
 
 
 # Routes
-@app.route("/", methods=["GET"])
-def index() -> None:
-    """Index route."""
-    return render_template("index.html")
-
-
 @app.route("/set_color", methods=["GET"])
 def set_color() -> None:
     """Set LED strip color."""
