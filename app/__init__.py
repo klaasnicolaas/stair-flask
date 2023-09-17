@@ -48,10 +48,14 @@ led_controller = LEDController(
 led_controller.turn_off()
 
 # Install the blueprints
+from app.blueprints.frontend import bp as frontend_bp
 from app.blueprints.backend import bp as backend_bp
+from app.blueprints.auth import bp as auth_bp
 from app.blueprints.backend.models import Sensor
 
-app.register_blueprint(backend_bp)
+app.register_blueprint(frontend_bp)
+app.register_blueprint(backend_bp, url_prefix="/admin")
+app.register_blueprint(auth_bp)
 
 
 def on_topic_trigger(client: MQTTClient, userdata: dict, message: dict) -> None:
@@ -116,12 +120,6 @@ with app.app_context():
 
 
 # Routes
-@app.route("/", methods=["GET"])
-def index() -> None:
-    """Index route."""
-    return render_template("index.html")
-
-
 @app.route("/set_color", methods=["GET"])
 def set_color() -> None:
     """Set LED strip color."""
