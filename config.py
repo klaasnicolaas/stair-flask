@@ -13,7 +13,6 @@ class Config:
     """Set Flask config variables."""
 
     # General Config
-    ENVIRONMENT = environ.get("ENVIRONMENT")
     FLASK_APP = environ.get("FLASK_APP")
     SECRET_KEY = environ.get("SECRET_KEY")
     STATIC_FOLDER = "static"

@@ -9,10 +9,10 @@ from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
 
-from app.config import Config
 from app.const import MQTT_STATUS_TOPIC, MQTT_TRIGGER_TOPIC
 from app.led_controller import LEDController
 from app.mqtt_controller import MQTTClient
+from config import Config
 
 app = Flask(__name__)
 
@@ -25,6 +25,8 @@ db = SQLAlchemy(app)
 # Initialize MQTT client
 mqtt = MQTTClient()
 mqtt.connect()
+
+from app.blueprints.backend.models import Sensor
 
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
@@ -51,7 +53,6 @@ led_controller.turn_off()
 # Install the blueprints
 from app.blueprints.auth import bp as auth_bp
 from app.blueprints.backend import bp as backend_bp
-from app.blueprints.backend.models import Sensor
 from app.blueprints.frontend import bp as frontend_bp
 
 app.register_blueprint(frontend_bp)
@@ -119,15 +120,6 @@ def on_topic_status(
         print("An error occurred during database operation.")
 
 
-mqtt.client.message_callback_add(MQTT_TRIGGER_TOPIC, on_topic_trigger)
-mqtt.client.message_callback_add(MQTT_STATUS_TOPIC, on_topic_status)
-
-# Create the database tables
-with app.app_context():
-    print("Creating database tables...")
-    db.create_all()
-
-
 # Routes
 @app.route("/set_color", methods=["GET"])
 def set_color() -> None:
@@ -144,3 +136,7 @@ def turn_off() -> None:
     """Turn off LED strip."""
     led_controller.turn_off()
     return redirect("/")
+
+
+mqtt.client.message_callback_add(MQTT_TRIGGER_TOPIC, on_topic_trigger)
+mqtt.client.message_callback_add(MQTT_STATUS_TOPIC, on_topic_status)

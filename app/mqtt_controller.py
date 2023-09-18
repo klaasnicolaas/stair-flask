@@ -1,9 +1,11 @@
 """MQTT Controller Module."""
+import secrets
+
 import paho.mqtt.client as mqtt
 
-from app.config import Config
 from app.const import MQTT_STATUS_TOPIC, MQTT_TEST_TOPIC, MQTT_TRIGGER_TOPIC
 from app.exceptions import StairChallengeConnectionError
+from config import Config
 
 
 # ruff: noqa: ARG002
@@ -12,7 +14,7 @@ class MQTTClient:
 
     def __init__(self) -> None:
         """Initialize MQTT Client."""
-        self.client = mqtt.Client("Raspberry Pi")
+        self.client = mqtt.Client(f"RaspberryPi-{secrets.token_hex(8)}")
         self.client.on_connect = self.on_connect
         # self.client.on_message = self.on_message
         self.client.on_disconnect = self.on_disconnect

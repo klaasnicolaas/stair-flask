@@ -30,7 +30,7 @@ class LEDController:
         self.strip = PixelStrip(count, pin, freq_hz, dma, invert, brightness, channel)
         try:
             self.strip.begin()
-            self.set_color(Color(0, 0, 0))
+            # self.set_color(Color(0, 0, 0))
             print("LED strip initialized successfully")
         except Exception as e:
             print(f"Error initializing LED strip: {e!s}")
