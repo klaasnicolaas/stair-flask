@@ -6,6 +6,7 @@ module.exports = {
     './app/static/**/*.js',
     "./node_modules/flowbite/**/*.js",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {

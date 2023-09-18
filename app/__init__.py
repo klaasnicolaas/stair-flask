@@ -1,10 +1,12 @@
 """Initialize Stair Challenge app."""
 # ruff: noqa: E402, ARG001
+import getpass
 import json
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from flask import Flask, redirect, request
+from flask import Flask, session, redirect, request
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
@@ -22,11 +24,24 @@ app.config.from_object(Config)
 # Database configuration
 db = SQLAlchemy(app)
 
+# Initialize the login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+# Tell users what view to go to when they need to login.
+login_manager.login_view = "auth.login"
+
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(hours=12)
+
 # Initialize MQTT client
 mqtt = MQTTClient()
 mqtt.connect()
 
 from app.blueprints.backend.models import Sensor
+from app.blueprints.auth.models import User
 
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
@@ -58,6 +73,27 @@ from app.blueprints.frontend import bp as frontend_bp
 app.register_blueprint(frontend_bp)
 app.register_blueprint(backend_bp, url_prefix="/admin")
 app.register_blueprint(auth_bp)
+
+
+@app.cli.command("create_admin")
+def create_admin():
+    """Creates the admin user."""
+    name = input("Enter name: ")
+    email = input("Enter email address: ")
+    password = getpass.getpass("Enter password: ")
+    confirm_password = getpass.getpass("Enter password again: ")
+    if password != confirm_password:
+        print("Passwords don't match")
+        return 1
+    try:
+        user = User(name=name, email=email, password=password, is_admin=True, created_on=datetime.now())
+        db.session.add(user)
+        db.session.commit()
+        print(f"Admin with email {email} created successfully!")
+    except Exception as e:
+        print(f"Could not create admin: {e}")
+        db.session.rollback()
+        return 1
 
 
 def on_topic_trigger(
