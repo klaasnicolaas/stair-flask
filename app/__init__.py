@@ -5,7 +5,7 @@ import json
 import random
 from datetime import datetime, timedelta
 
-from flask import Flask, session, redirect, request
+from flask import Flask, redirect, request, session
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
@@ -31,17 +31,20 @@ login_manager.init_app(app)
 # Tell users what view to go to when they need to login.
 login_manager.login_view = "auth.login"
 
+
 @app.before_request
 def make_session_permanent():
+    """Make the session permanent."""
     session.permanent = True
     app.permanent_session_lifetime = timedelta(hours=12)
+
 
 # Initialize MQTT client
 mqtt = MQTTClient()
 mqtt.connect()
 
-from app.blueprints.backend.models import Sensor
 from app.blueprints.auth.models import User
+from app.blueprints.backend.models import Sensor
 
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
@@ -76,8 +79,8 @@ app.register_blueprint(auth_bp)
 
 
 @app.cli.command("create_admin")
-def create_admin():
-    """Creates the admin user."""
+def create_admin() -> None:
+    """Create a new admin user."""
     name = input("Enter name: ")
     email = input("Enter email address: ")
     password = getpass.getpass("Enter password: ")
@@ -86,7 +89,13 @@ def create_admin():
         print("Passwords don't match")
         return 1
     try:
-        user = User(name=name, email=email, password=password, is_admin=True, created_on=datetime.now())
+        user = User(
+            name=name,
+            email=email,
+            password=password,
+            is_admin=True,
+            created_on=datetime.now(),
+        )
         db.session.add(user)
         db.session.commit()
         print(f"Admin with email {email} created successfully!")

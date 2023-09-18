@@ -1,5 +1,6 @@
 """Blueprint for the authentication pages."""
 from datetime import datetime
+
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
@@ -23,9 +24,8 @@ def login():
         if user is not None and user.check_password(password=form.password.data):
             login_user(user)
             return redirect(url_for("backend.dashboard"))
-        else:
-            flash("Invalid username/password combination", "danger")
-            return redirect(url_for("auth.login"))
+        flash("Invalid username/password combination", "danger")
+        return redirect(url_for("auth.login"))
     return render_template("login.html", form=form)
 
 

@@ -1,22 +1,31 @@
 """Authentication user models."""
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from flask import flash, redirect, url_for
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db, login_manager
 
+if TYPE_CHECKING:
+    from datetime import datetime
+
 
 # The user_loader decorator allows flask-login to load the current user
 # and grab their id.
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(user_id: int) -> User:
     return User.query.get(user_id)
 
+
 @login_manager.unauthorized_handler
-def unauthorized():
+def unauthorized() -> None:
     """Redirect unauthorized users to Login page."""
     flash("You must be logged in to view that page.")
     return redirect(url_for("auth.login"))
+
 
 class User(UserMixin, db.Model):
     """User account model."""
@@ -30,18 +39,35 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     created_on = db.Column(db.DateTime, index=False, nullable=False)
 
-    def __init__(self, name, email, password, is_admin=False, created_on=None):
+    def __init__(
+        self,
+        name: str,
+        email: str,
+        password: str,
+        is_admin: bool = False,
+        created_on: datetime | None = None,
+    ) -> None:
         """Initialize the user."""
         self.name = name
         self.email = email
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password, method="sha256")
         self.is_admin = is_admin
         self.created_on = created_on
 
-    def set_password(self, password):
-        """Set password."""
+    def set_password(self, password: str) -> None:
+        """Set password.
+
+        Args:
+        ----
+            password (str): The password to set.
+        """
         self.password_hash = generate_password_hash(password, method="sha256")
 
-    def check_password(self, password):
-        """Check password."""
+    def check_password(self, password: str) -> bool:
+        """Check password.
+
+        Args:
+        ----
+            password (str): The password to check.
+        """
         return check_password_hash(self.password_hash, password)
