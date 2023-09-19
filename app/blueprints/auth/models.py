@@ -37,7 +37,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
-    created_on = db.Column(db.DateTime, index=False, nullable=False)
+    created_at = db.Column(db.DateTime, index=False, nullable=False)
 
     def __init__(
         self,
@@ -45,14 +45,14 @@ class User(UserMixin, db.Model):
         email: str,
         password: str,
         is_admin: bool = False,
-        created_on: datetime | None = None,
+        created_at: datetime | None = None,
     ) -> None:
         """Initialize the user."""
         self.name = name
         self.email = email
-        self.password_hash = generate_password_hash(password, method="sha256")
+        self.password_hash = generate_password_hash(password, method="scrypt")
         self.is_admin = is_admin
-        self.created_on = created_on
+        self.created_at = created_at
 
     def set_password(self, password: str) -> None:
         """Set password.
@@ -61,7 +61,7 @@ class User(UserMixin, db.Model):
         ----
             password (str): The password to set.
         """
-        self.password_hash = generate_password_hash(password, method="sha256")
+        self.password_hash = generate_password_hash(password, method="scrypt")
 
     def check_password(self, password: str) -> bool:
         """Check password.

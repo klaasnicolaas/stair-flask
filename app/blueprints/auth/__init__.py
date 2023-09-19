@@ -23,8 +23,9 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.check_password(password=form.password.data):
             login_user(user)
+            flash("Welcome back!", "info")
             return redirect(url_for("backend.dashboard"))
-        flash("Invalid username/password combination", "danger")
+        flash("Please check your login details and try again", "danger")
         return redirect(url_for("auth.login"))
     return render_template("login.html", form=form)
 
@@ -40,7 +41,7 @@ def register() -> None:
                 name=form.name.data,
                 email=form.email.data,
                 password=form.password.data,
-                created_on=datetime.now(),
+                created_at=datetime.now(),
             )
             db.session.add(user)
             db.session.commit()
