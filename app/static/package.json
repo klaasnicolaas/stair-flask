@@ -12,6 +12,6 @@
     "sweetalert2": "^11.7.28"
   },
   "scripts": {
-    "build": "npx tailwindcss -i app/static/src/input.css -o app/static/css/output.css --watch"
+    "build": "npx tailwindcss -i src/input.css -o css/output.css --watch"
   }
 }
