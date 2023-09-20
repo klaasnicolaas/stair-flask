@@ -5,7 +5,7 @@ import json
 import random
 from datetime import datetime, timedelta
 
-from flask import Flask, redirect, request, session
+from flask import Flask, redirect, request, session, url_for
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
@@ -182,13 +182,14 @@ def set_color() -> None:
     led_controller.set_color(
         Color(int(args.get("red")), int(args.get("green")), int(args.get("blue"))),
     )
-    return redirect("/")
+    return redirect(url_for("backend.led_control"))
 
 
 @app.route("/turn_off")
 def turn_off() -> None:
     """Turn off LED strip."""
     led_controller.turn_off()
+    return redirect(url_for("backend.led_control"))
 
 # SocketIO events
 @socketio.on("connect")
