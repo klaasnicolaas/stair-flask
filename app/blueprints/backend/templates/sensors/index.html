@@ -1,0 +1,96 @@
+{% extends 'layout_backend.html' %}{% block content %} {% include 'includes/_flash.html' %}
+<section>
+  <div class="w-full pb-4 mx-auto">
+    <!-- Banner -->
+    <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+      <div class="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
+        <div>
+          <h5 class="mr-3 font-semibold dark:text-white">Stair Challenge - Sensors</h5>
+          <p class="text-gray-500 dark:text-gray-400">Overview of all sensors</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button
+            type="button"
+            onclick="restart_sensors('all_sensors')"
+            class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-accent-700 hover:bg-accent-800 focus:ring-4 focus:ring-accent-300 dark:bg-accent-600 dark:hover:bg-accent-700 focus:outline-none dark:focus:ring-accent-800"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 mr-2 -ml-1">
+              <path
+                fill-rule="evenodd"
+                d="M15.312 11.424a5.5 5.5 0 01-9.201 2.466l-.312-.311h2.433a.75.75 0 000-1.5H3.989a.75.75 0 00-.75.75v4.242a.75.75 0 001.5 0v-2.43l.31.31a7 7 0 0011.712-3.138.75.75 0 00-1.449-.39zm1.23-3.723a.75.75 0 00.219-.53V2.929a.75.75 0 00-1.5 0V5.36l-.31-.31A7 7 0 003.239 8.188a.75.75 0 101.448.389A5.5 5.5 0 0113.89 6.11l.311.31h-2.432a.75.75 0 000 1.5h4.243a.75.75 0 00.53-.219z"
+                clip-rule="evenodd"
+              />
+            </svg>
+
+            Restart all
+          </button>
+          <form action="{{ url_for('backend.delete_all_sensors') }}" method="POST" id="delete-all">
+            <button
+              type="submit"
+              class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 mr-2 -ml-1">
+                <path
+                  fill-rule="evenodd"
+                  d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+
+              Remove all
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Cards -->
+<div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  {% for sensor in sensors %}
+  <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <a class="relative" href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
+      <div class="absolute bottom-2 right-0">
+        <span class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{ sensor.status }}</span>
+      </div>
+      <img class="object-cover w-full h-45 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
+    </a>
+    <div class="p-5">
+      <a href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ sensor.client_id }}</h5>
+      </a>
+      <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Een sensor van de stair challenge die gemonteerd zit in de trap installatie.</p>
+      <a
+        href="{{ url_for('backend.show_sensor', id=sensor.id) }}"
+        class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+      >
+        Meer info
+        <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+        </svg>
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %} {% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensors.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
+
+<script>
+  restart_sensors = function(event) {
+    Swal.fire({
+      title: 'Weet je het zeker?',
+      text: 'Wanneer je deze actie uitvoert worden alle sensoren opnieuw opgestart.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Restart',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        socket.emit('restart_sensors', event);
+      }
+    })
+  }
+</script>
+{% endblock %}

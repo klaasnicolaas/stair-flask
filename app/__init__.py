@@ -10,6 +10,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
+from flask_socketio import SocketIO
 
 from app.const import MQTT_STATUS_TOPIC, MQTT_TRIGGER_TOPIC
 from app.led_controller import LEDController
@@ -17,6 +18,7 @@ from app.mqtt_controller import MQTTClient
 from config import Config
 
 app = Flask(__name__)
+socketio = SocketIO(app, async_mode="threading")
 
 # Load config values from app/config.py
 app.config.from_object(Config)
@@ -94,7 +96,7 @@ def create_admin() -> None:
             email=email,
             password=password,
             is_admin=True,
-            created_on=datetime.now(),
+            created_at=datetime.now(),
         )
         db.session.add(user)
         db.session.commit()
@@ -137,14 +139,19 @@ def on_topic_status(
         userdata: The private user data as set in Client() or userdata_set().
         message: An instance of MQTTMessage.
     """
+    # TODO: Socket emit to update sensot status to specific element ID
     try:
         data = json.loads(message.payload)
         with app.app_context():
-            sensor = Sensor.query.filter_by(client_id=data["client_id"]).first()
+            sensor = Sensor.query.filter_by(
+                client_id=f"sensor-{data['client_id']}"
+            ).first()
             if sensor:
                 # If the sensor already exists
-                print(f"Updating sensor: {data['client_id']}")
+                # print(f"Updating sensor: {data['client_id']}")
                 sensor.ip_address = data["ip_address"]
+                sensor.max_distance = data["max_distance"]
+                sensor.threshold = data["threshold"]
                 sensor.status = data["status"]
                 sensor.last_update = datetime.now()
                 db.session.commit()
@@ -152,8 +159,10 @@ def on_topic_status(
                 # If the sensor doesn't exist
                 print(f"Adding new sensor: {data['client_id']}")
                 sensor = Sensor(
-                    client_id=data["client_id"],
+                    client_id=f"sensor-{data['client_id']}",
                     ip_address=data["ip_address"],
+                    max_distance=data["max_distance"],
+                    threshold=data["threshold"],
                     status=data["status"],
                     last_update=datetime.now(),
                 )
@@ -180,8 +189,19 @@ def set_color() -> None:
 def turn_off() -> None:
     """Turn off LED strip."""
     led_controller.turn_off()
-    return redirect("/")
 
+# SocketIO events
+@socketio.on("connect")
+def on_connect():
+    """SocketIO function to handle connect event."""
+    print("Client connected")
 
+@socketio.on("restart_sensors")
+def on_restart_sensors(event):
+    """SocketIO function to handle restart_sensors event."""
+    print(f"Restarting sensors - {event}")
+    # TODO: Send restart signal to single sensor or all sensors
+
+# MQTT events
 mqtt.client.message_callback_add(MQTT_TRIGGER_TOPIC, on_topic_trigger)
 mqtt.client.message_callback_add(MQTT_STATUS_TOPIC, on_topic_status)
