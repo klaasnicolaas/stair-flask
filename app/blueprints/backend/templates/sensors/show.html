@@ -31,7 +31,12 @@
   <!-- <div class="basis-2/4 xl:basis-1/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div> -->
 
   <div class="basis-2/4 xl:basis-1/4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    <img class="object-cover w-full h-38 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
+    <div class="relative">
+      <img class="object-cover w-full h-38 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
+      <div class="absolute bottom-2 right-0">
+        <span class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{ sensor.status }}</span>
+      </div>
+    </div>
     <div class="m-4">
       <div class="flex justify-between mb-1">
         <span class="text-base font-medium text-primary-700 dark:text-white">Kalibratie</span>
@@ -42,7 +47,7 @@
       </div>
     </div>
 
-    <div class="relative overflow-x-auto">
+    <div class="relative overflow-x-auto mb-2">
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -51,10 +56,6 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Status</th>
-            <td class="px-6 py-4">{{ sensor.status }}</td>
-          </tr>
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">IP Address</th>
             <td class="px-6 py-4"><a href="http://{{ sensor.ip_address }}" class="text-accent-600 dark:text-accent-500 hover:underline" target="_blank">{{ sensor.ip_address }}</a></td>
@@ -106,4 +107,7 @@
   </div>
 </div>
 <!-- <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"></div> -->
+{% endblock %} {% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='node_modules/socket.io-client/dist/socket.io.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
 {% endblock %}
