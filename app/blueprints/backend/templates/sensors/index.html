@@ -50,12 +50,14 @@
 <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
   {% for sensor in sensors %}
   <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    <a class="relative" href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
-      <div class="absolute bottom-2 right-0">
-        <span class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{ sensor.status }}</span>
-      </div>
-      <img class="object-cover w-full h-45 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
-    </a>
+    <div class="relative">
+      <a href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
+        <img class="object-cover w-full h-45 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
+        <div class="absolute bottom-2 right-0">
+          <span class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{ sensor.status }}</span>
+        </div>
+      </a>
+    </div>
     <div class="p-5">
       <a href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ sensor.client_id }}</h5>
