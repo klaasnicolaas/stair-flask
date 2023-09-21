@@ -2,18 +2,17 @@
 # ruff: noqa: E402, ARG001
 import getpass
 import json
-import random
 from datetime import datetime, timedelta
 
 from flask import Flask, redirect, request, session, url_for
 from flask_login import LoginManager
+from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
-from flask_socketio import SocketIO
 
 from app.const import MQTT_STATUS_TOPIC, MQTT_TRIGGER_TOPIC
-from app.led_controller import LEDController
+from app.led_controller import LEDController, Colors
 from app.mqtt_controller import MQTTClient
 from config import Config
 
@@ -47,6 +46,8 @@ mqtt.connect()
 
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Sensor
+
+workout_active: bool = False
 
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
@@ -120,9 +121,13 @@ def on_topic_trigger(
         userdata: The private user data as set in Client() or userdata_set().
         message: An instance of MQTTMessage.
     """
-    led_controller.set_color(
-        Color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)),
-    )
+    colors = Colors()
+    if workout_active:
+        led_controller.set_color(
+            colors.get_random_unique_color(),
+        )
+    # TODO: Check welke workout er actief is en pas een if statement toe
+    # INFO: Call daarna de functie om de LED strip aan te sturen
     print(f"Message Received from Others: {message.payload.decode()}")
 
 
@@ -144,7 +149,7 @@ def on_topic_status(
         data = json.loads(message.payload)
         with app.app_context():
             sensor = Sensor.query.filter_by(
-                client_id=f"sensor-{data['client_id']}"
+                client_id=f"sensor-{data['client_id']}",
             ).first()
             if sensor:
                 # If the sensor already exists
@@ -191,17 +196,34 @@ def turn_off() -> None:
     led_controller.turn_off()
     return redirect(url_for("backend.led_control"))
 
+
 # SocketIO events
 @socketio.on("connect")
 def on_connect():
     """SocketIO function to handle connect event."""
     print("Client connected")
 
+
+@socketio.on("active")
+def on_system_active(event):
+    """Put the system in active mode or not."""
+    global workout_active
+
+    if event["data"] == "start":
+        workout_active = True
+        print("Starting workout")
+    elif event["data"] == "stop":
+        workout_active = False
+        led_controller.turn_off()
+        print("Stopping workout")
+
+
 @socketio.on("restart_sensors")
 def on_restart_sensors(event):
     """SocketIO function to handle restart_sensors event."""
     print(f"Restarting sensors - {event}")
     # TODO: Send restart signal to single sensor or all sensors
+
 
 # MQTT events
 mqtt.client.message_callback_add(MQTT_TRIGGER_TOPIC, on_topic_trigger)
