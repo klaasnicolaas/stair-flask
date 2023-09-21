@@ -6,15 +6,16 @@
       <div class="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
         <div>
           <h5 class="mr-3 font-semibold dark:text-white">{{ sensor.client_id }}</h5>
-          <p class="text-gray-500 dark:text-gray-400">Overview of this sensor</p>
+          <p class="text-gray-500 dark:text-gray-400">Overview van deze sensor</p>
         </div>
         <a
           href="{{ url_for('backend.sensors') }}"
           class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-accent-700 hover:bg-accent-800 focus:ring-4 focus:ring-accent-300 dark:bg-accent-600 dark:hover:bg-accent-700 focus:outline-none dark:focus:ring-accent-800"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 mr-2 -ml-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2 ml-1">
             <path
               fill-rule="evenodd"
+              stroke-width="2"
               d="M18 10a.75.75 0 01-.75.75H4.66l2.1 1.95a.75.75 0 11-1.02 1.1l-3.5-3.25a.75.75 0 010-1.1l3.5-3.25a.75.75 0 111.02 1.1l-2.1 1.95h12.59A.75.75 0 0118 10z"
               clip-rule="evenodd"
             />
@@ -27,7 +28,68 @@
   </div>
 </section>
 
-<div class="flex flex-row gap-4 mb-4">
+<section>
+  <div class="grid grid-rows-1 pb-4 grid-flow-col gap-4">
+    <a
+      href="http://{{ sensor.ip_address }}"
+      target="_blank"
+      class="inline-flex items-center my-3 px-5 py-3 text-sm font-medium text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="0"
+          d="M16.555 5.412a8.028 8.028 0 00-3.503-2.81 14.899 14.899 0 011.663 4.472 8.547 8.547 0 001.84-1.662zM13.326 7.825a13.43 13.43 0 00-2.413-5.773 8.087 8.087 0 00-1.826 0 13.43 13.43 0 00-2.413 5.773A8.473 8.473 0 0010 8.5c1.18 0 2.304-.24 3.326-.675zM6.514 9.376A9.98 9.98 0 0010 10c1.226 0 2.4-.22 3.486-.624a13.54 13.54 0 01-.351 3.759A13.54 13.54 0 0110 13.5c-1.079 0-2.128-.127-3.134-.366a13.538 13.538 0 01-.352-3.758zM5.285 7.074a14.9 14.9 0 011.663-4.471 8.028 8.028 0 00-3.503 2.81c.529.638 1.149 1.199 1.84 1.66zM17.334 6.798a7.973 7.973 0 01.614 4.115 13.47 13.47 0 01-3.178 1.72 15.093 15.093 0 00.174-3.939 10.043 10.043 0 002.39-1.896zM2.666 6.798a10.042 10.042 0 002.39 1.896 15.196 15.196 0 00.174 3.94 13.472 13.472 0 01-3.178-1.72 7.973 7.973 0 01.615-4.115zM10 15c.898 0 1.778-.079 2.633-.23a13.473 13.473 0 01-1.72 3.178 8.099 8.099 0 01-1.826 0 13.47 13.47 0 01-1.72-3.178c.855.151 1.735.23 2.633.23zM14.357 14.357a14.912 14.912 0 01-1.305 3.04 8.027 8.027 0 004.345-4.345c-.953.542-1.971.981-3.04 1.305zM6.948 17.397a8.027 8.027 0 01-4.345-4.345c.953.542 1.971.981 3.04 1.305a14.912 14.912 0 001.305 3.04z"
+        />
+      </svg>
+
+      Webserver
+    </a>
+    <button
+      onclick="restart_sensor('{{ sensor.client_id }}')"
+      class="inline-flex items-center my-3 px-5 py-3 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 mr-2">
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1"
+          d="M15.312 11.424a5.5 5.5 0 01-9.201 2.466l-.312-.311h2.433a.75.75 0 000-1.5H3.989a.75.75 0 00-.75.75v4.242a.75.75 0 001.5 0v-2.43l.31.31a7 7 0 0011.712-3.138.75.75 0 00-1.449-.39zm1.23-3.723a.75.75 0 00.219-.53V2.929a.75.75 0 00-1.5 0V5.36l-.31-.31A7 7 0 003.239 8.188a.75.75 0 101.448.389A5.5 5.5 0 0113.89 6.11l.311.31h-2.432a.75.75 0 000 1.5h4.243a.75.75 0 00.53-.219z"
+        />
+      </svg>
+      Restart
+    </button>
+    <a
+      href="http://{{ sensor.ip_address }}/update"
+      target="_blank"
+      class="inline-flex items-center my-3 px-5 py-3 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1"
+          d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z"
+        />
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1"
+          d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z"
+        />
+      </svg>
+
+      OTA Update
+    </a>
+  </div>
+</section>
+
+<section class="flex flex-row gap-4 mb-4">
   <!-- <div class="basis-2/4 xl:basis-1/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div> -->
 
   <div class="basis-2/4 xl:basis-1/4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -40,7 +102,7 @@
     <div class="m-4">
       <div class="flex justify-between mb-1">
         <span class="text-base font-medium text-primary-700 dark:text-white">Kalibratie</span>
-        <span class="text-sm font-medium text-primary-700 dark:text-white">{{ sensor.threshold }}</span>
+        <span class="text-sm font-medium text-primary-700 dark:text-white">{{ sensor.threshold }} mm</span>
       </div>
       <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
         <div class="bg-primary-600 h-2.5 rounded-full" style="width: {{ (sensor.threshold / 1300) * 100 }}%"></div>
@@ -62,52 +124,35 @@
           </tr>
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Threshold</th>
-            <td class="px-6 py-4">{{ sensor.threshold }}</td>
+            <td class="px-6 py-4">{{ sensor.threshold }} mm</td>
           </tr>
           <tr class="bg-white dark:bg-gray-800">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Max distance</th>
-            <td class="px-6 py-4">{{ sensor.max_distance }}</td>
+            <td class="px-6 py-4">{{ sensor.max_distance }} mm</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-  <div class="basis-2/4 xl:basis-3/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72">
-    <!-- <div class="grid grid-rows-1 grid-flow-col">
-      <a
-        href="http://{{ sensor.ip_address }}"
-        target="_blank"
-        class="inline-flex items-center m-3 px-5 py-3 text-sm font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-      >
-        Webserver
-        <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-        </svg>
-      </a>
-      <a
-        href="#"
-        class="inline-flex items-center m-3 px-5 py-3 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-      >
-        Restart
-        <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-        </svg>
-      </a>
-      <a
-        href="http://{{ sensor.ip_address }}/update"
-        target="_blank"
-        class="inline-flex items-center m-3 px-5 py-3 text-sm font-medium text-center text-white bg-teal-700 rounded-lg hover:bg-teal-800 focus:ring-4 focus:outline-none focus:ring-teal-300 dark:bg-teal-600 dark:hover:bg-teal-700 dark:focus:ring-teal-800"
-      >
-        OTA Update
-        <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-        </svg>
-      </a>
-    </div> -->
-  </div>
-</div>
+  <div class="basis-2/4 xl:basis-3/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+</section>
 <!-- <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"></div> -->
 {% endblock %} {% block script %}
 <script type="text/javascript" src="{{ url_for('static', filename='node_modules/socket.io-client/dist/socket.io.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
+<script>
+  restart_sensor = function(event) {
+    Swal.fire({
+      title: 'Weet je het zeker?',
+      text: 'Wanneer je deze actie uitvoert wordt de sensor opnieuw opgestart.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Restart',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        socket.emit('restart_sensors', event);
+      }
+    })
+  }
+</script>
 {% endblock %}
