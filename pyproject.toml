@@ -90,7 +90,7 @@ max-attributes = 12
 
 [tool.ruff]
 select = ["ALL"]
-extend-exclude = ["test_led.py"]
+extend-exclude = ["test_*.py"]
 ignore = [
   "ANN101", # Self... explanatory
   "ANN401", # Opinioated warning on disallowing dynamically typed expressions

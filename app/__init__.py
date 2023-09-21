@@ -12,7 +12,7 @@ from rpi_ws281x import Color
 from sqlalchemy import exc
 
 from app.const import MQTT_STATUS_TOPIC, MQTT_TRIGGER_TOPIC
-from app.led_controller import LEDController, Colors
+from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
 from config import Config
 

@@ -1,6 +1,7 @@
 """LED strip module."""
-from rpi_ws281x import Color, PixelStrip
 import random
+
+from rpi_ws281x import Color, PixelStrip
 
 
 class Colors:
@@ -23,8 +24,8 @@ class Colors:
     def get_random_unique_color(self) -> None:
         """Return a random color that has not been used yet.
 
-        Returns:
-        ----
+        Returns
+        -------
             Color: A random color that has not been used yet.
         """
         available_colors = [
@@ -44,8 +45,8 @@ class Colors:
     def get_all_colors(cls):
         """Return all available colors.
 
-        Returns:
-        ----
+        Returns
+        -------
             list: A list of all available colors.
         """
         return [
