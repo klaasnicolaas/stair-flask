@@ -1,5 +1,81 @@
 """LED strip module."""
+import random
+
 from rpi_ws281x import Color, PixelStrip
+
+
+class Colors:
+    """Class to store colors."""
+
+    RED = Color(255, 0, 0)
+    GREEN = Color(0, 255, 0)
+    BLUE = Color(0, 0, 255)
+    YELLOW = Color(255, 255, 0)
+    PURPLE = Color(255, 0, 255)
+    CYAN = Color(0, 255, 255)
+    ORANGE = Color(255, 165, 0)
+    PINK = Color(255, 192, 203)
+    BROWN = Color(165, 42, 42)
+
+    def __init__(self) -> None:
+        """Initialize the used colors."""
+        self.used_colors = []
+
+    def get_random_unique_color(self) -> None:
+        """Return a random color that has not been used yet.
+
+        Returns
+        -------
+            Color: A random color that has not been used yet.
+        """
+        available_colors = [
+            color for color in self.get_all_colors() if color not in self.used_colors
+        ]
+        if not available_colors:
+            available_colors = self.get_all_colors()
+            self.used_colors = []
+
+        random.shuffle(available_colors)
+
+        color = random.choice(available_colors)
+        self.used_colors.append(color)
+        return color
+
+    @classmethod
+    def get_all_colors(cls):
+        """Return all available colors.
+
+        Returns
+        -------
+            list: A list of all available colors.
+        """
+        return [
+            cls.RED,
+            cls.GREEN,
+            cls.BLUE,
+            cls.YELLOW,
+            cls.PURPLE,
+            cls.CYAN,
+            cls.ORANGE,
+            cls.PINK,
+            cls.BROWN,
+        ]
+
+    def random_color(self) -> Color:
+        """Return a random color."""
+        return random.choice(
+            [
+                self.RED,
+                self.GREEN,
+                self.BLUE,
+                self.YELLOW,
+                self.PURPLE,
+                self.CYAN,
+                self.ORANGE,
+                self.PINK,
+                self.BROWN,
+            ],
+        )
 
 
 class LEDController:
