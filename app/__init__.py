@@ -11,7 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
 
-from app.const import MQTT_STATUS_TOPIC, MQTT_TRIGGER_TOPIC
+from app.const import MQTT_STATUS_TOPIC, MQTT_TRIGGER_TOPIC, MQTT_RESTART_ALL_TOPIC, MQTT_SENSOR
 from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
 from config import Config
@@ -221,8 +221,12 @@ def on_system_active(event):
 @socketio.on("restart_sensors")
 def on_restart_sensors(event):
     """SocketIO function to handle restart_sensors event."""
-    print(f"Restarting sensors - {event}")
-    # TODO: Send restart signal to single sensor or all sensors
+    if event == "all_sensors":
+        print("Restarting all sensors")
+        mqtt.send(MQTT_RESTART_ALL_TOPIC, "restart")
+    else:
+        print(f"Restarting sensor - {event[7:]}")
+        mqtt.send(f"{MQTT_SENSOR}/{event[7:]}/restart", "restart")
 
 
 # MQTT events

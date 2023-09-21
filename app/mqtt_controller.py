@@ -1,4 +1,5 @@
 """MQTT Controller Module."""
+from __future__ import annotations
 import secrets
 
 import paho.mqtt.client as mqtt
@@ -97,3 +98,13 @@ class MQTTClient:
         """Disconnect from MQTT Broker."""
         self.client.loop_stop()
         self.client.disconnect()
+        
+    def send(self, topic: str, payload: str | dict) -> None:
+        """Send message to MQTT Broker.
+
+        Args:
+        ----
+            topic: MQTT topic to send message to.
+            payload: Message to send to MQTT Broker.
+        """
+        self.client.publish(topic, payload)
