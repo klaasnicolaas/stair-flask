@@ -29,7 +29,7 @@
 </section>
 
 <section>
-  <div class="grid grid-rows-1 pb-4 grid-flow-col gap-4">
+  <div class="grid grid-rows-3 md:grid-rows-1 pb-4 grid-flow-col gap-0 md:gap-4">
     <a
       href="http://{{ sensor.ip_address }}"
       target="_blank"
@@ -89,10 +89,9 @@
   </div>
 </section>
 
-<section class="flex flex-row gap-4 mb-4">
+<section class="grid md:flex grid-cols-1 md:grid-cols-2 gap-4 mb-4">
   <!-- <div class="basis-2/4 xl:basis-1/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div> -->
-
-  <div class="basis-2/4 xl:basis-1/4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+  <div class="basis-1/4 lg:basis-2/4 xl:basis-1/4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     <div class="relative">
       <img class="object-cover w-full h-38 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
       <div class="absolute bottom-2 right-0">
@@ -134,7 +133,7 @@
       </table>
     </div>
   </div>
-  <div class="basis-2/4 xl:basis-3/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+  <div class="basis-2/4 md:basis-3/4 xl:basis-3/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
 </section>
 <!-- <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"></div> -->
 {% endblock %} {% block script %}
