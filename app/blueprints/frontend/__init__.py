@@ -1,7 +1,7 @@
 """Blueprint for the frontend of the application."""
 from flask import Blueprint, render_template
 
-from app.blueprints.backend.models import Workout
+from app.blueprints.backend.models import Workout, Sensor
 
 bp = Blueprint("frontend", __name__, template_folder="templates")
 
@@ -12,11 +12,16 @@ def home() -> None:
     return render_template("home.html", workouts=Workout.query.all())
 
 
-@bp.route("/workout", methods=["GET"])
-def workout() -> None:
-    """Render the workout page."""
-    return render_template("workout.html")
+@bp.route("/workouts", methods=["GET"])
+def workouts() -> None:
+    """Render the workouts page."""
+    return render_template("workouts/index.html", workouts=Workout.query.all())
 
+
+@bp.route("/workouts/<int:workout_id>", methods=["GET"])
+def workout_start(workout_id: int) -> None:
+    """Render the workout page."""
+    return render_template("workouts/start.html", workout=Workout.query.get(workout_id), sensors=Sensor.query.all())
 
 @bp.route("/info", methods=["GET"])
 def info() -> None:
