@@ -54,7 +54,7 @@
       <a href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
         <img class="object-cover w-full h-45 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
         <div class="absolute top-2 left-2">
-          <span id="js--{{ sensor.client_id }}_state"> {% if sensor.status == 'offline' or sensor.status == 'error' %} 🔴 {% elif sensor.status == 'trigger' %} 🟣 {% else %} 🟢 {% endif %} </span>
+          <span id="js--{{ sensor.client_id }}_state"> {% if sensor.status == 'offline' or sensor.status == 'error' %} 🔴 {% elif sensor.status == 'trigger' %} 🟣 {% elif sensor.status == 'measure' %} 🟡 {% else %} 🟢 {% endif %} </span>
         </div>
         <div class="absolute bottom-2 right-0">
           <span id="js--{{ sensor.client_id }}_status" class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400"

@@ -11,7 +11,13 @@ from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
 
-from app.const import MQTT_STATUS_TOPIC, MQTT_TRIGGER_TOPIC, MQTT_RESTART_ALL_TOPIC, MQTT_SENSOR
+from app.const import (
+    MQTT_STATUS_TOPIC,
+    MQTT_TRIGGER_TOPIC,
+    MQTT_RESTART_ALL_TOPIC,
+    MQTT_SENSOR,
+    MQTT_WORKOUT_CONTROL_ALL_TOPIC,
+)
 from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
 from config import Config
@@ -204,7 +210,7 @@ def set_color() -> None:
 @app.route("/turn_off")
 def turn_off() -> None:
     """Turn off LED strip."""
-    led_controller.turn_off()
+    led_controller.color_wipe(Color(0, 0, 0), 10)
     return redirect(url_for("backend.led_control"))
 
 
@@ -220,13 +226,15 @@ def on_system_control(event):
     """Put the system in active mode or not."""
     global workout_mode
 
-    if event["data"] == "start":
-        workout_mode = True
+    if event["mode"] == "start":
         print("Starting workout")
-    elif event["data"] == "stop":
-        workout_mode = False
-        led_controller.turn_off()
+        mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
+        workout_mode = True
+    elif event["mode"] == "stop":
         print("Stopping workout")
+        mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
+        workout_mode = False
+        led_controller.color_wipe(Color(0, 0, 0), 10)
 
 
 @socketio.on("restart_sensors")
