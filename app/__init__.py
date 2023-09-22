@@ -81,6 +81,13 @@ app.register_blueprint(backend_bp, url_prefix="/admin")
 app.register_blueprint(auth_bp)
 
 
+@app.cli.command("init_db")
+def init_db() -> None:
+    """Initialize the database."""
+    db.drop_all()
+    db.create_all()
+
+
 @app.cli.command("create_admin")
 def create_admin() -> None:
     """Create a new admin user."""
