@@ -11,7 +11,7 @@
         <div class="flex items-center space-x-3">
           <button
             type="button"
-            onclick="restart_sensors('all_sensors')"
+            onclick="restart_all_sensors('all_sensors')"
             class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-accent-700 hover:bg-accent-800 focus:ring-4 focus:ring-accent-300 dark:bg-accent-600 dark:hover:bg-accent-700 focus:outline-none dark:focus:ring-accent-800"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 mr-2 -ml-1">
@@ -53,8 +53,13 @@
     <div class="relative">
       <a href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
         <img class="object-cover w-full h-45 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
+        <div class="absolute top-2 left-2">
+          <span id="js--{{ sensor.client_id }}_state"> {% if sensor.status == 'offline' or sensor.status == 'error' %} 🔴 {% elif sensor.status == 'trigger' %} 🟣 {% else %} 🟢 {% endif %} </span>
+        </div>
         <div class="absolute bottom-2 right-0">
-          <span class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{ sensor.status }}</span>
+          <span id="js--{{ sensor.client_id }}_status" class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400"
+            >{{ sensor.status }}</span
+          >
         </div>
       </a>
     </div>
@@ -77,22 +82,9 @@
   {% endfor %}
 </div>
 {% endblock %} {% block script %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensors.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensors_delete.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
 
-<script>
-  restart_sensors = function(event) {
-    Swal.fire({
-      title: 'Weet je het zeker?',
-      text: 'Wanneer je deze actie uitvoert worden alle sensoren opnieuw opgestart.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Restart',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        socket.emit('restart_sensors', event);
-      }
-    })
-  }
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensor_restart.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/sensors_index.js') }}"></script>
 {% endblock %}
