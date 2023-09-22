@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "flowbite": "^1.8.1",
+    "jquery": "^3.7.1",
     "socket.io-client": "^4.7.2",
     "sweetalert2": "^11.7.28"
   },

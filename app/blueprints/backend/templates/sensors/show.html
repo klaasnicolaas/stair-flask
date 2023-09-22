@@ -1,4 +1,6 @@
-{% extends 'layout_backend.html' %}{% block content %}
+{% extends 'layout_backend.html' %} {% block head %}
+<meta id="sensor_id" data-name="{{ sensor.client_id }}" />
+{% endblock %} {% block content %}
 <section>
   <div class="w-full pb-4 mx-auto">
     <!-- Banner -->
@@ -60,7 +62,7 @@
           d="M15.312 11.424a5.5 5.5 0 01-9.201 2.466l-.312-.311h2.433a.75.75 0 000-1.5H3.989a.75.75 0 00-.75.75v4.242a.75.75 0 001.5 0v-2.43l.31.31a7 7 0 0011.712-3.138.75.75 0 00-1.449-.39zm1.23-3.723a.75.75 0 00.219-.53V2.929a.75.75 0 00-1.5 0V5.36l-.31-.31A7 7 0 003.239 8.188a.75.75 0 101.448.389A5.5 5.5 0 0113.89 6.11l.311.31h-2.432a.75.75 0 000 1.5h4.243a.75.75 0 00.53-.219z"
         />
       </svg>
-      Restart
+      Herstart Sensor
     </button>
     <a
       href="http://{{ sensor.ip_address }}/update"
@@ -89,13 +91,13 @@
   </div>
 </section>
 
-<section class="grid md:flex grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+<section class="grid lg:flex grid-cols-1 gap-4 mb-4">
   <!-- <div class="basis-2/4 xl:basis-1/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div> -->
   <div class="basis-1/4 lg:basis-2/4 xl:basis-1/4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     <div class="relative">
       <img class="object-cover w-full h-38 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
       <div class="absolute bottom-2 right-0">
-        <span class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{ sensor.status }}</span>
+        <span id="js--sensor_status" class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">{{ sensor.status }}</span>
       </div>
     </div>
     <div class="m-4">
@@ -122,6 +124,10 @@
             <td class="px-6 py-4"><a href="http://{{ sensor.ip_address }}" class="text-accent-600 dark:text-accent-500 hover:underline" target="_blank">{{ sensor.ip_address }}</a></td>
           </tr>
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Trigger distance</th>
+            <td class="px-6 py-4"> mm</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Threshold</th>
             <td class="px-6 py-4">{{ sensor.threshold }} mm</td>
           </tr>
@@ -133,25 +139,19 @@
       </table>
     </div>
   </div>
-  <div class="basis-2/4 md:basis-3/4 xl:basis-3/4 border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+  <div class="basis-2/4 md:basis-3/4 xl:basis-3/4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div class="px-6 py-4">
+      <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Logboek</h2>
+      <ul id="log-list" class="space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400"></ul>
+    </div>
+  </div>
 </section>
 <!-- <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"></div> -->
 {% endblock %} {% block script %}
 <script type="text/javascript" src="{{ url_for('static', filename='node_modules/socket.io-client/dist/socket.io.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
-<script>
-  restart_sensor = function(event) {
-    Swal.fire({
-      title: 'Weet je het zeker?',
-      text: 'Wanneer je deze actie uitvoert wordt de sensor opnieuw opgestart.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Restart',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        socket.emit('restart_sensors', event);
-      }
-    })
-  }
-</script>
+
+<script text="text/javascript" src="{{ url_for('static', filename='js/sockets/sensor_show.js') }}"></script>
+<script text="text/javascript" src="{{ url_for('static', filename='js/sockets/logging.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensor_restart.js') }}"></script>
 {% endblock %}

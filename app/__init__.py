@@ -144,9 +144,10 @@ def on_topic_status(
         userdata: The private user data as set in Client() or userdata_set().
         message: An instance of MQTTMessage.
     """
-    # TODO: Socket emit to update sensot status to specific element ID
+    data = json.loads(message.payload)
+    socketio.emit(f"sensor_status_{data['client_id']}", data)
+    socketio.emit("sensors_status_all", data)
     try:
-        data = json.loads(message.payload)
         with app.app_context():
             sensor = Sensor.query.filter_by(
                 client_id=f"sensor-{data['client_id']}",
@@ -177,6 +178,8 @@ def on_topic_status(
         with app.app_context():
             db.session.rollback()
         print("An error occurred during database operation.")
+    except KeyError as e:
+        print(f"MQTT data is missing the following key: {e}")
 
 
 # Routes
