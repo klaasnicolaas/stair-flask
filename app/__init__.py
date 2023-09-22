@@ -12,11 +12,12 @@ from rpi_ws281x import Color
 from sqlalchemy import exc
 
 from app.const import (
-    MQTT_STATUS_TOPIC,
-    MQTT_TRIGGER_TOPIC,
     MQTT_RESTART_ALL_TOPIC,
     MQTT_SENSOR,
+    MQTT_STATUS_TOPIC,
+    MQTT_TRIGGER_TOPIC,
     MQTT_WORKOUT_CONTROL_ALL_TOPIC,
+    WORKOUTS,
 )
 from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
@@ -51,7 +52,7 @@ mqtt = MQTTClient()
 mqtt.connect()
 
 from app.blueprints.auth.models import User
-from app.blueprints.backend.models import Sensor
+from app.blueprints.backend.models import Sensor, Workout
 
 workout_mode: bool = False
 
@@ -82,9 +83,9 @@ from app.blueprints.auth import bp as auth_bp
 from app.blueprints.backend import bp as backend_bp
 from app.blueprints.frontend import bp as frontend_bp
 
-app.register_blueprint(frontend_bp)
-app.register_blueprint(backend_bp, url_prefix="/admin")
 app.register_blueprint(auth_bp)
+app.register_blueprint(backend_bp, url_prefix="/admin")
+app.register_blueprint(frontend_bp)
 
 
 @app.cli.command("init_db")
@@ -92,7 +93,22 @@ def init_db() -> None:
     """Initialize the database."""
     db.drop_all()
     db.create_all()
+    print("Database initialized successfully!")
 
+@app.cli.command("seed_workouts")
+def seed_workouts() -> None:
+    """Seed the workouts table."""
+    for index, workout in enumerate(WORKOUTS, 1):
+        workout = Workout(
+            name=workout["name"],
+            description=workout["description"],
+            pros=workout["pros"],
+            cons=None if "cons" not in workout else workout["cons"],
+        )
+
+        db.session.add(workout)
+        db.session.commit()
+        print(f"Workout {index} added successfully!")
 
 @app.cli.command("create_admin")
 def create_admin() -> None:
