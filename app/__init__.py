@@ -47,7 +47,7 @@ mqtt.connect()
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Sensor
 
-workout_active: bool = False
+workout_mode: bool = False
 
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
@@ -128,13 +128,13 @@ def on_topic_trigger(
         userdata: The private user data as set in Client() or userdata_set().
         message: An instance of MQTTMessage.
     """
-    colors = Colors()
-    if workout_active:
+    # TODO: Check welke workout er actief is en pas een if statement toe
+    # INFO: Call daarna de functie om de LED strip aan te sturen
+    if workout_mode:
+        colors = Colors()
         led_controller.set_color(
             colors.get_random_unique_color(),
         )
-    # TODO: Check welke workout er actief is en pas een if statement toe
-    # INFO: Call daarna de functie om de LED strip aan te sturen
     print(f"Message Received from Others: {message.payload.decode()}")
 
 
@@ -152,6 +152,7 @@ def on_topic_status(
         message: An instance of MQTTMessage.
     """
     data = json.loads(message.payload)
+    # Send the data to the frontend
     socketio.emit(f"sensor_status_{data['client_id']}", data)
     socketio.emit("sensors_status_all", data)
     try:
@@ -214,16 +215,16 @@ def on_connect():
     print("Client connected")
 
 
-@socketio.on("active")
-def on_system_active(event):
+@socketio.on("system_control")
+def on_system_control(event):
     """Put the system in active mode or not."""
-    global workout_active
+    global workout_mode
 
     if event["data"] == "start":
-        workout_active = True
+        workout_mode = True
         print("Starting workout")
     elif event["data"] == "stop":
-        workout_active = False
+        workout_mode = False
         led_controller.turn_off()
         print("Stopping workout")
 
