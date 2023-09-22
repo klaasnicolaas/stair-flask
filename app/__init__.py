@@ -11,7 +11,13 @@ from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
 
-from app.const import MQTT_STATUS_TOPIC, MQTT_TRIGGER_TOPIC, MQTT_RESTART_ALL_TOPIC, MQTT_SENSOR
+from app.const import (
+    MQTT_STATUS_TOPIC,
+    MQTT_TRIGGER_TOPIC,
+    MQTT_RESTART_ALL_TOPIC,
+    MQTT_SENSOR,
+    MQTT_WORKOUT_CONTROL_ALL_TOPIC,
+)
 from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
 from config import Config
@@ -47,7 +53,7 @@ mqtt.connect()
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Sensor
 
-workout_active: bool = False
+workout_mode: bool = False
 
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
@@ -79,6 +85,13 @@ from app.blueprints.frontend import bp as frontend_bp
 app.register_blueprint(frontend_bp)
 app.register_blueprint(backend_bp, url_prefix="/admin")
 app.register_blueprint(auth_bp)
+
+
+@app.cli.command("init_db")
+def init_db() -> None:
+    """Initialize the database."""
+    db.drop_all()
+    db.create_all()
 
 
 @app.cli.command("create_admin")
@@ -121,13 +134,13 @@ def on_topic_trigger(
         userdata: The private user data as set in Client() or userdata_set().
         message: An instance of MQTTMessage.
     """
-    colors = Colors()
-    if workout_active:
+    # TODO: Check welke workout er actief is en pas een if statement toe
+    # INFO: Call daarna de functie om de LED strip aan te sturen
+    if workout_mode:
+        colors = Colors()
         led_controller.set_color(
             colors.get_random_unique_color(),
         )
-    # TODO: Check welke workout er actief is en pas een if statement toe
-    # INFO: Call daarna de functie om de LED strip aan te sturen
     print(f"Message Received from Others: {message.payload.decode()}")
 
 
@@ -145,6 +158,7 @@ def on_topic_status(
         message: An instance of MQTTMessage.
     """
     data = json.loads(message.payload)
+    # Send the data to the frontend
     socketio.emit(f"sensor_status_{data['client_id']}", data)
     socketio.emit("sensors_status_all", data)
     try:
@@ -196,7 +210,7 @@ def set_color() -> None:
 @app.route("/turn_off")
 def turn_off() -> None:
     """Turn off LED strip."""
-    led_controller.turn_off()
+    led_controller.color_wipe(Color(0, 0, 0), 10)
     return redirect(url_for("backend.led_control"))
 
 
@@ -207,18 +221,20 @@ def on_connect():
     print("Client connected")
 
 
-@socketio.on("active")
-def on_system_active(event):
+@socketio.on("system_control")
+def on_system_control(event):
     """Put the system in active mode or not."""
-    global workout_active
+    global workout_mode
 
-    if event["data"] == "start":
-        workout_active = True
+    if event["mode"] == "start":
         print("Starting workout")
-    elif event["data"] == "stop":
-        workout_active = False
-        led_controller.turn_off()
+        mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
+        workout_mode = True
+    elif event["mode"] == "stop":
         print("Stopping workout")
+        mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
+        workout_mode = False
+        led_controller.color_wipe(Color(0, 0, 0), 10)
 
 
 @socketio.on("restart_sensors")

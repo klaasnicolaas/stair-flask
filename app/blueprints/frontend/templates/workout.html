@@ -48,28 +48,27 @@
   <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12">
     <button
       type="button"
-      onclick="system_active('start')"
+      onclick="system_control('start')"
       class="focus:outline-none text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
     >
       Start oefening
     </button>
     <button
       type="button"
-      onclick="system_active('stop')"
+      onclick="system_control('stop')"
       class="focus:outline-none text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
     >
       Stop oefening
     </button>
-    <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an option</label>
+    <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kies een oefening</label>
     <select
       id="countries"
       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
     >
-      <option selected>Choose a country</option>
-      <option value="US">United States</option>
-      <option value="CA">Canada</option>
-      <option value="FR">France</option>
-      <option value="DE">Germany</option>
+      <option disabled>Kies een oefening</option>
+      <option value="US">Kameleon</option>
+      <option value="CA">Meeloper</option>
+      <option value="FR">Traploop test</option>
     </select>
     <label class="relative inline-flex items-center cursor-pointer">
       <input type="checkbox" value="" class="sr-only peer" />
