@@ -17,6 +17,16 @@ if TYPE_CHECKING:
 # and grab their id.
 @login_manager.user_loader
 def load_user(user_id: int) -> User:
+    """Load the current user.
+
+    Args:
+    ----
+        user_id (int): The user id to load.
+
+    Returns:
+    -------
+        User: The current user.
+    """
     return User.query.get(user_id)
 
 

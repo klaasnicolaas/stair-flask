@@ -43,9 +43,9 @@ login_manager.login_view = "auth.login"
 
 
 @app.before_request
-def make_session_permanent():
+def make_session_permanent() -> None:
     """Make the session permanent."""
-    session.permanent = True
+    session.permanent: bool = True
     app.permanent_session_lifetime = timedelta(hours=12)
 
 
@@ -126,9 +126,13 @@ def create_admin() -> None:
     email = input("Enter email address: ")
     password = getpass.getpass("Enter password: ")
     confirm_password = getpass.getpass("Enter password again: ")
+
+    # Validate the password
     if password != confirm_password:
         print("Passwords don't match")
         return 1
+
+    # Create the user
     try:
         user = User(
             name=name,
@@ -265,7 +269,6 @@ def on_topic_status(
             ).first()
             if sensor:
                 # If the sensor already exists
-                # print(f"Updating sensor: {data['client_id']}")
                 sensor.ip_address = data["ip_address"]
                 sensor.max_distance = data["max_distance"]
                 sensor.threshold = data["threshold"]
@@ -313,7 +316,7 @@ def turn_off() -> None:
 
 # SocketIO events
 @socketio.on("connect")
-def on_connect():
+def on_connect() -> None:
     """SocketIO function to handle connect event."""
     print("Client connected")
 
@@ -354,8 +357,13 @@ def on_system_control(event: dict) -> None:
 
 
 @socketio.on("restart_sensors")
-def on_restart_sensors(event):
-    """SocketIO function to handle restart_sensors event."""
+def on_restart_sensors(event: str) -> None:
+    """SocketIO function to handle restart_sensors event.
+
+    Args:
+    ----
+        event (str): The event data.
+    """
     if event == "all_sensors":
         print("Restarting all sensors")
         mqtt.send(MQTT_RESTART_ALL_TOPIC, "restart")

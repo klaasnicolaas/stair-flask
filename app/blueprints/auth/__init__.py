@@ -14,7 +14,12 @@ bp = Blueprint("auth", __name__, template_folder="templates")
 
 @bp.route("/login", methods=["GET", "POST"])
 def login():
-    """Render the login page."""
+    """Render the login page.
+
+    Returns
+    -------
+        render_template: The login page.
+    """
     if current_user.is_authenticated:
         return redirect(url_for("backend.dashboard"))
     form = LoginForm()
@@ -32,7 +37,12 @@ def login():
 
 @bp.route("/register", methods=["GET", "POST"])
 def register() -> None:
-    """Render the register page."""
+    """Render the register page.
+
+    Returns
+    -------
+        render_template: The register page.
+    """
     form = RegisterForm()
     if form.validate_on_submit():
         existing_user = User.query.filter_by(email=form.email.data).first()
@@ -66,6 +76,11 @@ def reset_password() -> None:
 @bp.route("/logout")
 @login_required
 def logout() -> None:
-    """Render the logout page."""
+    """Render the logout page.
+
+    Returns
+    -------
+        redirect: The home page.
+    """
     logout_user()
     return redirect(url_for("frontend.home"))
