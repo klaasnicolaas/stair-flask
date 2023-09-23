@@ -1,5 +1,7 @@
 """Initialize Stair Challenge app."""
 # ruff: noqa: E402, ARG001
+from __future__ import annotations
+
 import getpass
 import json
 from datetime import datetime, timedelta
@@ -12,11 +14,12 @@ from rpi_ws281x import Color
 from sqlalchemy import exc
 
 from app.const import (
-    MQTT_STATUS_TOPIC,
-    MQTT_TRIGGER_TOPIC,
     MQTT_RESTART_ALL_TOPIC,
     MQTT_SENSOR,
+    MQTT_STATUS_TOPIC,
+    MQTT_TRIGGER_TOPIC,
     MQTT_WORKOUT_CONTROL_ALL_TOPIC,
+    WORKOUTS,
 )
 from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
@@ -40,9 +43,9 @@ login_manager.login_view = "auth.login"
 
 
 @app.before_request
-def make_session_permanent():
+def make_session_permanent() -> None:
     """Make the session permanent."""
-    session.permanent = True
+    session.permanent: bool = True
     app.permanent_session_lifetime = timedelta(hours=12)
 
 
@@ -51,9 +54,14 @@ mqtt = MQTTClient()
 mqtt.connect()
 
 from app.blueprints.auth.models import User
-from app.blueprints.backend.models import Sensor
+from app.blueprints.backend.models import Sensor, Workout
 
 workout_mode: bool = False
+workout_id: int = None
+
+client_counters: dict = {1: False, 6: False}
+overall_counter: int = 0
+led_start: int = 0
 
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
@@ -82,9 +90,9 @@ from app.blueprints.auth import bp as auth_bp
 from app.blueprints.backend import bp as backend_bp
 from app.blueprints.frontend import bp as frontend_bp
 
-app.register_blueprint(frontend_bp)
-app.register_blueprint(backend_bp, url_prefix="/admin")
 app.register_blueprint(auth_bp)
+app.register_blueprint(backend_bp, url_prefix="/admin")
+app.register_blueprint(frontend_bp)
 
 
 @app.cli.command("init_db")
@@ -92,6 +100,23 @@ def init_db() -> None:
     """Initialize the database."""
     db.drop_all()
     db.create_all()
+    print("Database initialized successfully!")
+
+
+@app.cli.command("seed_workouts")
+def seed_workouts() -> None:
+    """Seed the workouts table."""
+    for index, workout in enumerate(WORKOUTS, 1):
+        workout = Workout(
+            name=workout["name"],
+            description=workout["description"],
+            pros=workout["pros"],
+            cons=None if "cons" not in workout else workout["cons"],
+        )
+
+        db.session.add(workout)
+        db.session.commit()
+        print(f"Workout {index} added successfully!")
 
 
 @app.cli.command("create_admin")
@@ -101,9 +126,13 @@ def create_admin() -> None:
     email = input("Enter email address: ")
     password = getpass.getpass("Enter password: ")
     confirm_password = getpass.getpass("Enter password again: ")
+
+    # Validate the password
     if password != confirm_password:
         print("Passwords don't match")
         return 1
+
+    # Create the user
     try:
         user = User(
             name=name,
@@ -136,12 +165,84 @@ def on_topic_trigger(
     """
     # TODO: Check welke workout er actief is en pas een if statement toe
     # INFO: Call daarna de functie om de LED strip aan te sturen
+    data: dict = json.loads(message.payload)
     if workout_mode:
-        colors = Colors()
-        led_controller.set_color(
-            colors.get_random_unique_color(),
-        )
+        match workout_id:
+            case 1:
+                # Kameleon
+                colors = Colors()
+                led_controller.set_color(colors.get_random_unique_color())
+            case 2:
+                # Trap op, trap af
+                workout_counting(data["client_id"])
+            case 3:
+                # Meeloper
+                print("Workout 3")
+            case _:
+                print("Workout not found")
     print(f"Message Received from Others: {message.payload.decode()}")
+
+
+def workout_counting(client_id: int) -> None:
+    """Start the counter for the workout.
+
+    Args:
+    ----
+        client_id: The client ID of the sensor that triggered.
+    """
+    global overall_counter, client_counters
+
+    if client_id in client_counters:
+        # Put the sensor on True
+        client_counters[client_id] = True
+        if all(client_counters.values()):
+            # If all sensors are on True, update the counter
+            update_counter(1)
+
+            # Party time!
+            set_next_10_leds(Color(0, 0, 255))
+            # led_controller.rainbow()
+            # led_controller.color_wipe(Color(0, 0, 0), 10)
+
+            for key in client_counters:
+                # Reset all sensors to False
+                client_counters[key] = False
+
+
+
+def set_next_10_leds(color: Color) -> None:
+    """Set the color of the next 10 LEDs.
+
+    Args:
+    ----
+        color (Color): Color object with RGB values
+    """
+    global led_start
+    end_led = led_start + 10
+    led_controller.set_led_range(color, led_start, end_led)
+    led_start = end_led
+
+
+def update_counter(value: int, reset: bool = False) -> None:
+    """Update the counter on the frontend.
+
+    Args:
+    ----
+        value: The value to update the counter with.
+        reset: Whether to reset the counter.
+    """
+    global overall_counter, client_counters
+    if reset:
+        # reset the counter and sensor list
+        overall_counter = 0
+        for key in client_counters:
+            client_counters[key] = False
+    else:
+        # Update the counter
+        overall_counter += value
+        print(f"Overall counter: {overall_counter}")
+    # Send the counter value to the frontend
+    socketio.emit("counter", overall_counter)
 
 
 def on_topic_status(
@@ -168,7 +269,6 @@ def on_topic_status(
             ).first()
             if sensor:
                 # If the sensor already exists
-                # print(f"Updating sensor: {data['client_id']}")
                 sensor.ip_address = data["ip_address"]
                 sensor.max_distance = data["max_distance"]
                 sensor.threshold = data["threshold"]
@@ -216,30 +316,54 @@ def turn_off() -> None:
 
 # SocketIO events
 @socketio.on("connect")
-def on_connect():
+def on_connect() -> None:
     """SocketIO function to handle connect event."""
     print("Client connected")
 
 
 @socketio.on("system_control")
-def on_system_control(event):
-    """Put the system in active mode or not."""
-    global workout_mode
+def on_system_control(event: dict) -> None:
+    """Put the system in active mode and start the workout.
+
+    Args:
+    ----
+        event (dict): The event data.
+    """
+    global workout_mode, workout_id, led_start
+    # TODO: Check welke workout er actief is en pas een if statement toe
 
     if event["mode"] == "start":
         print("Starting workout")
         mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
+
+        # Start workout mode and reset the counter
         workout_mode = True
+        workout_id = event["workout_id"]
+        update_counter(0, True)
+
+        # led_controller.one_led(Color(0, 255, 0), 104)
     elif event["mode"] == "stop":
         print("Stopping workout")
         mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
+
+        # Stop workout mode and reset variables
         workout_mode = False
+        workout_id = None
+        led_start = 0
+
+        # Reset the counter and turn off the LEDs
+        update_counter(0, True)
         led_controller.color_wipe(Color(0, 0, 0), 10)
 
 
 @socketio.on("restart_sensors")
-def on_restart_sensors(event):
-    """SocketIO function to handle restart_sensors event."""
+def on_restart_sensors(event: str) -> None:
+    """SocketIO function to handle restart_sensors event.
+
+    Args:
+    ----
+        event (str): The event data.
+    """
     if event == "all_sensors":
         print("Restarting all sensors")
         mqtt.send(MQTT_RESTART_ALL_TOPIC, "restart")

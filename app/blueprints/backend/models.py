@@ -42,3 +42,29 @@ class Sensor(db.Model):
         self.threshold = threshold
         self.status = status
         self.last_update = last_update
+
+
+class Workout(db.Model):
+    """Workout model."""
+
+    __tablename__ = "workouts"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    description = db.Column(db.String(300))
+    pros = db.Column(db.JSON, nullable=True)
+    cons = db.Column(db.JSON, nullable=True)
+
+    def __init__(self, name: str, description: str, pros: dict, cons: dict) -> None:
+        """Initialize Workout model.
+
+        Args:
+        ----
+            name (str): Workout name
+            description (str): Workout description
+            pros (dict): Workout pros
+            cons (dict): Workout cons
+        """
+        self.name = name
+        self.description = description
+        self.pros = pros
+        self.cons = cons
