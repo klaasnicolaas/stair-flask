@@ -1,6 +1,15 @@
-{% extends 'layout_frontend.html' %} {% set active_page = 'workout' %} {% block content %}
+{% extends 'layout_frontend.html' %} {% set active_page = 'workout' %} {% block head %}
+<meta id="workout_id" data-name="{{ workout.id }}" />
+{% endblock %} {% block content %}
 <section class="bg-primary-100 dark:bg-gray-900">
   <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12">
+    <h1>{{ workout.name}}</h1>
+    TODO: Hier een status alert van de workout
+    <br />
+    {% if workout.id == 2 %}
+    <h2>Counter: <span id="counter">0</span></h2>
+    <br />
+    {% endif %}
     <button
       type="button"
       onclick="system_control('start')"
@@ -15,7 +24,12 @@
     >
       Stop oefening
     </button>
-    {% if workout.name == 'Traploop test' %}
+    <div class="m-4 px-20">
+      <label for="default-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brightness</label>
+      <input id="default-range" type="range" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+    </div>
+    {% if workout.id == 2 %}
+    <br />
     <label class="relative inline-flex items-center cursor-pointer">
       <input type="checkbox" value="" class="sr-only peer" />
       <div
@@ -60,9 +74,6 @@
         </ul>
       </div>
     </div>
-
-    <label for="default-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brightness</label>
-    <input id="default-range" type="range" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
     {% endif %}
   </div>
 </section>
@@ -79,6 +90,9 @@
     var selectedValue = $('input[name="list-sensor-start"]:checked').val()
     console.log('Selected item: ' + selectedValue)
     // You can use the selectedValue in your JavaScript code as needed
+  })
+  socket.on('counter', function (data) {
+    $('#counter').text(data)
   })
 </script>
 {% endblock %}

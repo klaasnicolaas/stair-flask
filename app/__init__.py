@@ -1,5 +1,7 @@
 """Initialize Stair Challenge app."""
 # ruff: noqa: E402, ARG001
+from __future__ import annotations
+
 import getpass
 import json
 from datetime import datetime, timedelta
@@ -95,6 +97,7 @@ def init_db() -> None:
     db.create_all()
     print("Database initialized successfully!")
 
+
 @app.cli.command("seed_workouts")
 def seed_workouts() -> None:
     """Seed the workouts table."""
@@ -109,6 +112,7 @@ def seed_workouts() -> None:
         db.session.add(workout)
         db.session.commit()
         print(f"Workout {index} added successfully!")
+
 
 @app.cli.command("create_admin")
 def create_admin() -> None:

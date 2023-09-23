@@ -1,5 +1,6 @@
 """MQTT Controller Module."""
 from __future__ import annotations
+
 import secrets
 
 import paho.mqtt.client as mqtt
