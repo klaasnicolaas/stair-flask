@@ -5,9 +5,7 @@ from flask_login import current_user, login_required
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Sensor
 
-from app import db
-
-bp = Blueprint("backend", __name__, template_folder="templates")
+bp = Blueprint("backend", __name__, template_folder="templates/admin")
 
 
 @bp.route("/", methods=["GET"])
