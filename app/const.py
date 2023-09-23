@@ -1,4 +1,5 @@
 """Constants for the Stair Challenge app."""
+# ruff: noqa: E501
 from typing import Final
 
 MQTT_SENSOR: Final = "sensor"
@@ -22,7 +23,11 @@ WORKOUTS = [
     {
         "name": "Traploop test",
         "description": "Probeer in een beperkte tijd zoveel mogelijk op en neer te gaan.",
-        "pros": {"pro1": "Conditioneel uitdagend", "pro2": "Competitief", "pro3": "Tijdsgebonden"},
+        "pros": {
+            "pro1": "Conditioneel uitdagend",
+            "pro2": "Competitief",
+            "pro3": "Tijdsgebonden",
+        },
     },
     {
         "name": "Meeloper",

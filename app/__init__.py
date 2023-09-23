@@ -57,6 +57,11 @@ from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Sensor, Workout
 
 workout_mode: bool = False
+workout_id: int = None
+
+client_counters: dict = {1: False, 6: False}
+overall_counter: int = 0
+led_start: int = 0
 
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
@@ -156,12 +161,84 @@ def on_topic_trigger(
     """
     # TODO: Check welke workout er actief is en pas een if statement toe
     # INFO: Call daarna de functie om de LED strip aan te sturen
+    data: dict = json.loads(message.payload)
     if workout_mode:
-        colors = Colors()
-        led_controller.set_color(
-            colors.get_random_unique_color(),
-        )
+        match workout_id:
+            case 1:
+                # Kameleon
+                colors = Colors()
+                led_controller.set_color(colors.get_random_unique_color())
+            case 2:
+                # Trap op, trap af
+                workout_counting(data["client_id"])
+            case 3:
+                # Meeloper
+                print("Workout 3")
+            case _:
+                print("Workout not found")
     print(f"Message Received from Others: {message.payload.decode()}")
+
+
+def workout_counting(client_id: int) -> None:
+    """Start the counter for the workout.
+
+    Args:
+    ----
+        client_id: The client ID of the sensor that triggered.
+    """
+    global overall_counter, client_counters
+
+    if client_id in client_counters:
+        # Put the sensor on True
+        client_counters[client_id] = True
+        if all(client_counters.values()):
+            # If all sensors are on True, update the counter
+            update_counter(1)
+
+            # Party time!
+            set_next_10_leds(Color(0, 0, 255))
+            # led_controller.rainbow()
+            # led_controller.color_wipe(Color(0, 0, 0), 10)
+
+            for key in client_counters:
+                # Reset all sensors to False
+                client_counters[key] = False
+
+
+
+def set_next_10_leds(color: Color) -> None:
+    """Set the color of the next 10 LEDs.
+
+    Args:
+    ----
+        color (Color): Color object with RGB values
+    """
+    global led_start
+    end_led = led_start + 10
+    led_controller.set_led_range(color, led_start, end_led)
+    led_start = end_led
+
+
+def update_counter(value: int, reset: bool = False) -> None:
+    """Update the counter on the frontend.
+
+    Args:
+    ----
+        value: The value to update the counter with.
+        reset: Whether to reset the counter.
+    """
+    global overall_counter, client_counters
+    if reset:
+        # reset the counter and sensor list
+        overall_counter = 0
+        for key in client_counters:
+            client_counters[key] = False
+    else:
+        # Update the counter
+        overall_counter += value
+        print(f"Overall counter: {overall_counter}")
+    # Send the counter value to the frontend
+    socketio.emit("counter", overall_counter)
 
 
 def on_topic_status(
@@ -242,18 +319,37 @@ def on_connect():
 
 
 @socketio.on("system_control")
-def on_system_control(event):
-    """Put the system in active mode or not."""
-    global workout_mode
+def on_system_control(event: dict) -> None:
+    """Put the system in active mode and start the workout.
+
+    Args:
+    ----
+        event (dict): The event data.
+    """
+    global workout_mode, workout_id, led_start
+    # TODO: Check welke workout er actief is en pas een if statement toe
 
     if event["mode"] == "start":
         print("Starting workout")
         mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
+
+        # Start workout mode and reset the counter
         workout_mode = True
+        workout_id = event["workout_id"]
+        update_counter(0, True)
+
+        # led_controller.one_led(Color(0, 255, 0), 104)
     elif event["mode"] == "stop":
         print("Stopping workout")
         mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
+
+        # Stop workout mode and reset variables
         workout_mode = False
+        workout_id = None
+        led_start = 0
+
+        # Reset the counter and turn off the LEDs
+        update_counter(0, True)
         led_controller.color_wipe(Color(0, 0, 0), 10)
 
 
