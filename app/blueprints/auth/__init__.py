@@ -13,7 +13,7 @@ bp = Blueprint("auth", __name__, template_folder="templates")
 
 
 @bp.route("/login", methods=["GET", "POST"])
-def login():
+def login() -> None:
     """Render the login page.
 
     Returns

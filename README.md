@@ -26,6 +26,15 @@ without root.
 ```bash
 cp ./app/.env.example ./app/.env
 ln -s app/.env .env
+```
+
+## FAQ
+
+### Temporary failure in name resolution
+
+`socket.gaierror: [Errno -3] Temporary failure in name resolution`
+
+This error may indicate that the IP address of your MQTT server is incorrect.
 
 ### Docker
 

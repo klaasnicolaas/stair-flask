@@ -30,5 +30,30 @@ services:
     volumes:
       - $PWD/emqx_data:/opt/emqx/data
 
+  # MySQL Service
+  # mysql:
+  #   image: mysql:latest
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 400M
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: "${DB_NAME}"
+  #     MYSQL_USER: "${DB_USER}"
+  #     MYSQL_PASSWORD: "${DB_PASSWORD}"
+  #     MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+  #   healthcheck:
+  #     test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+  #     timeout: 10s
+  #     start_period: 60s
+  #     retries: 10
+  #   ports:
+  #     - ${DB_PORT}:3306
+  #   networks:
+  #     - backend
+  #   volumes:
+  #     - ./mysql:/var/lib/mysql
+
 networks:
   backend:

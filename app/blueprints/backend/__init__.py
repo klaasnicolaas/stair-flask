@@ -121,3 +121,18 @@ def delete_workout(id: int) -> None:
 # TODO - Delete single sensor
 # TODO - Add single sensor
 
+
+@bp.route("/led_control", methods=["GET"])
+@login_required
+def led_control() -> None:
+    """Render the led_control page."""
+    return render_template("led_control.html", user=current_user)
+
+
+@bp.route("/users", methods=["GET"])
+@login_required
+def users() -> None:
+    """Render the users page."""
+    if current_user.is_admin:
+        return render_template("users.html", user=current_user, users=User.query.all())
+    return redirect(url_for("backend.dashboard"))
