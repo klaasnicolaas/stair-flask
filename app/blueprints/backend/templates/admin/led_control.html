@@ -1,0 +1,37 @@
+{% extends 'layout_backend.html' %} {% block content %}
+<section>
+  <div class="w-full pb-4 mx-auto">
+    <!-- Start coding here -->
+    <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
+      <div class="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
+        <div>
+          <h5 class="mr-3 font-semibold dark:text-white">LED Control</h5>
+          <p class="text-gray-500 dark:text-gray-400">Manage the LED strip and have fun!</p>
+        </div>
+        <a
+          href="{{ url_for('turn_off') }}"
+          type="button"
+          class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
+          ><svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-2 -ml-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+          </svg>
+          Turn off</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
+    <form action="{{ url_for('set_color') }}" class="mt-4">
+      <label for="red" class="text-lg">Red:</label>
+      <input type="range" id="red" name="red" min="0" max="255" value="0" class="w-full" /><br />
+      <label for="green" class="text-lg">Green:</label>
+      <input type="range" id="green" name="green" min="0" max="255" value="0" class="w-full" /><br />
+      <label for="blue" class="text-lg">Blue:</label>
+      <input type="range" id="blue" name="blue" min="0" max="255" value="0" class="w-full" /><br />
+      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Set color</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
