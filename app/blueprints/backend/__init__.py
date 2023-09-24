@@ -1,9 +1,11 @@
 """Blueprint for the backend of the application."""
-from flask import Blueprint, redirect, render_template, url_for, flash
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from app import db
 from app.blueprints.auth.models import User
-from app.blueprints.backend.models import Sensor
+
+from .models import Sensor, Workout
 
 bp = Blueprint("backend", __name__, template_folder="templates/admin")
 
@@ -26,6 +28,17 @@ def sensors() -> None:
     )
 
 
+@bp.route("/workouts", methods=["GET"])
+@login_required
+def workouts() -> None:
+    """Render the workouts page."""
+    return render_template(
+        "workouts/index.html",
+        user=current_user,
+        workouts=Workout.query.all(),
+    )
+
+
 @bp.route("/sensors/<int:id>", methods=["GET"])
 @login_required
 def show_sensor(id: int) -> None:
@@ -37,6 +50,46 @@ def show_sensor(id: int) -> None:
     )
 
 
+@bp.route("/workouts/add", methods=["POST"])
+@login_required
+def add_workout() -> None:
+    """Add a workout."""
+    if request.form:
+        try:
+            workout = Workout(
+                name=request.form.get("name"),
+                description=request.form.get("description"),
+            )
+            db.session.add(workout)
+            db.session.commit()
+        except Exception as e:
+            print(f"Failed to add workout: {e}")
+    flash("Workout added!", "success")
+    return redirect(url_for("backend.workouts"))
+
+
+@bp.route("/workouts/<int:id>/update", methods=["POST"])
+@login_required
+def update_workout(id: int) -> None:
+    """Update a workout.
+
+    Args:
+    ----
+        id (int): The id of the workout to update.
+    """
+    if request.form:
+        try:
+            workout = Workout.query.get(id)
+            workout.name = request.form.get("name")
+            workout.description = request.form.get("description")
+
+            db.session.commit()
+        except Exception as e:
+            print(f"Failed to update workout: {e}")
+    flash ("Workout updated!", "success")
+    return redirect(url_for("backend.workouts"))
+
+
 @bp.route("/sensors/delete_all", methods=["POST"])
 @login_required
 def delete_all_sensors() -> None:
@@ -46,4 +99,25 @@ def delete_all_sensors() -> None:
     flash("All sensors deleted.", "success")
     return redirect(url_for("backend.sensors"))
 
+
+@bp.route("/workouts/<int:id>/delete", methods=["POST"])
+def delete_workout(id: int) -> None:
+    """Delete a workout.
+
+    Args:
+    ----
+        id (int): The id of the workout to delete.
+    """
+    try:
+        workout = Workout.query.get(id)
+        db.session.delete(workout)
+        db.session.commit()
+    except Exception as e:
+        print(f"Failed to delete workout: {e}")
+    flash("Workout deleted!", "success")
+    return redirect(url_for("backend.workouts"))
+
+
+# TODO - Delete single sensor
+# TODO - Add single sensor
 
