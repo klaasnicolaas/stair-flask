@@ -54,7 +54,7 @@ class Workout(db.Model):
     pros = db.Column(db.JSON, nullable=True)
     cons = db.Column(db.JSON, nullable=True)
 
-    def __init__(self, name: str, description: str, pros: dict, cons: dict) -> None:
+    def __init__(self, name: str, description: str, pros: dict = None, cons: dict = None) -> None:
         """Initialize Workout model.
 
         Args:

@@ -3,7 +3,7 @@ from flask import Blueprint, render_template
 
 from app.blueprints.backend.models import Sensor, Workout
 
-bp = Blueprint("frontend", __name__, template_folder="templates")
+bp = Blueprint("frontend", __name__, template_folder="templates/frontend")
 
 
 @bp.route("/", methods=["GET"])
