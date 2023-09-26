@@ -2,97 +2,117 @@
 <meta id="workout_id" data-name="{{ workout.id }}" />
 {% endblock %} {% block content %}
 <section class="bg-primary-100 dark:bg-gray-900">
-  <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12">
-    <h1>{{ workout.name}}</h1>
-    TODO: Hier een status alert van de workout
-    <br />
-    {% if workout.id == 2 %}
-    <h2>Counter: <span id="counter">0</span></h2>
-    <br />
-    {% endif %}
-    <button
-      type="button"
-      onclick="system_control('start')"
-      class="focus:outline-none text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+  <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-12 lg:px-12">
+    <h1 class="text-2xl"><b>{{ workout.name}}</b></h1>
+    {{ workout.description }}
+  </div>
+</section>
+<section class="bg-white-100 dark:bg-gray-900">
+  <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-10 lg:px-6">
+    <div
+      id="alert-container"
+      class="hidden items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
+      role="alert"
     >
-      Start oefening
-    </button>
-    <button
-      type="button"
-      onclick="system_control('stop')"
-      class="focus:outline-none text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-    >
-      Stop oefening
-    </button>
-    <div class="m-4 px-20">
-      <label for="default-range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brightness</label>
-      <input id="default-range" type="range" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+      <span class="sr-only">Info</span>
+      <div><span class="font-medium">Let op!</span> De oefening is gestart!</div>
     </div>
-    {% if workout.id == 2 %}
-    <br />
-    <label class="relative inline-flex items-center cursor-pointer">
-      <input type="checkbox" value="" class="sr-only peer" />
-      <div
-        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-      ></div>
-      <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">LED strip</span>
-    </label>
-    <br />
-    <div class="flex justify-center items-center space-x-8 gap-4">
-      <div>
-        <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">Start</h3>
-        <ul class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-          {% for sensor in sensors %}
-          <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
-            <div class="flex items-center pl-3">
-              <input id="list-start-{{ sensor.client_id }}" type="radio" value="{{ sensor.client_id }}" name="list-sensor-start" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300
-              focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" {% if loop.index == 1 %}
-              checked {% endif %} />
-              <label for="list-start-{{ sensor.client_id }}" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ sensor.client_id }}</label>
-            </div>
-          </li>
-          {% endfor %}
-        </ul>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 xl:gap-10 lg:space-y-0">
+      {% if workout.id == 2 %}
+      <div class="w-full">
+        <div class="p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white h-auto">
+          <h1 class="mb-4 text-4xl font-semibold" id="show_timer">00:02:00</h1>
+          <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Resterende tijd</p>
+          <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
+          <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Kies een tijd</p>
+          <input
+            type="time"
+            id="input_time"
+            name="time"
+            value="00:02:00"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
       </div>
-      <div>
-        <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">Stop</h3>
-        <ul class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-          {% for sensor in sensors %}
-          <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
-            <div class="flex items-center pl-3">
-              <input
-                id="list-end-{{ sensor.client_id }}"
-                type="radio"
-                value="{{ sensor.client_id }}"
-                name="list-sensor-end"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-              />
-              <label for="list-end-{{ sensor.client_id }}" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ sensor.client_id }}</label>
+      <div class="w-full">
+        <div class="p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white h-auto">
+          <h1 class="mb-4 text-6xl font-semibold" id="counter">0</h1>
+          <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">Aantal trappen</p>
+        </div>
+      </div>
+      {% endif %}
+      <div class="w-full">
+        <div class="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+          <div class="flex flex-col space-y-3 justify-center">
+            <button
+              type="button"
+              onclick="system_control('start')"
+              class="focus:outline-none text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            >
+              Start
+            </button>
+            <button
+              type="button"
+              onclick="system_control('stop')"
+              class="focus:outline-none text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            >
+              Stop
+            </button>
+          </div>
+          {% if workout.id == 2 %}
+          <hr class="h-px mt-8 bg-gray-200 border-0 dark:bg-gray-700" />
+          <div class="flex flex-col space-y-3 justify-center gap-1">
+            <!-- Slider -->
+            <div class="my-4">
+              <label for="brightness_value" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Lichtsterkte</label>
+              <div class="flex justify-between mb-1">
+                <span class="text-base font-medium text-primary-700 dark:text-white">Waarde</span>
+                <span class="text-sm font-medium text-primary-700 dark:text-white" id="brightness_number">125</span>
+              </div>
+              <input id="brightness_value" type="range" value="125" min="50" step="25" max="225" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
             </div>
-          </li>
-          {% endfor %}
-        </ul>
+            <!-- Color picker -->
+            <label for="color-picker" class="ext-sm font-medium text-gray-900 dark:text-white">Kies een kleur:</label>
+            <input
+              type="color"
+              id="color-picker"
+              name="color-picker"
+              value="#1269b0"
+              class="w-full py-2 px-3 mt-1 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+            />
+            <!-- Toggle -->
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input id="led_toggle" type="checkbox" value="" checked class="sr-only peer" />
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+              ></div>
+              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-white">Zandloper</span>
+            </label>
+          </div>
+          <hr class="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
+          <div class="mb-4">
+            <h3 class="font-semibold text-gray-900 dark:text-white">De stop sensor</h3>
+            <p class="font-light text-gray-500 sm:text-md dark:text-gray-400">Tot hoe ver loop je omhoog?</p>
+          </div>
+          <ul class="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            {% for sensor in sensors[-4:] %}
+            <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+              <div class="flex items-center pl-3">
+                <input id="list-end-{{ sensor.client_id }}" type="radio" value="{{ sensor.client_id }}" name="list-sensor-end" {% if loop.index == 4 %} checked {% endif %} class="w-4 h-4 text-blue-600
+                bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                />
+                <label for="list-end-{{ sensor.client_id }}" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ sensor.client_id }}</label>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
       </div>
     </div>
-    {% endif %}
   </div>
 </section>
 {% endblock %} {% block script %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/workout.js') }}"></script>
-<script>
-  $('input[name="list-sensor-start"]').change(function () {
-    var selectedValue = $('input[name="list-sensor-start"]:checked').val()
-    console.log('Selected item: ' + selectedValue)
-    // You can use the selectedValue in your JavaScript code as needed
-  })
-  $('input[name="list-sensor-start"]').change(function () {
-    var selectedValue = $('input[name="list-sensor-start"]:checked').val()
-    console.log('Selected item: ' + selectedValue)
-    // You can use the selectedValue in your JavaScript code as needed
-  })
-  socket.on('counter', function (data) {
-    $('#counter').text(data)
-  })
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/workout.js') }}"></script>
 {% endblock %}

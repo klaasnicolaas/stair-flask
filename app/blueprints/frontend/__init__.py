@@ -15,7 +15,7 @@ def home() -> None:
 @bp.route("/workouts", methods=["GET"])
 def workouts() -> None:
     """Render the workouts page."""
-    return render_template("workouts/index.html", workouts=Workout.query.all())
+    return render_template("workouts.html", workouts=Workout.query.all())
 
 
 @bp.route("/workouts/<int:workout_id>", methods=["GET"])
