@@ -1,9 +1,13 @@
 """LED strip module."""
 import secrets
 import time
+import threading
 from enum import Enum
 
 from rpi_ws281x import Color, PixelStrip
+
+
+thread_stop_event = threading.Event()
 
 
 class Colors:
@@ -23,6 +27,33 @@ class Colors:
         """Initialize the used colors."""
         self.used_colors = []
 
+    def hex_to_rgb(self, hex_color: str) -> Color:
+        """Convert a hex color to RGB.
+
+        Args:
+        ----
+            hex_color (str): Hex color
+
+        Returns:
+        -------
+            Color: Color object with RGB values
+        """
+        # Remove the '#' if it's included in the input string
+        if hex_color.startswith("#"):
+            hex_color = hex_color[1:]
+
+        # Check if the input is a valid hex color string
+        if not all(c in "0123456789ABCDEFabcdef" for c in hex_color):
+            msg = "Invalid hex color string"
+            raise ValueError(msg)
+
+        # Convert the hex values to integers
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+
+        return Color(r, g, b)
+
     def get_random_unique_color(self) -> None:
         """Return a random color that has not been used yet.
 
@@ -36,8 +67,6 @@ class Colors:
         if not available_colors:
             available_colors = self.get_all_colors()
             self.used_colors = []
-
-        secrets.shuffle(available_colors)
 
         color = secrets.choice(available_colors)
         self.used_colors.append(color)
@@ -85,6 +114,15 @@ class StripInvert(Enum):
 
     TRUE = True
     FALSE = False
+
+
+class SensorLed(Enum):
+    """Enum for the sensor LEDs."""
+
+    SENSOR_3 = 58
+    SENSOR_4 = 38
+    SENSOR_5 = 18
+    SENSOR_6 = 0
 
 
 class LEDController:
@@ -200,8 +238,28 @@ class LEDController:
             color (Color): Color object with RGB values
             led (int): LED number
         """
-        self.strip.setPixelColor(led + 1, color)
+        self.strip.setPixelColor(led, color)
         self.strip.show()
+
+    def set_sensor_led(self, color: Color, sensor_id: int) -> None:
+        """Set the color of one sensor LED.
+
+        Args:
+        ----
+            color (Color): Color object with RGB values
+            sensor_id (int): Sensor ID
+        """
+        match sensor_id:
+            case 3:
+                self.one_led(color, SensorLed.SENSOR_3.value)
+            case 4:
+                self.one_led(color, SensorLed.SENSOR_4.value)
+            case 5:
+                self.one_led(color, SensorLed.SENSOR_5.value)
+            case 6:
+                self.one_led(color, SensorLed.SENSOR_6.value)
+            case _:
+                print(f"Invalid sensor ID: {sensor_id}")
 
     def set_led_range(self, color: Color, start: int, end: int) -> None:
         """Set the color of a range of LEDs.
@@ -216,7 +274,48 @@ class LEDController:
             self.strip.setPixelColor(i, color)
         self.strip.show()
 
+    def sandglass(self, duration: int, color: Color) -> None:
+        """Display a sandglass animation for a specified duration.
+
+        Args:
+        ----
+            duration (int): Duration of the sandglass animation in seconds.
+            color (Color): Color object with RGB values
+        """
+        num_leds = self.strip.numPixels()
+        self.set_color(color)
+
+        # Calculate the time interval for each LED to turn off
+        interval_seconds: int = (duration - 1) / num_leds
+
+        # Wait for the first interval
+        time.sleep(1)
+
+        for i in range(num_leds):
+            remaining_time = duration - (i * interval_seconds)
+
+            if thread_stop_event.is_set():
+                print("Force stopping sandglass animation")
+                thread_stop_event.clear()
+                break
+
+            # Turn off the current LED
+            self.one_led(Color(0, 0, 0), i)
+
+            # Turn off the LED after its corresponding time interval
+            if remaining_time < 0:
+                print("Time is up, stop sandglass animation")
+                self.stop_sandglass_thread()
+                break
+
+            # Wait for the interval
+            time.sleep(interval_seconds)
+
     def turn_off(self) -> None:
         """Turn off the LED strip."""
         self.set_color(Color(0, 0, 0))
         # print('LED strip turned off')
+
+    def stop_sandglass_thread(self) -> None:
+        """Stop the sandglass thread."""
+        thread_stop_event.set()
