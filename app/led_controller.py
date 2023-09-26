@@ -1,10 +1,13 @@
 """LED strip module."""
 import secrets
 import time
+import threading
 from enum import Enum
 
 from rpi_ws281x import Color, PixelStrip
-from app.thread import thread_stop_event
+
+
+thread_stop_event = threading.Event()
 
 
 class Colors:
@@ -36,18 +39,19 @@ class Colors:
             Color: Color object with RGB values
         """
         # Remove the '#' if it's included in the input string
-        if hex_color.startswith('#'):
+        if hex_color.startswith("#"):
             hex_color = hex_color[1:]
-        
+
         # Check if the input is a valid hex color string
-        if not all(c in '0123456789ABCDEFabcdef' for c in hex_color):
-            raise ValueError("Invalid hex color string")
-        
+        if not all(c in "0123456789ABCDEFabcdef" for c in hex_color):
+            msg = "Invalid hex color string"
+            raise ValueError(msg)
+
         # Convert the hex values to integers
         r = int(hex_color[0:2], 16)
         g = int(hex_color[2:4], 16)
         b = int(hex_color[4:6], 16)
-        
+
         return Color(r, g, b)
 
     def get_random_unique_color(self) -> None:
@@ -119,6 +123,7 @@ class SensorLed(Enum):
     SENSOR_4 = 38
     SENSOR_5 = 18
     SENSOR_6 = 0
+
 
 class LEDController:
     """LED strip configuration."""
@@ -277,12 +282,11 @@ class LEDController:
             duration (int): Duration of the sandglass animation in seconds.
             color (Color): Color object with RGB values
         """
-        global thread_stop_event
         num_leds = self.strip.numPixels()
         self.set_color(color)
 
         # Calculate the time interval for each LED to turn off
-        interval_seconds: int = ((duration - 1) / num_leds)
+        interval_seconds: int = (duration - 1) / num_leds
 
         # Wait for the first interval
         time.sleep(1)

@@ -19,11 +19,10 @@ from app.const import (
     MQTT_SENSOR,
     MQTT_STATUS_TOPIC,
     MQTT_TRIGGER_TOPIC,
+    MQTT_WORKOUT,
     MQTT_WORKOUT_CONTROL_ALL_TOPIC,
     WORKOUTS,
-    MQTT_WORKOUT,
 )
-from app.thread import sandglass_thread
 from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
 from config import Config
@@ -67,7 +66,7 @@ last_triggered_client_id = None
 client_counters: list = [1]
 stair_counter: int = 0
 
-thread_stop_event = threading.Event()
+sandglass_thread = None
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
 # ----------------------------------------------------------------------------#
@@ -195,7 +194,7 @@ def workout_counting(client_id: int) -> None:
     ----
         client_id: The client ID of the sensor that triggered.
     """
-    global client_counters, last_triggered_client_id, first_trigger
+    global last_triggered_client_id, first_trigger
 
     print(client_counters)
     if client_id in client_counters and client_id != last_triggered_client_id:
@@ -310,7 +309,7 @@ def on_system_control(event: dict) -> None:
     ----
         event (dict): The event data.
     """
-    global workout_mode, workout_id, sandglass_thread, client_counters, last_triggered_client_id, first_trigger
+    global workout_mode, workout_id, sandglass_thread, last_triggered_client_id, first_trigger
     colors = Colors()
 
     if event["mode"] == "start":
@@ -336,7 +335,7 @@ def on_system_control(event: dict) -> None:
                 led_controller.stop_sandglass_thread()
                 sandglass_thread.join()
 
-            if event["led_toggle"] == True:
+            if event["led_toggle"] is True:
                 sandglass_thread = threading.Thread(
                     target=led_controller.sandglass,
                     args=(event["time"], colors.hex_to_rgb(event["color"])),
@@ -359,14 +358,16 @@ def on_system_control(event: dict) -> None:
             client_counters.remove(int(event["end_sensor"][7:]))
             last_triggered_client_id = None
 
-            if event["led_toggle"] == True:
+            if event["led_toggle"] is True:
                 led_controller.stop_sandglass_thread()  # Stop the sandglass thread
                 sandglass_thread = None
-                print(f"Sandglass thread stopped: {led_controller.stop_sandglass_thread()}")
+                print(
+                    f"Sandglass thread stopped: {led_controller.stop_sandglass_thread()}",
+                )
             else:
                 led_controller.one_led(colors.RED, 103)
 
-            if event["mode"] == "finished" and event["led_toggle"] == True:
+            if event["mode"] == "finished" and event["led_toggle"] is True:
                 # Pary mode!
                 led_controller.rainbow()  # Turn on the rainbow
                 led_controller.color_wipe(Color(0, 0, 0), 10)  # Turn off the LEDs

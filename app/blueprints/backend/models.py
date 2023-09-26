@@ -1,7 +1,12 @@
 """Backend models."""
-from datetime import datetime
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from app import db
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class Sensor(db.Model):
@@ -54,7 +59,13 @@ class Workout(db.Model):
     pros = db.Column(db.JSON, nullable=True)
     cons = db.Column(db.JSON, nullable=True)
 
-    def __init__(self, name: str, description: str, pros: dict = None, cons: dict = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        pros: dict | None = None,
+        cons: dict | None = None,
+    ) -> None:
         """Initialize Workout model.
 
         Args:

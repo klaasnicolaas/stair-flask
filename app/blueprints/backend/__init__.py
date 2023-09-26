@@ -86,7 +86,7 @@ def update_workout(id: int) -> None:
             db.session.commit()
         except Exception as e:
             print(f"Failed to update workout: {e}")
-    flash ("Workout updated!", "success")
+    flash("Workout updated!", "success")
     return redirect(url_for("backend.workouts"))
 
 
