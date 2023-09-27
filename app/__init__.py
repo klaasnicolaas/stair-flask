@@ -1,5 +1,6 @@
 """Initialize Stair Challenge app."""
 # ruff: noqa: E402, ARG001
+# pylint: disable=wrong-import-position
 from __future__ import annotations
 
 import getpass
@@ -62,11 +63,11 @@ workout_mode: bool = False
 first_trigger: bool = True
 workout_id: int = None
 
-last_triggered_client_id = None
+last_triggered_client_id: int = None
 client_counters: list = [1]
 stair_counter: int = 0
 
-sandglass_thread = None
+sandglass_thread: threading.Thread = None
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
 # ----------------------------------------------------------------------------#
@@ -111,14 +112,14 @@ def init_db() -> None:
 def seed_workouts() -> None:
     """Seed the workouts table."""
     for index, workout in enumerate(WORKOUTS, 1):
-        workout = Workout(
-            name=workout["name"],
-            description=workout["description"],
-            pros=workout["pros"],
-            cons=None if "cons" not in workout else workout["cons"],
+        db.session.add(
+            Workout(
+                name=workout["name"],
+                description=workout["description"],
+                pros=workout["pros"],
+                cons=None if "cons" not in workout else workout["cons"],
+            ),
         )
-
-        db.session.add(workout)
         db.session.commit()
         print(f"Workout {index} added successfully!")
 
@@ -148,15 +149,15 @@ def create_admin() -> None:
         db.session.add(user)
         db.session.commit()
         print(f"Admin with email {email} created successfully!")
-    except Exception as e:
-        print(f"Could not create admin: {e}")
+    except Exception as error:
+        print(f"Could not create admin: {error}")
         db.session.rollback()
         return 1
 
 
 def on_topic_trigger(
-    client: MQTTClient,
-    userdata: dict,
+    client: MQTTClient,  # pylint: disable=unused-argument
+    userdata: dict,  # pylint: disable=unused-argument
     message: dict,
 ) -> None:
     """MQTT function to handle trigger messages.
@@ -167,8 +168,6 @@ def on_topic_trigger(
         userdata: The private user data as set in Client() or userdata_set().
         message: An instance of MQTTMessage.
     """
-    # TODO: Check welke workout er actief is en pas een if statement toe
-    # INFO: Call daarna de functie om de LED strip aan te sturen
     data: dict = json.loads(message.payload)
     if workout_mode:
         match workout_id:
@@ -226,8 +225,8 @@ def update_counter(value: int, reset: bool = False) -> None:
 
 
 def on_topic_status(
-    client: MQTTClient,
-    userdata: dict,
+    client: MQTTClient,  # pylint: disable=unused-argument
+    userdata: dict,  # pylint: disable=unused-argument
     message: dict,
 ) -> None:
     """MQTT Function to handle status messages.
@@ -272,8 +271,8 @@ def on_topic_status(
         with app.app_context():
             db.session.rollback()
         print("An error occurred during database operation.")
-    except KeyError as e:
-        print(f"MQTT data is missing the following key: {e}")
+    except KeyError as error:
+        print(f"MQTT data is missing the following key: {error}")
 
 
 # Routes
@@ -362,7 +361,7 @@ def on_system_control(event: dict) -> None:
                 led_controller.stop_sandglass_thread()  # Stop the sandglass thread
                 sandglass_thread = None
                 print(
-                    f"Sandglass thread stopped: {led_controller.stop_sandglass_thread()}",
+                    f"thread stopped: {led_controller.stop_sandglass_thread()}",
                 )
             else:
                 led_controller.one_led(colors.RED, 103)

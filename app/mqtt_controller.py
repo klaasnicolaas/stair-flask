@@ -23,10 +23,10 @@ class MQTTClient:
 
     def on_connect(
         self,
-        client: mqtt.Client,
-        userdata: dict,
-        flags: dict,
-        rc: int,
+        client: mqtt.Client,  # pylint: disable=unused-argument
+        userdata: dict,  # pylint: disable=unused-argument
+        flags: dict,  # pylint: disable=unused-argument
+        rc: int,  # pylint: disable=invalid-name
     ) -> None:
         """Define on_publish event function.
 
@@ -47,9 +47,9 @@ class MQTTClient:
 
     def on_disconnect(
         self,
-        client: mqtt.Client,
-        userdata: dict,
-        rc: int,
+        client: mqtt.Client,  # pylint: disable=unused-argument
+        userdata: dict,  # pylint: disable=unused-argument
+        rc: int,  # pylint: disable=invalid-name
     ) -> None:
         """Define on_disconnect event function.
 
@@ -64,8 +64,8 @@ class MQTTClient:
 
     def on_message(
         self,
-        client: mqtt.Client,
-        userdata: dict,
+        client: mqtt.Client,  # pylint: disable=unused-argument
+        userdata: dict,  # pylint: disable=unused-argument
         message: mqtt.MQTTMessage,
     ) -> None:
         """Define on_message event function.
@@ -81,7 +81,6 @@ class MQTTClient:
     def connect(self) -> None:
         """Connect with MQTT Broker."""
         try:
-            """Connect with MQTT Broker."""
             self.client.connect(
                 Config.MQTT_BROKER_URL,
                 Config.MQTT_BROKER_PORT,

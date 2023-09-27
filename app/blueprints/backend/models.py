@@ -1,4 +1,5 @@
 """Backend models."""
+# ruff: noqa: A003
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

@@ -1,11 +1,10 @@
 """LED strip module."""
 import secrets
-import time
 import threading
+import time
 from enum import Enum
 
 from rpi_ws281x import Color, PixelStrip
-
 
 thread_stop_event = threading.Event()
 
@@ -48,11 +47,11 @@ class Colors:
             raise ValueError(msg)
 
         # Convert the hex values to integers
-        r = int(hex_color[0:2], 16)
-        g = int(hex_color[2:4], 16)
-        b = int(hex_color[4:6], 16)
+        red = int(hex_color[0:2], 16)
+        green = int(hex_color[2:4], 16)
+        blue = int(hex_color[4:6], 16)
 
-        return Color(r, g, b)
+        return Color(red, green, blue)
 
     def get_random_unique_color(self) -> None:
         """Return a random color that has not been used yet.
@@ -155,8 +154,8 @@ class LEDController:
             self.strip.begin()
             # self.set_color(Color(0, 0, 0))
             print("LED strip initialized successfully")
-        except Exception as e:
-            print(f"Error initializing LED strip: {e!s}")
+        except Exception as error:
+            print(f"Error initializing LED strip: {error!s}")
 
     def set_color(self, color: Color) -> None:
         """Set the color of the LED strip.
@@ -201,7 +200,8 @@ class LEDController:
         ----
             color (Color): Color object with RGB values
             wait_ms (int): milliseconds to wait between pixels
-            direction (bool): direction of the color wipe - True = top to bottom, False = bottom to top
+            direction (bool): direction of the color wipe
+                True = top to bottom, False = bottom to top
         """
         num_puxels = self.strip.numPixels()
         if direction:
