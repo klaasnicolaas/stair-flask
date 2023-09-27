@@ -135,7 +135,7 @@ function startTimer() {
       clearInterval(timerInterval);
       timerInterval = null; // Verwijder de interval
       system_control('finished') // Stop de oefening
-      
+
     } else {
       totalSeconds--;
     }

@@ -1,11 +1,10 @@
 """LED strip module."""
 import secrets
-import time
 import threading
+import time
 from enum import Enum
 
 from rpi_ws281x import Color, PixelStrip
-
 
 thread_stop_event = threading.Event()
 
