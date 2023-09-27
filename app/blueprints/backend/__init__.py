@@ -41,12 +41,17 @@ def workouts() -> None:
 
 @bp.route("/sensors/<int:id>", methods=["GET"])
 @login_required
-def show_sensor(id: int) -> None:
-    """Render the sensors page."""
+def show_sensor(workout_id: int) -> None:
+    """Render the sensors page.
+
+    Args:
+    ----
+        workout_id (int): The id of the workout to show.
+    """
     return render_template(
         "sensors/show.html",
         user=current_user,
-        sensor=Sensor.query.get(id),
+        sensor=Sensor.query.get(workout_id),
     )
 
 
@@ -62,30 +67,30 @@ def add_workout() -> None:
             )
             db.session.add(workout)
             db.session.commit()
-        except Exception as e:
-            print(f"Failed to add workout: {e}")
+        except Exception as error:
+            print(f"Failed to add workout: {error}")
     flash("Workout added!", "success")
     return redirect(url_for("backend.workouts"))
 
 
 @bp.route("/workouts/<int:id>/update", methods=["POST"])
 @login_required
-def update_workout(id: int) -> None:
+def update_workout(workout_id: int) -> None:
     """Update a workout.
 
     Args:
     ----
-        id (int): The id of the workout to update.
+        workout_id (int): The id of the workout to update.
     """
     if request.form:
         try:
-            workout = Workout.query.get(id)
+            workout = Workout.query.get(workout_id)
             workout.name = request.form.get("name")
             workout.description = request.form.get("description")
 
             db.session.commit()
-        except Exception as e:
-            print(f"Failed to update workout: {e}")
+        except Exception as error:
+            print(f"Failed to update workout: {error}")
     flash("Workout updated!", "success")
     return redirect(url_for("backend.workouts"))
 
@@ -101,19 +106,19 @@ def delete_all_sensors() -> None:
 
 
 @bp.route("/workouts/<int:id>/delete", methods=["POST"])
-def delete_workout(id: int) -> None:
+def delete_workout(workout_id: int) -> None:
     """Delete a workout.
 
     Args:
     ----
-        id (int): The id of the workout to delete.
+        workout_id (int): The id of the workout to delete.
     """
     try:
-        workout = Workout.query.get(id)
+        workout = Workout.query.get(workout_id)
         db.session.delete(workout)
         db.session.commit()
-    except Exception as e:
-        print(f"Failed to delete workout: {e}")
+    except Exception as error:
+        print(f"Failed to delete workout: {error}")
     flash("Workout deleted!", "success")
     return redirect(url_for("backend.workouts"))
 
