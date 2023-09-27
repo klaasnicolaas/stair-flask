@@ -67,11 +67,11 @@ repos:
         entry: poetry check
         pass_filenames: false
         always_run: true
-      # - id: pylint
-      #   name: 🌟 Starring code with pylint
-      #   language: system
-      #   types: [python]
-      #   entry: pylint
+      - id: pylint
+        name: 🌟 Starring code with pylint
+        language: system
+        types: [python]
+        entry: pylint
       - id: trailing-whitespace
         name: ✄  Trim Trailing Whitespace
         language: system

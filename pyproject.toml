@@ -25,6 +25,7 @@ ruff = "^0.0.290"
 pre-commit = "^3.4.0"
 pre-commit-hooks = "^4.4.0"
 yamllint = "^1.32.0"
+pylint = "^2.17.6"
 
 [tool.mypy]
 # Specify the target platform details in config, so your developers are
@@ -77,9 +78,12 @@ good-names = [
 
 [tool.pylint."MESSAGES CONTROL"]
 disable= [
+  "too-few-public-methods",
+  "too-many-arguments",
   "duplicate-code",
   "format",
   "unsubscriptable-object",
+  "broad-except",
 ]
 
 [tool.pylint.SIMILARITIES]
