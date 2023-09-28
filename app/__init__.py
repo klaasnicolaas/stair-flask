@@ -1,6 +1,6 @@
 """Initialize Stair Challenge app."""
 # ruff: noqa: E402, ARG001
-# pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position, ungrouped-imports
 from __future__ import annotations
 
 import getpass
@@ -23,6 +23,8 @@ from app.const import (
     MQTT_WORKOUT,
     MQTT_WORKOUT_CONTROL_ALL_TOPIC,
     WORKOUTS,
+    IsAdmin,
+    ResetCounter,
 )
 from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
@@ -76,7 +78,7 @@ LED_PIN = 10  # GPIO pin connected to the pixels (18 uses PWM!).
 LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA = 10  # DMA channel to use for generating signal (try 10)
 LED_BRIGHTNESS = 125  # Set to 0 for darkest and 255 for brightest
-LED_INVERT = False  # True to invert the signal (when using NPN transistor level shift)
+LED_INVERT = False  # ON to invert the signal (Using level shift)
 LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
 led_controller = LEDController(
@@ -143,7 +145,7 @@ def create_admin() -> None:
             name=name,
             email=email,
             password=password,
-            is_admin=True,
+            is_admin=IsAdmin.YES,
             created_at=datetime.now(),
         )
         db.session.add(user)
@@ -204,13 +206,13 @@ def workout_counting(client_id: int) -> None:
         last_triggered_client_id = client_id
 
 
-def update_counter(value: int, reset: bool = False) -> None:
+def update_counter(value: int, reset: ResetCounter = ResetCounter.NO) -> None:
     """Update the counter on the frontend.
 
     Args:
     ----
         value: The value to update the counter with.
-        reset: Whether to reset the counter.
+        reset (ResetCounter): Reset the counter.
     """
     global stair_counter
     if reset:
@@ -344,7 +346,7 @@ def on_system_control(event: dict) -> None:
             else:
                 led_controller.set_sensor_led(colors.BLUE, end_sensor)
                 led_controller.one_led(colors.GREEN, 103)
-            update_counter(0, True)
+            update_counter(0, ResetCounter.YES)
         else:
             mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
     elif event["mode"] == "stop" or event["mode"] == "finished":
