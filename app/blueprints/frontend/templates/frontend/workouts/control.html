@@ -1,12 +1,17 @@
 {% extends 'layout_frontend.html' %} {% set active_page = 'workout' %} {% block head %}
 <meta id="workout_id" data-name="{{ workout.id }}" />
 {% endblock %} {% block content %}
+<!-- Header -->
 <section class="bg-primary-100 dark:bg-gray-900">
   <div class="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-12 lg:px-12">
-    <h1 class="text-2xl"><b>{{ workout.name}}</b></h1>
-    {{ workout.description }}
+    <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">{{ workout.name}}</h2>
+    <p class="font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
+      {{ workout.description }}
+    </p>
   </div>
 </section>
+
+<!-- Main -->
 <section class="bg-white-100 dark:bg-gray-900">
   <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-10 lg:px-6">
     <div
@@ -63,23 +68,25 @@
           <hr class="h-px mt-8 bg-gray-200 border-0 dark:bg-gray-700" />
           <div class="flex flex-col space-y-3 justify-center gap-1">
             <!-- Slider -->
-            <div class="my-4">
+            <!-- <div class="my-4">
               <label for="brightness_value" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Lichtsterkte</label>
               <div class="flex justify-between mb-1">
                 <span class="text-base font-medium text-primary-700 dark:text-white">Waarde</span>
                 <span class="text-sm font-medium text-primary-700 dark:text-white" id="brightness_number">125</span>
               </div>
               <input id="brightness_value" type="range" value="125" min="50" step="25" max="225" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
-            </div>
+            </div> -->
             <!-- Color picker -->
-            <label for="color-picker" class="ext-sm font-medium text-gray-900 dark:text-white">Kies een kleur:</label>
-            <input
-              type="color"
-              id="color-picker"
-              name="color-picker"
-              value="#1269b0"
-              class="w-full py-2 px-3 mt-1 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
-            />
+            <div class="my-4">
+              <label for="color-picker" class="ext-sm font-medium text-gray-900 dark:text-white">Kies een kleur:</label>
+              <input
+                type="color"
+                id="color-picker"
+                name="color-picker"
+                value="#1269b0"
+                class="w-full py-2 px-3 mt-1 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+              />
+            </div>
             <!-- Toggle -->
             <label class="relative inline-flex items-center cursor-pointer">
               <input id="led_toggle" type="checkbox" value="" checked class="sr-only peer" />

@@ -18,11 +18,11 @@ def workouts() -> None:
     return render_template("workouts.html", workouts=Workout.query.all())
 
 
-@bp.route("/workouts/<int:workout_id>", methods=["GET"])
-def workout_start(workout_id: int) -> None:
-    """Render the workout page."""
+@bp.route("/workouts/<int:workout_id>/control", methods=["GET"])
+def workout_control(workout_id: int) -> None:
+    """Render the workout control page."""
     return render_template(
-        "workouts/start.html",
+        "workouts/control.html",
         workout=Workout.query.get(workout_id),
         sensors=Sensor.query.all(),
     )

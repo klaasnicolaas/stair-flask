@@ -14,7 +14,12 @@ bp = Blueprint("backend", __name__, template_folder="templates/admin")
 @login_required
 def dashboard() -> None:
     """Render the dashboard page."""
-    return render_template("dashboard.html", user=current_user)
+    return render_template(
+        "dashboard.html",
+        user=current_user,
+        sensors=Sensor.query.all(),
+        workouts=Workout.query.all(),
+    )
 
 
 @bp.route("/sensors", methods=["GET"])
@@ -39,19 +44,19 @@ def workouts() -> None:
     )
 
 
-@bp.route("/sensors/<int:id>", methods=["GET"])
+@bp.route("/sensors/<int:sensor_id>", methods=["GET"])
 @login_required
-def show_sensor(workout_id: int) -> None:
+def show_sensor(sensor_id: int) -> None:
     """Render the sensors page.
 
     Args:
     ----
-        workout_id (int): The id of the workout to show.
+        sensor_id (int): The id of the sensor to show.
     """
     return render_template(
         "sensors/show.html",
         user=current_user,
-        sensor=Sensor.query.get(workout_id),
+        sensor=Sensor.query.get(sensor_id),
     )
 
 
@@ -73,7 +78,7 @@ def add_workout() -> None:
     return redirect(url_for("backend.workouts"))
 
 
-@bp.route("/workouts/<int:id>/update", methods=["POST"])
+@bp.route("/workouts/<int:workout_id>/update", methods=["POST"])
 @login_required
 def update_workout(workout_id: int) -> None:
     """Update a workout.
@@ -91,7 +96,7 @@ def update_workout(workout_id: int) -> None:
             db.session.commit()
         except Exception as error:
             print(f"Failed to update workout: {error}")
-    flash("Workout updated!", "success")
+    flash("Oefening is bijgewerkt!", "success")
     return redirect(url_for("backend.workouts"))
 
 
@@ -105,7 +110,7 @@ def delete_all_sensors() -> None:
     return redirect(url_for("backend.sensors"))
 
 
-@bp.route("/workouts/<int:id>/delete", methods=["POST"])
+@bp.route("/workouts/<int:workout_id>/delete", methods=["POST"])
 def delete_workout(workout_id: int) -> None:
     """Delete a workout.
 
