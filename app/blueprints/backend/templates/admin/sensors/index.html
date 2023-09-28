@@ -51,7 +51,7 @@
   {% for sensor in sensors|sort(attribute='client_id') %}
   <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     <div class="relative">
-      <a href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
+      <a href="{{ url_for('backend.show_sensor', sensor_id=sensor.id) }}">
         <img class="object-cover w-full h-45 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
         <div class="absolute top-2 left-2">
           <span id="js--{{ sensor.client_id }}_state"> {% if sensor.status == 'offline' or sensor.status == 'error' %} 🔴 {% elif sensor.status == 'trigger' %} 🟣 {% elif sensor.status == 'measure' %} 🟡 {% else %} 🟢 {% endif %} </span>
@@ -64,12 +64,12 @@
       </a>
     </div>
     <div class="p-5">
-      <a href="{{ url_for('backend.show_sensor', id=sensor.id) }}">
+      <a href="{{ url_for('backend.show_sensor', sensor_id=sensor.id) }}">
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ sensor.client_id }}</h5>
       </a>
       <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Een sensor van de stair challenge die gemonteerd zit in de trap installatie.</p>
       <a
-        href="{{ url_for('backend.show_sensor', id=sensor.id) }}"
+        href="{{ url_for('backend.show_sensor', sensor_id=sensor.id) }}"
         class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
       >
         Meer info
@@ -86,5 +86,5 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensor_restart.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/sensors_index.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/sensors_state.js') }}"></script>
 {% endblock %}

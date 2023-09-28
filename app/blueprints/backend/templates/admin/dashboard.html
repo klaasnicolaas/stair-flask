@@ -1,22 +1,72 @@
-{% extends 'layout_backend.html' %} {% block content %}
-  {% include 'includes/_flash.html' %}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-    <div class="border-2 border-dashed border-gray-300 rounded-lg dark:border-gray-600 h-32 md:h-64"></div>
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"></div>
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"></div>
+{% extends 'layout_backend.html' %} {% block content %} {% include 'includes/_flash.html' %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+  <div class="border-2 border-dashed border-gray-300 rounded-lg dark:border-gray-600 h-32 md:h-64"></div>
+  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"></div>
+  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"></div>
+  <!-- <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    {% for sensor in sensors %}
+    <div class="m-4">
+      <div class="flex justify-between mb-1">
+        <span class="text-base text-primary-700 dark:text-white">Sensor {{ sensor.id }}</span>
+        <span class="text-sm font-medium text-primary-700 dark:text-white">{{ sensor.threshold }} mm</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+        <div class="bg-primary-600 h-2.5 rounded-full" style="width: {{ (sensor.threshold / 1300) * 100 }}%"></div>
+      </div>
+    </div>
+    {% endfor %}
   </div>
-  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"></div>
-  <div class="grid grid-cols-2 gap-4 mb-4">
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+  <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div class="relative overflow-x-auto mb-1">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">Sensor</th>
+            <th scope="col" class="px-6 py-3 flex justify-end">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sensor in sensors %}
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <a class="text-accent-600 dark:text-accent-500 hover:underline" href="{{ url_for('backend.show_sensor', sensor_id=sensor.id) }}">Sensor {{ sensor.id }}</a>
+            </th>
+            <td class="px-6 py-4">
+              <div class="flex justify-end">
+                <span id="js--{{ sensor.client_id }}_state">
+                  {% if sensor.status == 'offline' or sensor.status == 'error' %} 🔴 {% elif sensor.status == 'trigger' %} 🟣 {% elif sensor.status == 'measure' %} 🟡 {% else %} 🟢 {% endif %}
+                </span>
+                &nbsp;
+                <span id="js--{{ sensor.client_id }}_status">{{ sensor.status }}</span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-96 mb-4"></div>
-  <div class="grid grid-cols-2 gap-4">
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
-    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600">{% for workout in workouts %} {% endfor %}</div> -->
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+</div>
+<div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 md:h-72 mb-4">
+  <div class="px-6 py-4">
+    <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Logboek</h2>
+    <ul id="log-list" class="space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400"></ul>
   </div>
+</div>
+<!-- <div class="grid grid-cols-2 gap-4">
+    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+    <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+  </div> -->
+{% endblock %} {% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
+
+<script text="text/javascript" src="{{ url_for('static', filename='js/sockets/logging.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/sensors_state.js') }}"></script>
 {% endblock %}
