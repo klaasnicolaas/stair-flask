@@ -333,6 +333,7 @@ def on_system_control(event: dict) -> None:
             if sandglass_thread is not None and sandglass_thread.is_alive():
                 led_controller.stop_sandglass_thread()
                 sandglass_thread.join()
+                sandglass_thread = None
 
             if event["led_toggle"] is True:
                 sandglass_thread = threading.Thread(

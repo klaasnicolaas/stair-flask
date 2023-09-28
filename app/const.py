@@ -1,9 +1,12 @@
 """Constants for the Stair Challenge app."""
 # ruff: noqa: E501
+import threading
 from typing import Final
 
 MQTT_SENSOR: Final = "sensor"
 MQTT_WORKOUT: Final = "workout"
+
+THREAD_STOP_EVENT = threading.Event()
 
 # MQTT topics - Subscribed
 MQTT_TEST_TOPIC: Final = "test"

@@ -1,12 +1,11 @@
 """LED strip module."""
 import secrets
-import threading
 import time
 from enum import Enum
 
 from rpi_ws281x import Color, PixelStrip
 
-thread_stop_event = threading.Event()
+from app.const import THREAD_STOP_EVENT
 
 
 class Colors:
@@ -282,6 +281,9 @@ class LEDController:
             duration (int): Duration of the sandglass animation in seconds.
             color (Color): Color object with RGB values
         """
+        # Reset the stop event
+        THREAD_STOP_EVENT.clear()
+
         num_leds = self.strip.numPixels()
         self.set_color(color)
 
@@ -294,9 +296,9 @@ class LEDController:
         for i in range(num_leds):
             remaining_time = duration - (i * interval_seconds)
 
-            if thread_stop_event.is_set():
+            if THREAD_STOP_EVENT.is_set():
                 print("Force stopping sandglass animation")
-                thread_stop_event.clear()
+                THREAD_STOP_EVENT.clear()
                 break
 
             # Turn off the current LED
@@ -318,4 +320,8 @@ class LEDController:
 
     def stop_sandglass_thread(self) -> None:
         """Stop the sandglass thread."""
-        thread_stop_event.set()
+        THREAD_STOP_EVENT.set()
+
+    def reset_stop_event(self) -> None:
+        """Reset the stop event."""
+        THREAD_STOP_EVENT.clear()
