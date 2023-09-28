@@ -9,6 +9,7 @@ from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app import db, login_manager
+from app.const import IsAdmin
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -55,7 +56,7 @@ class User(UserMixin, db.Model):
         name: str,
         email: str,
         password: str,
-        is_admin: bool = False,
+        is_admin: IsAdmin = IsAdmin.NO,
         created_at: datetime | None = None,
     ) -> None:
         """Initialize the user."""

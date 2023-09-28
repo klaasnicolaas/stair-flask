@@ -1,6 +1,7 @@
 """Constants for the Stair Challenge app."""
 # ruff: noqa: E501
 import threading
+from enum import Enum
 from typing import Final
 
 MQTT_SENSOR: Final = "sensor"
@@ -16,6 +17,38 @@ MQTT_STATUS_TOPIC: Final = f"{MQTT_SENSOR}/+/status"
 # MQTT topics - Published
 MQTT_RESTART_ALL_TOPIC: Final = f"{MQTT_SENSOR}/restart_all"
 MQTT_WORKOUT_CONTROL_ALL_TOPIC: Final = f"{MQTT_WORKOUT}/control_all"
+
+
+# Enum classes
+class Direction(Enum):
+    """Enum for the direction."""
+
+    TOP_TO_BOTTOM = True
+    BOTTOM_TO_TOP = False
+
+
+class SensorLed(Enum):
+    """Enum for the sensor LEDs."""
+
+    SENSOR_3 = 58
+    SENSOR_4 = 38
+    SENSOR_5 = 18
+    SENSOR_6 = 0
+
+
+class IsAdmin(Enum):
+    """Enum for the admin status."""
+
+    YES = True
+    NO = False
+
+
+class ResetCounter(Enum):
+    """Enum for the reset counter."""
+
+    YES = True
+    NO = False
+
 
 WORKOUTS = [
     {

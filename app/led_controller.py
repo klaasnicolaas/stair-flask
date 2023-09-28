@@ -1,11 +1,10 @@
 """LED strip module."""
 import secrets
 import time
-from enum import Enum
 
 from rpi_ws281x import Color, PixelStrip
 
-from app.const import THREAD_STOP_EVENT
+from app.const import THREAD_STOP_EVENT, Direction, SensorLed
 
 
 class Colors:
@@ -107,22 +106,6 @@ class Colors:
         )
 
 
-class StripInvert(Enum):
-    """Enum for strip inversion."""
-
-    TRUE = True
-    FALSE = False
-
-
-class SensorLed(Enum):
-    """Enum for the sensor LEDs."""
-
-    SENSOR_3 = 58
-    SENSOR_4 = 38
-    SENSOR_5 = 18
-    SENSOR_6 = 0
-
-
 class LEDController:
     """LED strip configuration."""
 
@@ -133,7 +116,7 @@ class LEDController:
         freq_hz: int,
         dma: int,
         brightness: int,
-        invert: bool,
+        invert: bool,  # noqa: FBT001
         channel: int,
     ) -> None:
         """Initialize LED strip.
@@ -145,7 +128,7 @@ class LEDController:
             led_freq_hz (int): LED signal frequency in hertz (usually 800khz)
             led_dma (int): DMA channel to use for generating signal (try 10)
             led_brightness (int): Set to 0 for darkest and 255 for brightest
-            led_invert (bool): True to invert the signal (when using level shift)
+            led_invert (bool): True to invert the signal (using level shift)
             led_channel (int): set to '1' for GPIOs 13, 19, 41, 45 or 53
         """
         self.strip = PixelStrip(count, pin, freq_hz, dma, invert, brightness, channel)
@@ -191,7 +174,7 @@ class LEDController:
         self,
         color: Color,
         wait_ms: int = 50,
-        direction: bool = True,
+        direction: Direction = Direction.TOP_TO_BOTTOM,
     ) -> None:
         """Wipe color across display a pixel at a time.
 
@@ -199,8 +182,7 @@ class LEDController:
         ----
             color (Color): Color object with RGB values
             wait_ms (int): milliseconds to wait between pixels
-            direction (bool): direction of the color wipe
-                True = top to bottom, False = bottom to top
+            direction (Direction): direction of the color wipe
         """
         num_puxels = self.strip.numPixels()
         if direction:
