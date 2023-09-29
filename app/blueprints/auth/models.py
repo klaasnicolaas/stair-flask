@@ -56,7 +56,7 @@ class User(UserMixin, db.Model):
         name: str,
         email: str,
         password: str,
-        is_admin: IsAdmin = IsAdmin.NO,
+        is_admin: IsAdmin = IsAdmin.NO.value,
         created_at: datetime | None = None,
     ) -> None:
         """Initialize the user."""

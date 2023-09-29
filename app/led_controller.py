@@ -185,7 +185,7 @@ class LEDController:
             direction (Direction): direction of the color wipe
         """
         num_puxels = self.strip.numPixels()
-        if direction:
+        if direction == Direction.TOP_TO_BOTTOM:
             range_start, range_end, range_step = 0, num_puxels, 1
         else:
             range_start, range_end, range_step = num_puxels - 1, -1, -1
