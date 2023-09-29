@@ -346,7 +346,7 @@ def on_system_control(event: dict) -> None:
             else:
                 led_controller.set_sensor_led(colors.BLUE, end_sensor)
                 led_controller.one_led(colors.GREEN, 103)
-            update_counter(0, True)
+            update_counter(0, ResetCounter.YES)
         else:
             mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
     elif event["mode"] == "stop" or event["mode"] == "finished":
