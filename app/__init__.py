@@ -145,7 +145,7 @@ def create_admin() -> None:
             name=name,
             email=email,
             password=password,
-            is_admin=IsAdmin.YES,
+            is_admin=IsAdmin.YES.value,
             created_at=datetime.now(),
         )
         db.session.add(user)
@@ -215,7 +215,7 @@ def update_counter(value: int, reset: ResetCounter = ResetCounter.NO) -> None:
         reset (ResetCounter): Reset the counter.
     """
     global stair_counter
-    if reset:
+    if reset == ResetCounter.YES:
         # reset the counter
         stair_counter = 0
     else:
@@ -346,7 +346,7 @@ def on_system_control(event: dict) -> None:
             else:
                 led_controller.set_sensor_led(colors.BLUE, end_sensor)
                 led_controller.one_led(colors.GREEN, 103)
-            update_counter(0, ResetCounter.YES)
+            update_counter(0, True)
         else:
             mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
     elif event["mode"] == "stop" or event["mode"] == "finished":
