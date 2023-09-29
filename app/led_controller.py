@@ -232,13 +232,13 @@ class LEDController:
         """
         match sensor_id:
             case 3:
-                self.one_led(color, SensorLed.SENSOR_3.value)
+                self.set_led_range(color, SensorLed.SENSOR_3.value["start"], SensorLed.SENSOR_3.value["end"])
             case 4:
-                self.one_led(color, SensorLed.SENSOR_4.value)
+                self.set_led_range(color, SensorLed.SENSOR_4.value["start"], SensorLed.SENSOR_4.value["end"])
             case 5:
-                self.one_led(color, SensorLed.SENSOR_5.value)
+                self.set_led_range(color, SensorLed.SENSOR_5.value["start"], SensorLed.SENSOR_5.value["end"])
             case 6:
-                self.one_led(color, SensorLed.SENSOR_6.value)
+                self.set_led_range(color, SensorLed.SENSOR_6.value["start"], SensorLed.SENSOR_6.value["end"])
             case _:
                 print(f"Invalid sensor ID: {sensor_id}")
 
