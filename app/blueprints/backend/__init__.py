@@ -1,6 +1,7 @@
 """Blueprint for the backend of the application."""
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
+from sqlalchemy.exc import SQLAlchemyError
 
 from app import db
 from app.blueprints.auth.models import User
@@ -72,7 +73,7 @@ def add_workout() -> None:
             )
             db.session.add(workout)
             db.session.commit()
-        except Exception as error:
+        except SQLAlchemyError as error:
             print(f"Failed to add workout: {error}")
     flash("Workout added!", "success")
     return redirect(url_for("backend.workouts"))
@@ -94,7 +95,7 @@ def update_workout(workout_id: int) -> None:
             workout.description = request.form.get("description")
 
             db.session.commit()
-        except Exception as error:
+        except SQLAlchemyError as error:
             print(f"Failed to update workout: {error}")
     flash("Oefening is bijgewerkt!", "success")
     return redirect(url_for("backend.workouts"))
@@ -122,14 +123,10 @@ def delete_workout(workout_id: int) -> None:
         workout = Workout.query.get(workout_id)
         db.session.delete(workout)
         db.session.commit()
-    except Exception as error:
+    except SQLAlchemyError as error:
         print(f"Failed to delete workout: {error}")
     flash("Workout deleted!", "success")
     return redirect(url_for("backend.workouts"))
-
-
-# TODO - Delete single sensor
-# TODO - Add single sensor
 
 
 @bp.route("/led_control", methods=["GET"])

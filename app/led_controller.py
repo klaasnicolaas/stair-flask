@@ -1,10 +1,12 @@
 """LED strip module."""
+# ruff: noqa: PLR0913
 import secrets
 import time
 
 from rpi_ws281x import Color, PixelStrip
 
 from app.const import THREAD_STOP_EVENT, Direction, SensorLed
+from app.exceptions import StairChalllengeInitializationError
 
 
 class Colors:
@@ -136,8 +138,8 @@ class LEDController:
             self.strip.begin()
             # self.set_color(Color(0, 0, 0))
             print("LED strip initialized successfully")
-        except Exception as error:
-            print(f"Error initializing LED strip: {error!s}")
+        except StairChalllengeInitializationError as error:
+            print(f"Error initializing the LED strip: {error!s}")
 
     def set_color(self, color: Color) -> None:
         """Set the color of the LED strip.
@@ -232,13 +234,29 @@ class LEDController:
         """
         match sensor_id:
             case 3:
-                self.set_led_range(color, SensorLed.SENSOR_3.value["start"], SensorLed.SENSOR_3.value["end"])
+                self.set_led_range(
+                    color,
+                    SensorLed.SENSOR_3.value["start"],
+                    SensorLed.SENSOR_3.value["end"],
+                )
             case 4:
-                self.set_led_range(color, SensorLed.SENSOR_4.value["start"], SensorLed.SENSOR_4.value["end"])
+                self.set_led_range(
+                    color,
+                    SensorLed.SENSOR_4.value["start"],
+                    SensorLed.SENSOR_4.value["end"],
+                )
             case 5:
-                self.set_led_range(color, SensorLed.SENSOR_5.value["start"], SensorLed.SENSOR_5.value["end"])
+                self.set_led_range(
+                    color,
+                    SensorLed.SENSOR_5.value["start"],
+                    SensorLed.SENSOR_5.value["end"],
+                )
             case 6:
-                self.set_led_range(color, SensorLed.SENSOR_6.value["start"], SensorLed.SENSOR_6.value["end"])
+                self.set_led_range(
+                    color,
+                    SensorLed.SENSOR_6.value["start"],
+                    SensorLed.SENSOR_6.value["end"],
+                )
             case _:
                 print(f"Invalid sensor ID: {sensor_id}")
 
