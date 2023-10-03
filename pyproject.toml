@@ -26,6 +26,17 @@ pre-commit = "^3.4.0"
 pre-commit-hooks = "^4.4.0"
 yamllint = "^1.32.0"
 pylint = "^2.17.7"
+pytest = "^7.4.2"
+pytest-cov = "^4.1.0"
+covdefaults = "^2.3.0"
+
+[tool.coverage.run]
+plugins = ["covdefaults"]
+source = ["app"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
 
 [tool.mypy]
 # Specify the target platform details in config, so your developers are
@@ -94,6 +105,9 @@ max-line-length = 88
 
 [tool.pylint.DESIGN]
 max-attributes = 12
+
+[tool.pytest.ini_options]
+addopts = "--cov"
 
 [tool.ruff]
 select = ["ALL"]
