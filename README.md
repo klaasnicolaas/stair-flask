@@ -76,3 +76,8 @@ This error may indicate that the IP address of your MQTT server is incorrect.
 ### Docker
 
 https://linux.how2shout.com/how-to-start-docker-container-automatically-on-boot-in-linux/
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[poetry-install]: https://python-poetry.org/docs/#installation
+[poetry]: https://python-poetry.org
+[pre-commit]: https://pre-commit.com
