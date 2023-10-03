@@ -5,9 +5,11 @@ from __future__ import annotations
 
 import getpass
 import json
+import os
 import threading
 from datetime import datetime, timedelta
 
+import sqlalchemy as sqla
 from flask import Flask, redirect, request, session, url_for
 from flask_login import LoginManager
 from flask_socketio import SocketIO
@@ -28,38 +30,11 @@ from app.const import (
 )
 from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
-from config import Config
 
-app = Flask(__name__)
-socketio = SocketIO(app, async_mode="threading")
-
-# Load config values from app/config.py
-app.config.from_object(Config)
-
-# Database configuration
-db = SQLAlchemy(app)
-
-# Initialize the login manager
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-# Tell users what view to go to when they need to login.
-login_manager.login_view = "auth.login"
-
-
-@app.before_request
-def make_session_permanent() -> None:
-    """Make the session permanent."""
-    session.permanent: bool = True
-    app.permanent_session_lifetime = timedelta(hours=12)
-
-
-# Initialize MQTT client
-mqtt = MQTTClient()
-mqtt.connect()
-
-from app.blueprints.auth.models import User
-from app.blueprints.backend.models import Sensor, Workout
+db = SQLAlchemy()
+socketio = SocketIO(async_mode="threading")
+login = LoginManager()
+login.login_view = "auth.login"
 
 workout_mode: bool = False
 first_trigger: bool = True
@@ -70,6 +45,93 @@ client_counters: list = [1]
 stair_counter: int = 0
 
 sandglass_thread: threading.Thread = None
+
+# -----------------------------------
+# Create Application Factory Function
+# -----------------------------------
+
+
+def create_app() -> Flask:
+    """Create the Flask application.
+
+    Returns
+    -------
+        Flask: The Flask application.
+    """
+    app = Flask(__name__)
+
+    # Load config values from app/config.py
+    if os.getenv("FLASK_ENV") == "testing":
+        app.config.from_object("config.TestConfig")
+    else:
+        app.config.from_object("config.Config")
+
+    # Initialize the socketio instance
+    socketio.init_app(app)
+
+    initialize_extensions(app)
+    register_blueprints(app)
+    register_cli_commands(app)
+    register_routes(app)
+    register_mqtt_events(app)
+
+    # Check if the database needs to be initialized
+    engine = sqla.create_engine(app.config["SQLALCHEMY_DATABASE_URI"])
+    inspector = sqla.inspect(engine)
+    if not inspector.has_table("users"):
+        with app.app_context():
+            db.drop_all()
+            db.create_all()
+            app.logger.info("Initialized the database!")
+    else:
+        app.logger.info("Database already contains the users table.")
+
+    return app
+
+
+def initialize_extensions(app: Flask) -> None:
+    """Initialize the extensions.
+
+    Args:
+    ----
+        app: The Flask application.
+    """
+    # Initialize the database
+    db.init_app(app)
+
+    # Initialize the login manager
+    login.init_app(app)
+
+    # The user_loader decorator allows flask-login to load the current user
+    # and grab their id.
+    @login.user_loader
+    def load_user(user_id: int) -> User:
+        """Load the current user.
+
+        Args:
+        ----
+            user_id (int): The user id to load.
+
+        Returns:
+        -------
+            User: The current user.
+        """
+        return User.query.get(user_id)
+
+    @app.before_request
+    def make_session_permanent() -> None:
+        """Make the session permanent."""
+        session.permanent: bool = True
+        app.permanent_session_lifetime = timedelta(hours=12)
+
+
+# Initialize MQTT client
+mqtt = MQTTClient()
+mqtt.connect()
+
+from app.blueprints.auth.models import User
+from app.blueprints.backend.models import Sensor, Workout
+
 # ----------------------------------------------------------------------------#
 # LED strip configuration.
 # ----------------------------------------------------------------------------#
@@ -92,100 +154,82 @@ led_controller = LEDController(
 )
 led_controller.turn_off()
 
-# Install the blueprints
-from app.blueprints.auth import bp as auth_bp
-from app.blueprints.backend import bp as backend_bp
-from app.blueprints.frontend import bp as frontend_bp
 
-app.register_blueprint(auth_bp)
-app.register_blueprint(backend_bp, url_prefix="/admin")
-app.register_blueprint(frontend_bp)
-
-
-@app.cli.command("init_db")
-def init_db() -> None:
-    """Initialize the database."""
-    db.drop_all()
-    db.create_all()
-    print("Database initialized successfully!")
-
-
-@app.cli.command("seed_workouts")
-def seed_workouts() -> None:
-    """Seed the workouts table."""
-    for index, workout in enumerate(WORKOUTS, 1):
-        db.session.add(
-            Workout(
-                name=workout["name"],
-                description=workout["description"],
-                pros=workout["pros"],
-                cons=None if "cons" not in workout else workout["cons"],
-            ),
-        )
-        db.session.commit()
-        print(f"Workout {index} added successfully!")
-
-
-@app.cli.command("create_admin")
-def create_admin() -> None:
-    """Create a new admin user."""
-    name = input("Enter name: ")
-    email = input("Enter email address: ")
-    password = getpass.getpass("Enter password: ")
-    confirm_password = getpass.getpass("Enter password again: ")
-
-    # Validate the password
-    if password != confirm_password:
-        print("Passwords don't match")
-        return 1
-
-    # Create the user
-    try:
-        user = User(
-            name=name,
-            email=email,
-            password=password,
-            is_admin=IsAdmin.YES.value,
-            created_at=datetime.now(),
-        )
-        db.session.add(user)
-        db.session.commit()
-        print(f"Admin with email {email} created successfully!")
-    except Exception as error:
-        print(f"Could not create admin: {error}")
-        db.session.rollback()
-        return 1
-
-
-def on_topic_trigger(
-    client: MQTTClient,  # pylint: disable=unused-argument
-    userdata: dict,  # pylint: disable=unused-argument
-    message: dict,
-) -> None:
-    """MQTT function to handle trigger messages.
+def register_blueprints(app: Flask) -> None:
+    """Register the blueprints.
 
     Args:
     ----
-        client: The client instance for this callback.
-        userdata: The private user data as set in Client() or userdata_set().
-        message: An instance of MQTTMessage.
+        app: The Flask application.
     """
-    data: dict = json.loads(message.payload)
-    if workout_mode:
-        match workout_id:
-            case 1:
-                # Kameleon
-                colors = Colors()
-                led_controller.set_color(colors.get_random_unique_color())
-            case 2:
-                # Trap op, trap af
-                workout_counting(data["client_id"])
-            case 3:
-                # Meeloper
-                print("Workout 3")
-            case _:
-                print("Workout not found")
-    print(f"Message Received from Others: {message.payload.decode()}")
+    from app.blueprints.auth import bp as auth_bp
+    from app.blueprints.backend import bp as backend_bp
+    from app.blueprints.frontend import bp as frontend_bp
+
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(backend_bp, url_prefix="/admin")
+    app.register_blueprint(frontend_bp)
+
+
+def register_cli_commands(app: Flask) -> None:
+    """Register the CLI commands.
+
+    Args:
+    ----
+        app: The Flask application.
+    """
+
+    @app.cli.command("init_db")
+    def init_db() -> None:
+        """Initialize the database."""
+        db.drop_all()
+        db.create_all()
+        print("Database initialized successfully!")
+
+    @app.cli.command("seed_workouts")
+    def seed_workouts() -> None:
+        """Seed the workouts table."""
+        for index, workout in enumerate(WORKOUTS, 1):
+            db.session.add(
+                Workout(
+                    name=workout["name"],
+                    description=workout["description"],
+                    pros=workout["pros"],
+                    cons=None if "cons" not in workout else workout["cons"],
+                ),
+            )
+            db.session.commit()
+            print(f"Workout {index} added successfully!")
+
+    @app.cli.command("create_admin")
+    def create_admin() -> None:
+        """Create a new admin user."""
+        name = input("Enter name: ")
+        email = input("Enter email address: ")
+        password = getpass.getpass("Enter password: ")
+        confirm_password = getpass.getpass("Enter password again: ")
+
+        # Validate the password
+        if password != confirm_password:
+            print("Passwords don't match")
+            return 1
+
+        # Create the user
+        try:
+            user = User(
+                name=name,
+                email=email,
+                password=password,
+                is_admin=IsAdmin.YES.value,
+                created_at=datetime.now(),
+            )
+            db.session.add(user)
+            db.session.commit()
+            print(f"Admin with email {email} created successfully!")
+        except Exception as error:
+            print(f"Could not create admin: {error}")
+            db.session.rollback()
+            return 1
 
 
 def workout_counting(client_id: int) -> None:
@@ -226,73 +270,123 @@ def update_counter(value: int, reset: ResetCounter = ResetCounter.NO) -> None:
     socketio.emit("counter", stair_counter)
 
 
-def on_topic_status(
-    client: MQTTClient,  # pylint: disable=unused-argument
-    userdata: dict,  # pylint: disable=unused-argument
-    message: dict,
-) -> None:
-    """MQTT Function to handle status messages.
+def register_mqtt_events(app: Flask) -> None:
+    """Register the MQTT events.
 
     Args:
     ----
-        client: The client instance for this callback.
-        userdata: The private user data as set in Client() or userdata_set().
-        message: An instance of MQTTMessage.
+        app: The Flask application.
     """
-    data = json.loads(message.payload)
-    # Send the data to the frontend
-    socketio.emit(f"sensor_status_{data['client_id']}", data)
-    socketio.emit("sensors_status_all", data)
-    try:
-        with app.app_context():
-            sensor = Sensor.query.filter_by(
-                client_id=f"sensor-{data['client_id']}",
-            ).first()
-            if sensor:
-                # If the sensor already exists
-                sensor.ip_address = data["ip_address"]
-                sensor.max_distance = data["max_distance"]
-                sensor.threshold = data["threshold"]
-                sensor.status = data["status"]
-                sensor.last_update = datetime.now()
-                db.session.commit()
-            else:
-                # If the sensor doesn't exist
-                print(f"Adding new sensor: {data['client_id']}")
-                sensor = Sensor(
+
+    def on_topic_trigger(
+        client: MQTTClient,  # pylint: disable=unused-argument
+        userdata: dict,  # pylint: disable=unused-argument
+        message: dict,
+    ) -> None:
+        """MQTT function to handle trigger messages.
+
+        Args:
+        ----
+            client: The client instance for this callback.
+            userdata: The private user data as set in Client() or userdata_set().
+            message: An instance of MQTTMessage.
+        """
+        data: dict = json.loads(message.payload)
+        if workout_mode:
+            match workout_id:
+                case 1:
+                    # Kameleon
+                    colors = Colors()
+                    led_controller.set_color(colors.get_random_unique_color())
+                case 2:
+                    # Trap op, trap af
+                    workout_counting(data["client_id"])
+                case 3:
+                    # Meeloper
+                    print("Workout 3")
+                case _:
+                    print("Workout not found")
+        print(f"Message Received from Others: {message.payload.decode()}")
+
+    def on_topic_status(
+        client: MQTTClient,  # pylint: disable=unused-argument
+        userdata: dict,  # pylint: disable=unused-argument
+        message: dict,
+    ) -> None:
+        """MQTT Function to handle status messages.
+
+        Args:
+        ----
+            client: The client instance for this callback.
+            userdata: The private user data as set in Client() or userdata_set().
+            message: An instance of MQTTMessage.
+        """
+        data = json.loads(message.payload)
+        # Send the data to the frontend
+        socketio.emit(f"sensor_status_{data['client_id']}", data)
+        socketio.emit("sensors_status_all", data)
+        try:
+            with app.app_context():
+                sensor = Sensor.query.filter_by(
                     client_id=f"sensor-{data['client_id']}",
-                    ip_address=data["ip_address"],
-                    max_distance=data["max_distance"],
-                    threshold=data["threshold"],
-                    status=data["status"],
-                    last_update=datetime.now(),
-                )
-                db.session.add(sensor)
-                db.session.commit()
-    except exc.IntegrityError:
-        with app.app_context():
-            db.session.rollback()
-        print("An error occurred during database operation.")
-    except KeyError as error:
-        print(f"MQTT data is missing the following key: {error}")
+                ).first()
+                if sensor:
+                    # If the sensor already exists
+                    sensor.ip_address = data["ip_address"]
+                    sensor.max_distance = data["max_distance"]
+                    sensor.threshold = data["threshold"]
+                    sensor.status = data["status"]
+                    sensor.last_update = datetime.now()
+                    db.session.commit()
+                else:
+                    # If the sensor doesn't exist
+                    print(f"Adding new sensor: {data['client_id']}")
+                    sensor = Sensor(
+                        client_id=f"sensor-{data['client_id']}",
+                        ip_address=data["ip_address"],
+                        max_distance=data["max_distance"],
+                        threshold=data["threshold"],
+                        status=data["status"],
+                        last_update=datetime.now(),
+                    )
+                    db.session.add(sensor)
+                    db.session.commit()
+        except exc.IntegrityError:
+            with app.app_context():
+                db.session.rollback()
+                print("Sensor already exists in the database.")
+            print("An error occurred during database operation.")
+        except KeyError as error:
+            print(f"MQTT data is missing the following key: {error}")
+
+    # MQTT events
+    mqtt.client.message_callback_add(MQTT_TRIGGER_TOPIC, on_topic_trigger)
+    mqtt.client.message_callback_add(MQTT_STATUS_TOPIC, on_topic_status)
 
 
-# Routes
-@app.route("/set_color", methods=["GET"])
-def set_color() -> None:
-    """Set LED strip color."""
-    args = request.args
-    led_controller.set_color(
-        Color(int(args.get("red")), int(args.get("green")), int(args.get("blue"))),
-    )
-    return redirect(url_for("backend.led_control"))
+def register_routes(app: Flask) -> None:
+    """Register the routes.
 
+    Args:
+    ----
+        app: The Flask application.
+    """
 
-@app.route("/turn_off")
-def turn_off() -> None:
-    """Turn off LED strip."""
-    led_controller.color_wipe(Color(0, 0, 0), 10)
-    return redirect(url_for("backend.led_control"))
+    # Routes
+    @app.route("/set_color", methods=["GET"])
+    def set_color() -> None:
+        """Set LED strip color."""
+        args = request.args
+        led_controller.set_color(
+            Color(int(args.get("red")), int(args.get("green")), int(args.get("blue"))),
+        )
+        return redirect(url_for("backend.led_control"))
+
+    @app.route("/turn_off")
+    def turn_off() -> None:
+        """Turn off LED strip."""
+        led_controller.color_wipe(Color(0, 0, 0), 10)
+        return redirect(url_for("backend.led_control"))
 
 
 # SocketIO events
@@ -392,8 +486,3 @@ def on_restart_sensors(event: str) -> None:
     else:
         print(f"Restarting sensor - {event[7:]}")
         mqtt.send(f"{MQTT_SENSOR}/{event[7:]}/restart", "restart")
-
-
-# MQTT events
-mqtt.client.message_callback_add(MQTT_TRIGGER_TOPIC, on_topic_trigger)
-mqtt.client.message_callback_add(MQTT_STATUS_TOPIC, on_topic_status)
