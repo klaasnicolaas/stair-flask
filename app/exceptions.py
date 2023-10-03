@@ -7,3 +7,7 @@ class StairChallengeControlError(Exception):
 
 class StairChallengeConnectionError(StairChallengeControlError):
     """Stair Challenge connection exception."""
+
+
+class StairChalllengeInitializationError(StairChallengeControlError):
+    """Stair Challenge initialization exception."""

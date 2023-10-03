@@ -30,10 +30,10 @@ class Direction(Enum):
 class SensorLed(Enum):
     """Enum for the sensor LEDs."""
 
-    SENSOR_3 = {"start": 56, "end": 59}
-    SENSOR_4 = {"start": 36, "end": 39}
-    SENSOR_5 = {"start": 16, "end": 19}
-    SENSOR_6 = {"start": 0, "end": 3}
+    SENSOR_3: tuple = {"start": 56, "end": 59}
+    SENSOR_4: tuple = {"start": 36, "end": 39}
+    SENSOR_5: tuple = {"start": 16, "end": 19}
+    SENSOR_6: tuple = {"start": 0, "end": 3}
 
 
 class IsAdmin(Enum):
