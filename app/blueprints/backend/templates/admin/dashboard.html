@@ -3,6 +3,7 @@
   <!-- <div class="border-2 border-dashed border-gray-300 rounded-lg dark:border-gray-600 h-32 md:h-64"></div>
   <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"></div>
   <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"></div> -->
+  <!-- Sensor Cards -->
   <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     {% for sensor in sensors %}
     <div class="m-4">
@@ -48,15 +49,16 @@
   </div>
   <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600">{% for workout in workouts %} {% endfor %}</div>
 </div>
-<div class="grid grid-cols-2 gap-4 mb-4">
-  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
-  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
-</div>
+<!-- Logbook -->
 <div class="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 md:h-72 mb-4">
   <div class="px-6 py-4">
     <h2 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Logboek</h2>
     <ul id="log-list" class="space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400"></ul>
   </div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
+  <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
 </div>
 <!-- <div class="grid grid-cols-2 gap-4">
     <div class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-48 md:h-72"></div>
@@ -67,6 +69,7 @@
 {% endblock %} {% block script %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
 
-<script text="text/javascript" src="{{ url_for('static', filename='js/sockets/logging.js') }}"></script>
+<script text="text/javascript" src="{{ url_for('static', filename='js/sockets/logging/main.js') }}"></script>
+<script text="text/javascript" src="{{ url_for('static', filename='js/sockets/logging/dashboard_log.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/sensors_state.js') }}"></script>
 {% endblock %}

@@ -4,8 +4,11 @@ var eventName = 'sensor_status_' + sensorID;
 socket.on(eventName, function (msg) {
   append_to_status_log(msg)
   $('#js--sensor_status').text(msg.status);
-  limitLogItems();
 })
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 // Function that shows all the logs
 function append_to_status_log(jsonData) {
@@ -16,16 +19,14 @@ function append_to_status_log(jsonData) {
   const threshold = jsonData.threshold
   const maxDistance = jsonData.max_distance
 
-  const listItem = $('<li>').text(time + ' - Sensor is: ' + status + ' - T: ' + threshold + ' mm - Md: ' + maxDistance + ' mm');
+  let listItem;
+
+  if (status == 'trigger') {
+    const distance = jsonData.distance
+    listItem = $('<li>').html(time + ' - <strong>' + capitalizeFirstLetter(status) + '</strong> - Distance: ' + distance + ' mm')
+  } else {
+    listItem = $('<li>').html(time + ' - <strong>' + capitalizeFirstLetter(status) + '</strong> - T: ' + threshold + ' mm - Md: ' + maxDistance + ' mm');
+  }
   $('#log-list').prepend(listItem);
   limitLogItems();
-}
-
-function limitLogItems() {
-  const maxItems = 15;
-  const logList = $('#log-list');
-
-  while (logList.children().length > maxItems) {
-    logList.children().last().remove();
-  }
 }
