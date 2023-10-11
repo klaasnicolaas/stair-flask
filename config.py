@@ -26,3 +26,10 @@ class Config:
     MQTT_BROKER_URL = environ.get("MQTT_BROKER_URL")
     MQTT_BROKER_PORT = int(environ.get("MQTT_BROKER_PORT"))
     MQTT_KEEPALIVE = int(environ.get("MQTT_KEEPALIVE"))
+
+
+class TestConfig(Config):
+    """Set Flask config variables for testing."""
+
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{basedir / 'tests' / 'test_database.sqlite3'}"

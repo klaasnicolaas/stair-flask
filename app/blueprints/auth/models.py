@@ -8,31 +8,14 @@ from flask import flash, redirect, url_for
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from app import db, login_manager
+from app import db, login
 from app.const import IsAdmin
 
 if TYPE_CHECKING:
     from datetime import datetime
 
 
-# The user_loader decorator allows flask-login to load the current user
-# and grab their id.
-@login_manager.user_loader
-def load_user(user_id: int) -> User:
-    """Load the current user.
-
-    Args:
-    ----
-        user_id (int): The user id to load.
-
-    Returns:
-    -------
-        User: The current user.
-    """
-    return User.query.get(user_id)
-
-
-@login_manager.unauthorized_handler
+@login.unauthorized_handler
 def unauthorized() -> None:
     """Redirect unauthorized users to Login page."""
     flash("You must be logged in to view that page.")

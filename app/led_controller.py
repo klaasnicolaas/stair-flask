@@ -21,6 +21,7 @@ class Colors:
     ORANGE = Color(255, 165, 0)
     PINK = Color(255, 192, 203)
     BROWN = Color(165, 42, 42)
+    WHITE = Color(255, 255, 255)
 
     def __init__(self) -> None:
         """Initialize the used colors."""
@@ -63,9 +64,14 @@ class Colors:
         available_colors = [
             color for color in self.get_all_colors() if color not in self.used_colors
         ]
+
         if not available_colors:
-            available_colors = self.get_all_colors()
             self.used_colors = []
+            available_colors = [
+                color
+                for color in self.get_all_colors()
+                if color not in self.used_colors
+            ]
 
         color = secrets.choice(available_colors)
         self.used_colors.append(color)
