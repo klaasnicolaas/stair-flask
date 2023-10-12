@@ -78,14 +78,14 @@ class MQTTClient:
         """
         print(f"Message Received from Others: {message.payload.decode()}")
 
-    def connect(self, host, port, keep_alive) -> None:
+    def connect(self, host: str, port: int, keep_alive: int) -> None:
         """Connect with MQTT Broker.
 
         Args:
         ----
-            host: MQTT Broker host.
-            port: MQTT Broker port.
-            keep_alive: MQTT Broker keep alive.
+            host (str): MQTT Broker host.
+            port (int): MQTT Broker port.
+            keep_alive (int): MQTT Broker keep alive.
         """
         try:
             self.client.connect(
