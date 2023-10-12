@@ -1,11 +1,11 @@
+"""Unit tests for the MQTTClient class."""
 from unittest.mock import MagicMock, call, patch
 
 import pytest
 
 from app import MQTTClient
 from app.const import MQTT_STATUS_TOPIC, MQTT_TEST_TOPIC, MQTT_TRIGGER_TOPIC
-from app.exceptions import StairChallengeConnectionError
-from config import Config
+from app.exceptions import StairChallengeMQTTConnectionError
 
 
 class TestMQTTClient:
@@ -144,13 +144,13 @@ class TestMQTTClient:
             mqtt_client: MQTTClient instance.
         """
         # Call the connect method
-        mqtt_client.connect()
+        mqtt_client.connect("localhost", 1883, 60)
 
         # Assert that the connect method is called with the correct arguments
         mock_connect.assert_called_with(
-            Config.MQTT_BROKER_URL,
-            Config.MQTT_BROKER_PORT,
-            Config.MQTT_KEEPALIVE,
+            "localhost",
+            1883,
+            60,
         )
 
     @patch("paho.mqtt.client.Client.connect", side_effect=ConnectionRefusedError)
@@ -166,6 +166,9 @@ class TestMQTTClient:
             mock_connect: Mocked connect method.
             mqtt_client: MQTTClient instance.
         """
-        # Call the connect method and assert that it raises the correct exception
-        with pytest.raises(StairChallengeConnectionError):
-            mqtt_client.connect()
+        with pytest.raises(StairChallengeMQTTConnectionError) as e:
+            # Call the connect method and assert that it raises the correct exception
+            mqtt_client.connect("blabla", 1883, 60)
+
+        # Check if the exception contains the expected message
+        assert str(e.value) == "Could not connect to MQTT Broker at blabla."

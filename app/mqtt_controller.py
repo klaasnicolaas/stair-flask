@@ -7,8 +7,7 @@ import socket
 import paho.mqtt.client as mqtt
 
 from app.const import MQTT_STATUS_TOPIC, MQTT_TEST_TOPIC, MQTT_TRIGGER_TOPIC
-from app.exceptions import StairChallengeConnectionError
-from config import Config
+from app.exceptions import StairChallengeMQTTConnectionError
 
 
 # ruff: noqa: ARG002
@@ -88,9 +87,8 @@ class MQTTClient:
                 Config.MQTT_KEEPALIVE,
             )
         except (ConnectionRefusedError, socket.gaierror) as exception:
-            msg = "Could not connect to MQTT Broker"
-            raise StairChallengeConnectionError(
-                msg,
+            raise StairChallengeMQTTConnectionError(
+                host,
             ) from exception
 
         self.client.loop_start()

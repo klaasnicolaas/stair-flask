@@ -61,8 +61,8 @@ def create_app() -> Flask:
     app = Flask(__name__)
 
     # Load config values from app/config.py
-    if os.getenv("FLASK_ENV") == "testing":
-        app.config.from_object("config.TestConfig")
+    elif os.getenv("FLASK_ENV") == "testing":
+        app.config.from_object("config.TestingConfig")
     else:
         app.config.from_object("config.Config")
 
