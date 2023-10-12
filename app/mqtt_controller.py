@@ -78,13 +78,20 @@ class MQTTClient:
         """
         print(f"Message Received from Others: {message.payload.decode()}")
 
-    def connect(self) -> None:
-        """Connect with MQTT Broker."""
+    def connect(self, host, port, keep_alive) -> None:
+        """Connect with MQTT Broker.
+
+        Args:
+        ----
+            host: MQTT Broker host.
+            port: MQTT Broker port.
+            keep_alive: MQTT Broker keep alive.
+        """
         try:
             self.client.connect(
-                Config.MQTT_BROKER_URL,
-                Config.MQTT_BROKER_PORT,
-                Config.MQTT_KEEPALIVE,
+                host,
+                port,
+                keep_alive,
             )
         except (ConnectionRefusedError, socket.gaierror) as exception:
             raise StairChallengeMQTTConnectionError(
