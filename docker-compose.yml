@@ -64,8 +64,10 @@ services:
     container_name: stair_challenge_flask
     restart: unless-stopped
     depends_on:
-      - emqx
-      - mysql
+      emqx:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
     networks:
       - backend
     environment:
