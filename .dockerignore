@@ -1,0 +1,13 @@
+# Files
+.dockerignore
+.gitignore
+
+# Folders
+__pycache__
+emqx_data
+tests
+node_modules
+.ruff_cache
+.pytest_cache
+.docker
+.github

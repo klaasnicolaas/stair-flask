@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import secrets
+import socket
 
 import paho.mqtt.client as mqtt
 
@@ -86,7 +87,7 @@ class MQTTClient:
                 Config.MQTT_BROKER_PORT,
                 Config.MQTT_KEEPALIVE,
             )
-        except ConnectionRefusedError as exception:
+        except (ConnectionRefusedError, socket.gaierror) as exception:
             msg = "Could not connect to MQTT Broker"
             raise StairChallengeConnectionError(
                 msg,

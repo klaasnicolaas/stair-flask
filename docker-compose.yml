@@ -8,7 +8,7 @@ volumes:
 services:
   # MQTT broker
   emqx:
-    image: emqx:5.1
+    image: emqx:5.3
     container_name: stair_challenge_emqx
     deploy:
       resources:
@@ -30,6 +30,23 @@ services:
       - 18083:18083
     volumes:
       - $PWD/emqx_data:/opt/emqx/data
+
+  # Flask app
+  flask:
+    build: .
+    container_name: stair_challenge_flask
+    restart: unless-stopped
+    depends_on:
+      - emqx
+    networks:
+      - backend
+    environment:
+      - MQTT_BROKER_URL=emqx
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/app
+    privileged: true
 
   # MySQL Service
   mysql:
