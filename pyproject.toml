@@ -17,6 +17,7 @@ flask-login = "^0.6.2"
 flask-wtf = "^1.1.1"
 email-validator = "^2.0.0.post2"
 flask-socketio = "^5.3.6"
+pymysql = "^1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "23.9.1"

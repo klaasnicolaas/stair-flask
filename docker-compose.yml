@@ -31,23 +31,6 @@ services:
     volumes:
       - $PWD/emqx_data:/opt/emqx/data
 
-  # Flask app
-  flask:
-    build: .
-    container_name: stair_challenge_flask
-    restart: unless-stopped
-    depends_on:
-      - emqx
-    networks:
-      - backend
-    environment:
-      - MQTT_BROKER_URL=emqx
-    ports:
-      - 5000:5000
-    volumes:
-      - .:/app
-    privileged: true
-
   # MySQL Service
   mysql:
     image: mysql:latest
@@ -72,6 +55,26 @@ services:
       - backend
     volumes:
       - ./mysql:/var/lib/mysql
+
+  # Flask app
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stair_challenge_flask
+    restart: unless-stopped
+    depends_on:
+      - emqx
+      - mysql
+    networks:
+      - backend
+    environment:
+      - FLASK_ENV=production
+    ports:
+      - 80:5000
+    volumes:
+      - .:/app
+    privileged: true
 
 networks:
   backend:
