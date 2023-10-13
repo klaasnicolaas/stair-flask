@@ -8,7 +8,7 @@ volumes:
 services:
   # MQTT broker
   emqx:
-    image: emqx:5.1
+    image: emqx:5.3
     container_name: stair_challenge_emqx
     deploy:
       resources:
@@ -55,6 +55,28 @@ services:
       - backend
     volumes:
       - ./mysql:/var/lib/mysql
+
+  # Flask app
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stair_challenge_flask
+    restart: unless-stopped
+    depends_on:
+      emqx:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      - FLASK_ENV=production
+    ports:
+      - 80:5000
+    volumes:
+      - .:/app
+    privileged: true
 
 networks:
   backend:

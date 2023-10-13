@@ -32,7 +32,8 @@ from app.led_controller import Colors, LEDController
 from app.mqtt_controller import MQTTClient
 
 db = SQLAlchemy()
-socketio = SocketIO(async_mode="threading")
+mqtt = MQTTClient()
+socketio = SocketIO()
 login = LoginManager()
 login.login_view = "auth.login"
 
@@ -61,13 +62,16 @@ def create_app() -> Flask:
     app = Flask(__name__)
 
     # Load config values from app/config.py
-    if os.getenv("FLASK_ENV") == "testing":
-        app.config.from_object("config.TestConfig")
+    if os.getenv("FLASK_ENV") == "production":
+        app.config.from_object("config.ProductionConfig")
+    elif os.getenv("FLASK_ENV") == "testing":
+        app.config.from_object("config.TestingConfig")
     else:
-        app.config.from_object("config.Config")
+        app.config.from_object("config.DevelopmentConfig")
 
     # Initialize the socketio instance
     socketio.init_app(app)
+    socketio.async_mode = app.config["SOCKETIO_ASYNC_MODE"]
 
     initialize_extensions(app)
     register_blueprints(app)
@@ -99,6 +103,13 @@ def initialize_extensions(app: Flask) -> None:
     # Initialize the database
     db.init_app(app)
 
+    # Initialize MQTT client
+    mqtt.connect(
+        app.config["MQTT_BROKER_URL"],
+        app.config["MQTT_BROKER_PORT"],
+        app.config["MQTT_KEEPALIVE"],
+    )
+
     # Initialize the login manager
     login.init_app(app)
 
@@ -124,10 +135,6 @@ def initialize_extensions(app: Flask) -> None:
         session.permanent: bool = True
         app.permanent_session_lifetime = timedelta(hours=12)
 
-
-# Initialize MQTT client
-mqtt = MQTTClient()
-mqtt.connect()
 
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Sensor, Workout
