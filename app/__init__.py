@@ -33,7 +33,7 @@ from app.mqtt_controller import MQTTClient
 
 db = SQLAlchemy()
 mqtt = MQTTClient()
-socketio = SocketIO(async_mode="threading")
+socketio = SocketIO(async_mode="eventlet")
 login = LoginManager()
 login.login_view = "auth.login"
 

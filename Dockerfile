@@ -26,4 +26,5 @@ RUN pip install poetry && poetry config virtualenvs.create false && poetry insta
 COPY . /app
 COPY --from=builder /app/static /app/static
 
-CMD ["poetry", "run", "flask", "run"]
+CMD ["poetry", "run", "python", "run.py"]
+# CMD ["poetry", "run", "uwsgi", "--ini", "uwsgi.ini"]
