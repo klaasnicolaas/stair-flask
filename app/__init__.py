@@ -33,7 +33,7 @@ from app.mqtt_controller import MQTTClient
 
 db = SQLAlchemy()
 mqtt = MQTTClient()
-socketio = SocketIO(async_mode="eventlet")
+socketio = SocketIO()
 login = LoginManager()
 login.login_view = "auth.login"
 
@@ -71,6 +71,7 @@ def create_app() -> Flask:
 
     # Initialize the socketio instance
     socketio.init_app(app)
+    socketio.async_mode = app.config["SOCKETIO_ASYNC_MODE"]
 
     initialize_extensions(app)
     register_blueprints(app)

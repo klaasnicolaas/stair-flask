@@ -25,6 +25,8 @@ class Config:
 
 class DevelopmentConfig(Config):
     """Set Flask config variables for development."""
+    
+    SOCKETIO_ASYNC_MODE = "threading"
 
     # Database
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{basedir / 'database.sqlite3'}"
@@ -49,6 +51,7 @@ class ProductionConfig(Config):
 
     DEBUG = False
     TESTING = False
+    SOCKETIO_ASYNC_MODE = "eventlet"
 
     # MQTT
     MQTT_BROKER_URL = "emqx"
