@@ -25,7 +25,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     """Set Flask config variables for development."""
-    
+
     SOCKETIO_ASYNC_MODE = "threading"
 
     # Database
