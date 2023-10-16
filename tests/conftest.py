@@ -81,7 +81,7 @@ def led_controller(mock_pixelstrip) -> pytest.fixture:
     Args:
     ----
         mock_pixelstrip (pytest.fixture): Mock PixelStrip object
-    
+
     Returns:
     -------
         pytest.fixture: Mock LEDController
@@ -94,16 +94,19 @@ def led_controller(mock_pixelstrip) -> pytest.fixture:
     invert = False
     channel = 0
 
-    led_controller = LEDController(
-        count,
-        pin,
-        freq_hz,
-        dma,
-        brightness,
-        invert,
-        channel,
-    )
-    led_controller.strip.begin = True
+    led_controller = MagicMock(spec=LEDController)
+
+    # Set attributes as needed
+    led_controller.count = count
+    led_controller.pin = pin
+    led_controller.freq_hz = freq_hz
+    led_controller.dma = dma
+    led_controller.brightness = brightness
+    led_controller.invert = invert
+    led_controller.channel = channel
+
+    led_controller.strip = mock_pixelstrip
+    led_controller.strip.begin.return_value = True
 
     return led_controller
 
