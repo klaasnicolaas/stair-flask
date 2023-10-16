@@ -40,6 +40,7 @@ class TestingConfig(Config):
     """Set Flask config variables for testing."""
 
     TESTING = True
+    SOCKETIO_ASYNC_MODE = "threading"
     MQTT_BROKER_URL = environ.get("MQTT_BROKER_URL")
 
     # Database
