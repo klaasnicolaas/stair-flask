@@ -1,10 +1,11 @@
 """Test configuration."""
 
 import os
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app import create_app, db
+from app import LEDController, create_app, db
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Workout
 from app.const import WORKOUTS
@@ -21,7 +22,7 @@ def new_user() -> pytest.fixture:
 
 
 @pytest.fixture(scope="module")
-def test_client() -> pytest.fixture:
+def test_client(led_controller) -> pytest.fixture:
     """Create a test client for the Flask application."""
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
@@ -31,6 +32,7 @@ def test_client() -> pytest.fixture:
     with flask_app.test_client() as testing_client:
         # Establish an application context
         with flask_app.app_context():
+            flask_app.led_controller = led_controller
             yield testing_client
 
 
@@ -58,6 +60,52 @@ def init_database(test_client: pytest.fixture) -> pytest.fixture:
     yield  # this is where the testing happens!
 
     db.drop_all()
+
+
+@pytest.fixture(scope="module")
+def mock_pixelstrip(request) -> pytest.fixture:
+    """Create a mock PixelStrip object.
+
+    Args:
+    ----
+        request (pytest.fixture): Pytest request object
+    """
+    with patch("rpi_ws281x.PixelStrip", autospec=True) as mock_pixelstrip:
+        yield mock_pixelstrip
+
+
+@pytest.fixture(scope="module")
+def led_controller(mock_pixelstrip) -> pytest.fixture:
+    """Create a mock LEDController.
+
+    Args:
+    ----
+        mock_pixelstrip (pytest.fixture): Mock PixelStrip object
+    
+    Returns:
+    -------
+        pytest.fixture: Mock LEDController
+    """
+    count = 10
+    pin = 10
+    freq_hz = 800000
+    dma = 10
+    brightness = 255
+    invert = False
+    channel = 0
+
+    led_controller = LEDController(
+        count,
+        pin,
+        freq_hz,
+        dma,
+        brightness,
+        invert,
+        channel,
+    )
+    led_controller.strip.begin = MagicMock()
+
+    return led_controller
 
 
 @pytest.fixture(scope="module")
