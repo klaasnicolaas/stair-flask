@@ -962,17 +962,6 @@ files = [
 ]
 
 [[package]]
-name = "rpi-ws281x-mock"
-version = "0.2.2"
-description = "This package mocks the behavior of the rpi-ws281x library"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "rpi_ws281x_mock-0.2.2-py2.py3-none-any.whl", hash = "sha256:4fc7928aee8dab03aad0a4cbc511bfd230a97e879552c581d3980618279cce5c"},
-    {file = "rpi_ws281x_mock-0.2.2.tar.gz", hash = "sha256:80c09a41a5ba2137c01afcb27a6d15dceccc4d7cb297053f3c955876fe8bded3"},
-]
-
-[[package]]
 name = "ruamel-yaml"
 version = "0.17.32"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
@@ -1292,4 +1281,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "02229aafdc6dbab8102951a842c6ca7aa5703ed607c10751484569c3fe4359f6"
+content-hash = "276be0ce205cc854a6b6a9e0b14abd869147fd74aab7e4f3d5abf8ebdcd0b726"

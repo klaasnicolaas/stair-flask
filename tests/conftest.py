@@ -103,7 +103,7 @@ def led_controller(mock_pixelstrip) -> pytest.fixture:
         invert,
         channel,
     )
-    led_controller.strip.begin = MagicMock()
+    led_controller.strip.begin = True
 
     return led_controller
 

@@ -10,7 +10,6 @@ readme = "README.md"
 python = "^3.11"
 flask = "^2.3.3"
 paho-mqtt = "^1.6.1"
-rpi-ws281x = "^5.0.0"
 python-dotenv = "^1.0.0"
 flask-sqlalchemy = "^3.1.1"
 flask-login = "^0.6.2"
@@ -19,6 +18,7 @@ email-validator = "^2.0.0.post2"
 flask-socketio = "^5.3.6"
 pymysql = "^1.1.0"
 eventlet = "^0.33.3"
+rpi-ws281x = "^5.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "23.9.1"
@@ -31,7 +31,6 @@ pylint = "3.0.1"
 pytest = "7.4.2"
 pytest-cov = "4.1.0"
 covdefaults = "2.3.0"
-rpi-ws281x-mock = "^0.2.2"
 
 [tool.coverage.run]
 plugins = ["covdefaults"]

@@ -35,7 +35,6 @@ jobs:
       - name: 🏗 Install dependencies
         run: |
           poetry install --no-interaction
-          poetry remove rpi_ws281x
       - name: 🚀 Run pytest
         run: poetry run pytest --cov app tests
       - name: ⬆️ Upload coverage artifact
@@ -69,7 +68,6 @@ jobs:
       - name: 🏗 Install dependencies
         run: |
           poetry install --no-interaction
-          poetry remove rpi_ws281x
       - name: 🚀 Process coverage results
         run: |
           poetry run coverage combine coverage*/.coverage*
