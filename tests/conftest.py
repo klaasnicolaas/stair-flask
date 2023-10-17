@@ -96,7 +96,7 @@ def init_database(test_client: pytest.fixture) -> None:
     db.drop_all()
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def cli_test_client() -> pytest.fixture:
     """Create a test client for the CLI."""
     # Set the Testing configuration prior to creating the Flask application
