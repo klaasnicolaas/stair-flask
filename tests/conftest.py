@@ -56,8 +56,8 @@ def new_user() -> pytest.fixture:
     return User("Tester", "test@test.com", "password")
 
 
-@pytest.fixture(scope="module")
-def test_client() -> pytest.fixture:
+@pytest.fixture()
+def test_client(mock_strip: MagicMock) -> pytest.fixture:
     """Create a test client for the Flask application."""
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
@@ -70,7 +70,7 @@ def test_client() -> pytest.fixture:
             yield testing_client
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def init_database(test_client: pytest.fixture) -> None:
     """Create the database and the database tables.
 
