@@ -140,6 +140,8 @@ class LEDController:
             led_channel (int): set to '1' for GPIOs 13, 19, 41, 45 or 53
         """
         self.strip = PixelStrip(count, pin, freq_hz, dma, invert, brightness, channel)
+
+    def connect(self) -> None:
         try:
             self.strip.begin()
             # self.set_color(Color(0, 0, 0))

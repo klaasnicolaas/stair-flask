@@ -77,6 +77,7 @@ def cli_test_client() -> pytest.fixture:
     """Create a test client for the CLI."""
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
-    flask_app = create_app()
+    with patch("app.led_controller.PixelStrip.begin"):
+        flask_app = create_app()
 
     return flask_app.test_cli_runner()
