@@ -14,6 +14,16 @@ from app.const import WORKOUTS
 # Fixtures
 # --------
 
+@pytest.fixture(scope="module", autouse=True)
+def mock_strip() -> None:
+    with patch("app.led_controller.PixelStrip.begin"), patch("app.led_controller.PixelStrip.setPixelColor"), patch("app.led_controller.PixelStrip.show"):
+        yield
+
+@pytest.fixture(scope="module", autouse=True)
+def mock_mqtt() -> None:
+    with patch("app.mqtt.connect"):
+        yield
+
 
 @pytest.fixture(scope="module")
 def new_user() -> pytest.fixture:
@@ -77,7 +87,6 @@ def cli_test_client() -> pytest.fixture:
     """Create a test client for the CLI."""
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
-    with patch("app.led_controller.PixelStrip.begin"):
-        flask_app = create_app()
+    flask_app = create_app()
 
     return flask_app.test_cli_runner()
