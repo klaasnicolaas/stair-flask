@@ -1,6 +1,7 @@
 """Test configuration."""
 
 import os
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,7 +14,8 @@ from app.const import WORKOUTS
 # --------
 # Fixtures
 # --------
-
+_mock_rpi_ws281x = MagicMock()
+channels = {}
 
 @pytest.fixture(scope="module")
 def new_user() -> pytest.fixture:
@@ -22,7 +24,7 @@ def new_user() -> pytest.fixture:
 
 
 @pytest.fixture(scope="module")
-def test_client(led_controller) -> pytest.fixture:
+def test_client(_rpi_ws281x) -> pytest.fixture:
     """Create a test client for the Flask application."""
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
@@ -32,7 +34,6 @@ def test_client(led_controller) -> pytest.fixture:
     with flask_app.test_client() as testing_client:
         # Establish an application context
         with flask_app.app_context():
-            flask_app.led_controller = led_controller
             yield testing_client
 
 
@@ -62,53 +63,24 @@ def init_database(test_client: pytest.fixture) -> pytest.fixture:
     db.drop_all()
 
 
-@pytest.fixture(scope="module")
-def mock_pixelstrip(request) -> pytest.fixture:
-    """Create a mock PixelStrip object.
-
-    Args:
-    ----
-        request (pytest.fixture): Pytest request object
-    """
-    with patch("rpi_ws281x.PixelStrip", autospec=True) as mock_pixelstrip:
-        yield mock_pixelstrip
-
-
-@pytest.fixture(scope="module")
-def led_controller(mock_pixelstrip) -> pytest.fixture:
-    """Create a mock LEDController.
-
-    Args:
-    ----
-        mock_pixelstrip (pytest.fixture): Mock PixelStrip object
+@pytest.fixture(scope='module', autouse=False)
+def _rpi_ws281x() -> pytest.fixture:
+    """Mock the _rpi_ws281x module.
+    
+    This fixture is used to mock the _rpi_ws281x module. It is used to mock the
+    PixelStrip class and the ws2811_init function.
 
     Returns:
     -------
-        pytest.fixture: Mock LEDController
+        pytest.fixture: Mocked _rpi_ws281x module
     """
-    count = 10
-    pin = 10
-    freq_hz = 800000
-    dma = 10
-    brightness = 255
-    invert = False
-    channel = 0
+    _mock_rpi_ws281x.ws2811_init.return_value = 0
+    sys.modules['_rpi_ws281x'] = _mock_rpi_ws281x
 
-    led_controller = MagicMock(spec=LEDController)
-
-    # Set attributes as needed
-    led_controller.count = count
-    led_controller.pin = pin
-    led_controller.freq_hz = freq_hz
-    led_controller.dma = dma
-    led_controller.brightness = brightness
-    led_controller.invert = invert
-    led_controller.channel = channel
-
-    led_controller.strip = mock_pixelstrip
-    led_controller.strip.begin.return_value = True
-
-    return led_controller
+    yield _mock_rpi_ws281x
+    del sys.modules['_rpi_ws281x']
+    _mock_rpi_ws281x.reset_mock()
+    channels.clear()
 
 
 @pytest.fixture(scope="module")
