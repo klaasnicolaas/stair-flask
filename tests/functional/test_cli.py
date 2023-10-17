@@ -1,6 +1,8 @@
 """Test the CLI commands."""
 
+import pytest
 
+@pytest.mark.parametrize('mock_strip', 'cli_test_client')
 def test_initialize_database(cli_test_client):
     """Test the init_db command."""
     output = cli_test_client.invoke(args=["init_db"])
