@@ -97,7 +97,7 @@ def init_database(test_client: pytest.fixture) -> None:
 
 
 @pytest.fixture(scope="module")
-def cli_test_client() -> pytest.fixture:
+def cli_test_client(mock_strip: MagicMock) -> pytest.fixture:
     """Create a test client for the CLI."""
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
