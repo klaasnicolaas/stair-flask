@@ -15,7 +15,7 @@ from app.const import WORKOUTS
 # --------
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(autouse=True)
 def mock_strip() -> MagicMock:
     """Mock the LED strip.
 
@@ -37,7 +37,7 @@ def mock_strip() -> MagicMock:
         yield mock
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def mock_mqtt() -> MagicMock:
     """Mock the MQTT client.
 
