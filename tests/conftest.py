@@ -16,7 +16,9 @@ from app.const import WORKOUTS
 
 @pytest.fixture(scope="module", autouse=True)
 def mock_strip() -> None:
+    mock = MagicMock()
     with patch("app.led_controller.PixelStrip.begin"),\
+            patch("app.led_controller.PixelStrip", mock),\
             patch("app.led_controller.PixelStrip.setPixelColor"),\
             patch("app.led_controller.PixelStrip.numPixels"),\
             patch("app.led_controller.PixelStrip.show"):
