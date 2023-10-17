@@ -149,8 +149,22 @@ class LEDController:
         self.invert = invert
         self.channel = channel
 
-    def connect(self) -> None:
-        self.strip = PixelStrip(self.count, self.pin, self.freq_hz, self.dma, self.invert, self.brightness, self.channel)
+    def start(self) -> None:
+        """Initialize the LED strip.
+
+        Raises
+        ------
+            StairChalllengeInitializationError: If the LED strip cannot be initialized
+        """
+        self.strip = PixelStrip(
+            self.count,
+            self.pin,
+            self.freq_hz,
+            self.dma,
+            self.invert,
+            self.brightness,
+            self.channel,
+        )
         try:
             self.strip.begin()
             # self.set_color(Color(0, 0, 0))

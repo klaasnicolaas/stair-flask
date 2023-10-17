@@ -94,7 +94,7 @@ def create_app() -> Flask:
     # Initialize the socketio instance
     socketio.init_app(app)
     socketio.async_mode = app.config["SOCKETIO_ASYNC_MODE"]
-    led_controller.connect()
+    led_controller.start()
     led_controller.turn_off()
 
     initialize_extensions(app)

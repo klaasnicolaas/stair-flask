@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from app import LEDController, create_app, db
+from app import create_app, db
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Workout
 from app.const import WORKOUTS
@@ -14,20 +14,40 @@ from app.const import WORKOUTS
 # Fixtures
 # --------
 
-@pytest.fixture(scope="module", autouse=True)
-def mock_strip() -> None:
-    mock = MagicMock()
-    with patch("app.led_controller.PixelStrip.begin"),\
-            patch("app.led_controller.PixelStrip", mock),\
-            patch("app.led_controller.PixelStrip.setPixelColor"),\
-            patch("app.led_controller.PixelStrip.numPixels"),\
-            patch("app.led_controller.PixelStrip.show"):
-        yield
 
-@pytest.fixture(scope="module", autouse=True)
-def mock_mqtt() -> None:
+@pytest.fixture(scope="function", autouse=True)
+def mock_strip() -> MagicMock:
+    """Mock the LED strip.
+
+    Returns
+    -------
+        MagicMock: Mocked LED strip
+    """
+    mock = MagicMock()
+
+    # Mock the number of pixels
+    mock.numPixels.return_value = 10
+    with patch("app.led_controller.PixelStrip.begin"), patch(
+        "app.led_controller.PixelStrip", return_value=mock,
+    ), patch("app.led_controller.PixelStrip.setPixelColor"), patch(
+        "app.led_controller.PixelStrip.numPixels",
+    ), patch(
+        "app.led_controller.PixelStrip.show",
+    ):
+        yield mock
+
+
+@pytest.fixture(scope="function", autouse=True)
+def mock_mqtt() -> MagicMock:
+    """Mock the MQTT client.
+
+    Returns
+    -------
+        MagicMock: Mocked MQTT client
+    """
+    mock = MagicMock()
     with patch("app.mqtt.connect"):
-        yield
+        yield mock
 
 
 @pytest.fixture(scope="module")
@@ -37,7 +57,7 @@ def new_user() -> pytest.fixture:
 
 
 @pytest.fixture(scope="module")
-def test_client(mocked_led_controller) -> pytest.fixture:
+def test_client() -> pytest.fixture:
     """Create a test client for the Flask application."""
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
@@ -51,7 +71,7 @@ def test_client(mocked_led_controller) -> pytest.fixture:
 
 
 @pytest.fixture(scope="module")
-def init_database(test_client: pytest.fixture) -> pytest.fixture:
+def init_database(test_client: pytest.fixture) -> None:
     """Create the database and the database tables.
 
     Args:
@@ -74,17 +94,6 @@ def init_database(test_client: pytest.fixture) -> pytest.fixture:
     yield  # this is where the testing happens!
 
     db.drop_all()
-
-
-@pytest.fixture(scope="module")
-def mocked_led_controller() -> pytest.fixture:
-    with patch("app.LEDController") as mock_pixel_strip:
-        mock_strip_instance = mock_pixel_strip.return_value
-        mock_strip_instance.begin.return_value = 0
-
-        led_controller = LEDController(count=10, pin=10, freq_hz=800000, dma=10, invert=False, brightness=255, channel=0)
-
-    return led_controller
 
 
 @pytest.fixture(scope="module")
