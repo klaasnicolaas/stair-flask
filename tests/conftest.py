@@ -15,7 +15,7 @@ from app.const import WORKOUTS
 # --------
 
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(autouse=True)
 def mock_strip() -> MagicMock:
     """Mock the LED strip.
 
