@@ -7,7 +7,7 @@ maintainers = ["Klaas Schoute <hello@student-techlife.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-email-validator = "^2.0.0.post2"
+email-validator = "^2.0.0-post.0"
 eventlet = "^0.33.3"
 flask = "^2.3.3"
 flask-login = "^0.6.2"
