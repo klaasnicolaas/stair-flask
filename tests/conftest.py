@@ -28,7 +28,8 @@ def mock_strip() -> MagicMock:
     # Mock the number of pixels
     mock.numPixels.return_value = 10
     with patch("app.led_controller.PixelStrip.begin"), patch(
-        "app.led_controller.PixelStrip", return_value=mock,
+        "app.led_controller.PixelStrip",
+        return_value=mock,
     ), patch("app.led_controller.PixelStrip.setPixelColor"), patch(
         "app.led_controller.PixelStrip.numPixels",
     ), patch(
@@ -56,7 +57,7 @@ def new_user() -> pytest.fixture:
     return User("Tester", "test@test.com", "password")
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_client(mock_strip: MagicMock) -> pytest.fixture:
     """Create a test client for the Flask application."""
     # Set the Testing configuration prior to creating the Flask application
@@ -70,7 +71,7 @@ def test_client(mock_strip: MagicMock) -> pytest.fixture:
             yield testing_client
 
 
-@pytest.fixture()
+@pytest.fixture
 def init_database(test_client: pytest.fixture) -> None:
     """Create the database and the database tables.
 
@@ -96,7 +97,7 @@ def init_database(test_client: pytest.fixture) -> None:
     db.drop_all()
 
 
-@pytest.fixture()
+@pytest.fixture
 def cli_test_client(mock_strip: MagicMock) -> pytest.fixture:
     """Create a test client for the CLI."""
     # Set the Testing configuration prior to creating the Flask application

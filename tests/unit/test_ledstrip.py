@@ -87,7 +87,15 @@ def test_led_controller_one_led(mock_strip: MagicMock) -> None:
 
 def test_led_controller_set_sensor_led(mock_strip: MagicMock) -> None:
     # Arrange
-    controller = LEDController(count=10, pin=18, freq_hz=800000, dma=10, brightness=255, invert=False, channel=1)
+    controller = LEDController(
+        count=10,
+        pin=18,
+        freq_hz=800000,
+        dma=10,
+        brightness=255,
+        invert=False,
+        channel=1,
+    )
     controller.start()
 
     # Act
