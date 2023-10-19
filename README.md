@@ -1,19 +1,38 @@
+<!-- PROJECT SHIELDS -->
+![Project Stage][project-stage-shield]
+![Project Maintenance][maintenance-shield]
+
+[![Build Status][build-shield]][build-url]
+[![Code Coverage][codecov-shield]][codecov-url]
+
 # Stair Challenge
 
-On an RPi 4 you must set a fixed frequency to avoid the idle CPU scaling changing the SPI frequency and breaking the ws281x timings:
+In this repository you will find the code for the overall operation of the Stair Challenge, a project by [Basalt][basalt] - Smartlab and designed to allow rehabilitation patients to practice climbing stairs in a fun and interactive way.
 
-Do this by adding the following lines to /boot/config.txt and reboot:
+## Get Started
+
+For this project you need at least a Raspberry Pi 4 with at least 4GB of RAM. All services are able to run in Docker containers, we are talking about an MQTT Broker from EMQX, MySQL database and the Flask application itself.
+
+### Prerequisites
+
+You must set a fixed frequency on the Raspberry Pi, to avoid the idle CPU scaling changing the SPI frequency and breaking the ws281x timings:
+
+Do this by adding the following lines to `/boot/config.txt` and reboot:
 
 ```txt
 core_freq=500
 core_freq_min=500
 ```
 
-SPI requires you to be in the `gpio` group if you wish to control your LEDs
-without root.
+SPI requires you to be in the `gpio` group if you wish to control your LEDs without root.
 
-## Get Started
+### Starting the services
 
+To start the services, you can use the `docker-compose.yml` file in the root of the project. This file contains all the services needed to run the application.
+
+```bash
+docker-compose up -d
+```
 
 ## Development
 
@@ -63,6 +82,14 @@ manually, using the following command:
 poetry run pre-commit run --all-files
 ```
 
+### Starting the application
+
+To start the application in development mode, you can use the default Flask CLI command:
+
+```bash
+flask run
+```
+
 ## FAQ
 
 ### Temporary failure in name resolution
@@ -71,13 +98,16 @@ poetry run pre-commit run --all-files
 
 This error may indicate that the IP address of your MQTT server is incorrect.
 
-<!-- Remove below this -->
-
-### Docker
-
-https://linux.how2shout.com/how-to-start-docker-container-automatically-on-boot-in-linux/
-
 <!-- MARKDOWN LINKS & IMAGES -->
 [poetry-install]: https://python-poetry.org/docs/#installation
 [poetry]: https://python-poetry.org
 [pre-commit]: https://pre-commit.com
+
+[basalt]: https://basaltrevalidatie.nl
+
+[build-shield]: https://github.com/klaasnicolaas/stair-flask/actions/workflows/tests.yaml/badge.svg
+[build-url]: https://github.com/klaasnicolaas/stair-flask/actions/workflows/tests.yaml
+[codecov-shield]: https://codecov.io/gh/klaasnicolaas/stair-flask/branch/main/graph/badge.svg?token=CC2PRKJGQ9
+[codecov-url]: https://codecov.io/gh/klaasnicolaas/stair-flask
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2023.svg
+[project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg

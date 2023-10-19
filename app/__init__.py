@@ -47,6 +47,28 @@ stair_counter: int = 0
 
 sandglass_thread: threading.Thread = None
 
+
+# ----------------------------------------------------------------------------#
+# LED strip configuration.
+# ----------------------------------------------------------------------------#
+LED_COUNT = 104  # Number of LED pixels.
+LED_PIN = 10  # GPIO pin connected to the pixels (18 uses PWM!).
+LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_DMA = 10  # DMA channel to use for generating signal (try 10)
+LED_BRIGHTNESS = 125  # Set to 0 for darkest and 255 for brightest
+LED_INVERT = False  # ON to invert the signal (Using level shift)
+LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
+
+led_controller = LEDController(
+    LED_COUNT,
+    LED_PIN,
+    LED_FREQ_HZ,
+    LED_DMA,
+    LED_BRIGHTNESS,
+    LED_INVERT,
+    LED_CHANNEL,
+)
+
 # -----------------------------------
 # Create Application Factory Function
 # -----------------------------------
@@ -72,6 +94,8 @@ def create_app() -> Flask:
     # Initialize the socketio instance
     socketio.init_app(app)
     socketio.async_mode = app.config["SOCKETIO_ASYNC_MODE"]
+    led_controller.start()
+    led_controller.turn_off()
 
     initialize_extensions(app)
     register_blueprints(app)
@@ -138,28 +162,6 @@ def initialize_extensions(app: Flask) -> None:
 
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Sensor, Workout
-
-# ----------------------------------------------------------------------------#
-# LED strip configuration.
-# ----------------------------------------------------------------------------#
-LED_COUNT = 104  # Number of LED pixels.
-LED_PIN = 10  # GPIO pin connected to the pixels (18 uses PWM!).
-LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA = 10  # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 125  # Set to 0 for darkest and 255 for brightest
-LED_INVERT = False  # ON to invert the signal (Using level shift)
-LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
-
-led_controller = LEDController(
-    LED_COUNT,
-    LED_PIN,
-    LED_FREQ_HZ,
-    LED_DMA,
-    LED_BRIGHTNESS,
-    LED_INVERT,
-    LED_CHANNEL,
-)
-led_controller.turn_off()
 
 
 def register_blueprints(app: Flask) -> None:

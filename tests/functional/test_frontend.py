@@ -37,7 +37,7 @@ def test_workouts_view(test_client, init_database) -> None:
         assert workout.name.encode() in response.data
 
 
-def test_workout_control_view(test_client) -> None:
+def test_workout_control_view(test_client, init_database) -> None:
     """Test the workout control view.
 
     Args:

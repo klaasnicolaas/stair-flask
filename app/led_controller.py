@@ -117,6 +117,8 @@ class Colors:
 class LEDController:
     """LED strip configuration."""
 
+    strip: PixelStrip
+
     def __init__(
         self,
         count: int,
@@ -139,7 +141,30 @@ class LEDController:
             led_invert (bool): True to invert the signal (using level shift)
             led_channel (int): set to '1' for GPIOs 13, 19, 41, 45 or 53
         """
-        self.strip = PixelStrip(count, pin, freq_hz, dma, invert, brightness, channel)
+        self.count = count
+        self.pin = pin
+        self.freq_hz = freq_hz
+        self.dma = dma
+        self.brightness = brightness
+        self.invert = invert
+        self.channel = channel
+
+    def start(self) -> None:
+        """Initialize the LED strip.
+
+        Raises
+        ------
+            StairChalllengeInitializationError: If the LED strip cannot be initialized
+        """
+        self.strip = PixelStrip(
+            self.count,
+            self.pin,
+            self.freq_hz,
+            self.dma,
+            self.invert,
+            self.brightness,
+            self.channel,
+        )
         try:
             self.strip.begin()
             # self.set_color(Color(0, 0, 0))
