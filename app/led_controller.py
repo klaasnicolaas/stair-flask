@@ -1,5 +1,7 @@
 """LED strip module."""
 # ruff: noqa: PLR0913
+from __future__ import annotations
+
 import secrets
 import time
 
@@ -25,7 +27,7 @@ class Colors:
 
     def __init__(self) -> None:
         """Initialize the used colors."""
-        self.used_colors = []
+        self.used_colors: list[Color] = []
 
     def hex_to_rgb(self, hex_color: str) -> Color:
         """Convert a hex color to RGB.
@@ -54,7 +56,7 @@ class Colors:
 
         return Color(red, green, blue)
 
-    def get_random_unique_color(self) -> None:
+    def get_random_unique_color(self) -> Color:
         """Return a random color that has not been used yet.
 
         Returns
@@ -78,7 +80,7 @@ class Colors:
         return color
 
     @classmethod
-    def get_all_colors(cls: object) -> list:
+    def get_all_colors(cls: object) -> list[Color]:
         """Return all available colors.
 
         Returns
