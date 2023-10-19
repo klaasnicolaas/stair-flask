@@ -2,15 +2,14 @@
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-from app.led_controller import LEDController, Color, Direction
+from app.led_controller import Color, Direction, LEDController
 
 
 def test_led_controller_color_wipe(mock_strip: MagicMock) -> None:
     """Test the color_wipe method of the LEDController class.
 
     Args:
-    -----
+    ----
         mock_strip (MagicMock): The mocked LED strip.
     """
     controller = LEDController(
@@ -35,7 +34,7 @@ def test_led_controller_one_led(mock_strip: MagicMock) -> None:
     """Test the one_led method of the LEDController class.
 
     Args:
-    -----
+    ----
         mock_strip (MagicMock): The mocked LED strip.
     """
     # Arrange
