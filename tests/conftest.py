@@ -2,6 +2,7 @@
 
 import os
 from unittest.mock import MagicMock, patch
+from datetime import datetime
 
 import pytest
 
@@ -51,36 +52,56 @@ def mock_mqtt() -> MagicMock:
         yield mock
 
 
-@pytest.fixture(scope="module")
-def new_user() -> pytest.fixture:
+@pytest.fixture
+def user() -> User:
     """Create a new user."""
-    return User("Tester", "test@test.com", "password")
+    user = User(
+        name="Tester",
+        email="test@test.com",
+        password="secretPassword",
+        created_at=datetime.utcnow()
+    )
+    user.set_password("secretPassword")
+    return user
 
 
 @pytest.fixture
-def test_client(mock_strip: MagicMock) -> pytest.fixture:
-    """Create a test client for the Flask application."""
+def as_user(client, init_database, user):
+    db.session.add(user)
+    return client.post(
+        "/login",
+        data=dict(email=user.email, password="secretPassword"),
+        follow_redirects=True,
+    )
+
+
+@pytest.fixture
+def app(mock_strip: MagicMock) -> pytest.fixture:
+    """Create the test Flask application."""
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
     flask_app = create_app()
 
-    # Create a test client using the Flask application configured for testing
-    with flask_app.test_client() as testing_client:
-        # Establish an application context
-        with flask_app.app_context():
-            yield testing_client
+    yield flask_app  # this is where the testing happens!
 
 
 @pytest.fixture
-def init_database(test_client: pytest.fixture) -> None:
+def client(app: pytest.fixture) -> pytest.fixture:
+    """Create a test client for the Flask application."""
+    with app.app_context():
+        yield app.test_client()
+
+@pytest.fixture
+def init_database(app: pytest.fixture) -> None:
     """Create the database and the database tables.
 
     Args:
     ----
-        test_client (pytest.fixture): Test client for the Flask application
+        app (pytest.fixture): Test client for the Flask application
     """
     db.create_all()
 
+    # Add workout data
     for workout in WORKOUTS:
         db.session.add(
             Workout(
