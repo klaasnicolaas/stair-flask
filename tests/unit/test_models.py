@@ -1,5 +1,4 @@
 """Unit tests for auth models."""
-import pytest
 from datetime import datetime
 
 from app.blueprints.auth.models import User
@@ -16,7 +15,7 @@ def test_new_user() -> None:
     assert user.is_active is True
     assert user.is_anonymous is False
 
-@pytest.mark.usefixtures("as_user")
+
 def test_setting_password(user: User) -> None:
     """Test setting password.
 
@@ -30,7 +29,6 @@ def test_setting_password(user: User) -> None:
     assert user.check_password("wrong") is False
 
 
-@pytest.mark.usefixtures("as_user")
 def test_user_id(user: User) -> None:
     """Test user id.
 

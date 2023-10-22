@@ -5,7 +5,7 @@ import pytest
 from app.blueprints.auth.models import User
 
 
-@pytest.mark.usefixtures("as_user", "init_database")
+@pytest.mark.usefixtures("auth_client")
 def test_dashboard_view(client: pytest.fixture, user: User) -> None:
     """Test the dashboard view.
 
@@ -21,7 +21,7 @@ def test_dashboard_view(client: pytest.fixture, user: User) -> None:
     assert response.request.path == "/admin"
 
 
-@pytest.mark.usefixtures("as_user")
+@pytest.mark.usefixtures("auth_client")
 def test_sensors_view(client: pytest.fixture, user: User) -> None:
     """Test the sensors view.
 

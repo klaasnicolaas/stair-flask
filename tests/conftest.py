@@ -5,6 +5,7 @@ from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
+from flask_login import login_user
 
 from app import create_app, db
 from app.blueprints.auth.models import User
@@ -65,14 +66,36 @@ def user() -> User:
     return user
 
 
+# @pytest.fixture
+# def as_user(client, init_database, user):
+#     db.session.add(user)
+#     return client.post(
+#         "/login",
+#         data=dict(email=user.email, password="secretPassword"),
+#         follow_redirects=True,
+#     )
+
+
 @pytest.fixture
-def as_user(client, init_database, user):
-    db.session.add(user)
-    return client.post(
-        "/login",
-        data=dict(email=user.email, password="secretPassword"),
-        follow_redirects=True,
-    )
+def auth_client(
+    app: pytest.fixture, user: User, database: pytest.fixture
+) -> pytest.fixture:
+    """Log in as a user.
+
+    Args:
+    ----
+        app (pytest.fixture): Test client for the Flask application
+        user (User): User to log in as
+
+    Returns:
+    -------
+        pytest.fixture: Logged in user
+    """
+    with app.test_request_context():
+        database.session.add(user)
+        database.session.commit()
+        test_user = database.session.query(User).filter_by(id=1).first()
+        yield login_user(test_user, remember=True)
 
 
 @pytest.fixture
