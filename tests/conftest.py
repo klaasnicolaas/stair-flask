@@ -1,8 +1,8 @@
 """Test configuration."""
 
 import os
-from unittest.mock import MagicMock, patch
 from datetime import datetime
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -59,7 +59,7 @@ def user() -> User:
         name="Tester",
         email="test@test.com",
         password="secretPassword",
-        created_at=datetime.utcnow()
+        created_at=datetime.utcnow(),
     )
     user.set_password("secretPassword")
     return user
@@ -82,7 +82,7 @@ def app(mock_strip: MagicMock) -> pytest.fixture:
     os.environ["FLASK_ENV"] = "testing"
     flask_app = create_app()
 
-    yield flask_app  # this is where the testing happens!
+    return flask_app  # this is where the testing happens!
 
 
 @pytest.fixture
@@ -91,8 +91,9 @@ def client(app: pytest.fixture) -> pytest.fixture:
     with app.app_context():
         yield app.test_client()
 
+
 @pytest.fixture
-def init_database(app: pytest.fixture) -> None:
+def init_database() -> None:
     """Create the database and the database tables.
 
     Args:
