@@ -67,31 +67,6 @@ def user() -> User:
 
 
 @pytest.fixture
-def auth_client(
-    app: pytest.fixture,
-    user: User,
-    database: pytest.fixture,
-) -> pytest.fixture:
-    """Log in as a user.
-
-    Args:
-    ----
-        app (pytest.fixture): Test client for the Flask application
-        user (User): User model
-        database (pytest.fixture): Database fixture
-
-    Returns:
-    -------
-        pytest.fixture: Logged in user
-    """
-    with app.test_request_context():
-        database.session.add(user)
-        database.session.commit()
-        test_user = database.session.query(User).filter_by(id=1).first()
-        yield login_user(test_user, remember=True)
-
-
-@pytest.fixture
 def database(app: pytest.fixture) -> pytest.fixture:
     """Create the database and the database tables.
 
@@ -122,7 +97,6 @@ def app(mock_strip: MagicMock) -> pytest.fixture:
     return create_app()
 
 
-
 @pytest.fixture
 def client(app: pytest.fixture) -> pytest.fixture:
     """Create a test client for the Flask application.
@@ -134,6 +108,31 @@ def client(app: pytest.fixture) -> pytest.fixture:
     """
     with app.app_context():
         yield app.test_client()
+
+
+@pytest.fixture
+def auth_client(
+    app: pytest.fixture,
+    user: User,
+    database: pytest.fixture,
+) -> pytest.fixture:
+    """Log in as a user.
+
+    Args:
+    ----
+        app (pytest.fixture): Test client for the Flask application
+        user (User): User model
+        database (pytest.fixture): Database fixture
+
+    Returns:
+    -------
+        pytest.fixture: Logged in user
+    """
+    with app.test_request_context():
+        database.session.add(user)
+        database.session.commit()
+        test_user = database.session.query(User).filter_by(id=1).first()
+        yield login_user(test_user, remember=True)
 
 
 @pytest.fixture

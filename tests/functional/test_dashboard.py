@@ -6,7 +6,7 @@ from app.blueprints.auth.models import User
 
 
 @pytest.mark.usefixtures("auth_client")
-def test_dashboard_view(client: pytest.fixture, user: User) -> None:
+def test_dashboard_view(client: pytest.fixture, user: User, database) -> None:
     """Test the dashboard view.
 
     Args:
@@ -14,6 +14,7 @@ def test_dashboard_view(client: pytest.fixture, user: User) -> None:
         client: Test client for the Flask application.
         user: User model.
     """
+    user = database.session.query(User).filter_by(id=1).first()
     assert user.is_authenticated is True
 
     response = client.get("/admin")
@@ -22,7 +23,7 @@ def test_dashboard_view(client: pytest.fixture, user: User) -> None:
 
 
 @pytest.mark.usefixtures("auth_client")
-def test_sensors_view(client: pytest.fixture, user: User) -> None:
+def test_sensors_view(client: pytest.fixture, user: User, database) -> None:
     """Test the sensors view.
 
     Args:
@@ -30,9 +31,9 @@ def test_sensors_view(client: pytest.fixture, user: User) -> None:
         client: Test client for the Flask application.
         user: User model.
     """
+    user = database.session.query(User).filter_by(id=1).first()
     assert user.is_authenticated is True
 
     response = client.get("/admin/sensors")
-    assert response.status_code == 302
+    assert response.status_code == 200
     assert response.request.path == "/admin/sensors"
-    # assert b"Sensor" in response.data
