@@ -5,13 +5,13 @@ import pytest
 from app.blueprints.backend.models import Workout
 
 
-def test_home_view(client: pytest.fixture, init_database: pytest.fixture) -> None:
+@pytest.mark.usefixtures("workouts")
+def test_home_view(client: pytest.fixture) -> None:
     """Test the home view.
 
     Args:
     ----
         client: Test client for the Flask application.
-        init_database: Initialize the database.
     """
     response = client.get("/")
     assert response.status_code == 200
@@ -22,13 +22,13 @@ def test_home_view(client: pytest.fixture, init_database: pytest.fixture) -> Non
         assert workout.name.encode() in response.data
 
 
-def test_workouts_view(client: pytest.fixture, init_database: pytest.fixture) -> None:
+@pytest.mark.usefixtures("workouts")
+def test_workouts_view(client: pytest.fixture) -> None:
     """Test the workouts view.
 
     Args:
     ----
         client: Test client for the Flask application.
-        init_database: Initialize the database.
     """
     response = client.get("/workouts")
     assert response.status_code == 200
@@ -39,7 +39,8 @@ def test_workouts_view(client: pytest.fixture, init_database: pytest.fixture) ->
         assert workout.name.encode() in response.data
 
 
-def test_workout_control_view(client: pytest.fixture, init_database) -> None:
+@pytest.mark.usefixtures("workouts")
+def test_workout_control_view(client: pytest.fixture) -> None:
     """Test the workout control view.
 
     Args:
