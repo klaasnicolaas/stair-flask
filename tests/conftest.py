@@ -60,6 +60,7 @@ def user() -> User:
         name="Tester",
         email="test@test.com",
         password="secretPassword",
+        is_admin=True,
         created_at=datetime.utcnow(),
     )
     user.set_password("secretPassword")

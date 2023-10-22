@@ -1,21 +1,20 @@
 """Functional tests for the backend of the Flask application."""
 
 import pytest
-
-from app.blueprints.auth.models import User
+from flask_login import current_user
 
 
 @pytest.mark.usefixtures("auth_client")
-def test_dashboard_view(client: pytest.fixture, user: User, database) -> None:
-    """Test the dashboard view.
+def test_dashboard_view(client: pytest.fixture) -> None:
+    """Test the dashboard view as admin.
 
     Args:
     ----
         client: Test client for the Flask application.
-        user: User model.
     """
-    user = database.session.query(User).filter_by(id=1).first()
-    assert user.is_authenticated is True
+    assert current_user.is_authenticated is True
+    assert current_user.is_admin is True
+    assert current_user.id == 1
 
     response = client.get("/admin")
     assert response.status_code == 308
@@ -23,16 +22,16 @@ def test_dashboard_view(client: pytest.fixture, user: User, database) -> None:
 
 
 @pytest.mark.usefixtures("auth_client")
-def test_sensors_view(client: pytest.fixture, user: User, database) -> None:
-    """Test the sensors view.
+def test_sensors_view(client: pytest.fixture) -> None:
+    """Test the sensors view as admin.
 
     Args:
     ----
         client: Test client for the Flask application.
-        user: User model.
     """
-    user = database.session.query(User).filter_by(id=1).first()
-    assert user.is_authenticated is True
+    assert current_user.is_authenticated is True
+    assert current_user.is_admin is True
+    assert current_user.id == 1
 
     response = client.get("/admin/sensors")
     assert response.status_code == 200
