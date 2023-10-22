@@ -21,17 +21,18 @@ def test_dashboard_view(client: pytest.fixture, user: User) -> None:
     assert response.request.path == "/admin"
 
 
-# @pytest.mark.usefixtures("as_user")
-# def test_sensors_view(client: pytest.fixture, user: User) -> None:
-#     """Test the sensors view.
-#     Args:
-#     ----
-#         client: Test client for the Flask application.
-#         user: User model.
-#     """
-#     assert user.is_authenticated is True
+@pytest.mark.usefixtures("as_user")
+def test_sensors_view(client: pytest.fixture, user: User) -> None:
+    """Test the sensors view.
 
-#     response = client.get("/admin/sensors")
-#     assert response.status_code == 200
-#     assert response.request.path == "/admin/sensors"
-#     assert b"Sensor" in response.data
+    Args:
+    ----
+        client: Test client for the Flask application.
+        user: User model.
+    """
+    assert user.is_authenticated is True
+
+    response = client.get("/admin/sensors")
+    assert response.status_code == 302
+    assert response.request.path == "/admin/sensors"
+    # assert b"Sensor" in response.data

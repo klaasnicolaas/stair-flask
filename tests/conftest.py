@@ -76,6 +76,14 @@ def as_user(client, init_database, user):
 
 
 @pytest.fixture
+def database(app: pytest.fixture) -> pytest.fixture:
+    with app.app_context():
+        db.create_all()
+        yield db
+        db.drop_all()
+
+
+@pytest.fixture
 def app(mock_strip: MagicMock) -> pytest.fixture:
     """Create the test Flask application."""
     # Set the Testing configuration prior to creating the Flask application
@@ -93,18 +101,16 @@ def client(app: pytest.fixture) -> pytest.fixture:
 
 
 @pytest.fixture
-def init_database() -> None:
+def init_database(database: pytest.fixture) -> None:
     """Create the database and the database tables.
 
     Args:
     ----
         app (pytest.fixture): Test client for the Flask application
     """
-    db.create_all()
-
     # Add workout data
     for workout in WORKOUTS:
-        db.session.add(
+        database.session.add(
             Workout(
                 name=workout["name"],
                 description=workout["description"],
@@ -112,11 +118,11 @@ def init_database() -> None:
                 cons=None if "cons" not in workout else workout["cons"],
             ),
         )
-        db.session.commit()
+    database.session.commit()
 
     yield  # this is where the testing happens!
 
-    db.drop_all()
+    database.drop_all()
 
 
 @pytest.fixture
