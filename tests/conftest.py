@@ -1,9 +1,11 @@
 """Test configuration."""
 
 import os
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
+from flask_login import login_user
 
 from app import create_app, db
 from app.blueprints.auth.models import User
@@ -51,38 +53,100 @@ def mock_mqtt() -> MagicMock:
         yield mock
 
 
-@pytest.fixture(scope="module")
-def new_user() -> pytest.fixture:
+@pytest.fixture
+def user() -> User:
     """Create a new user."""
-    return User("Tester", "test@test.com", "password")
+    user = User(
+        name="Tester",
+        email="test@test.com",
+        password="secretPassword",
+        is_admin=True,
+        created_at=datetime.utcnow(),
+    )
+    user.set_password("secretPassword")
+    return user
 
 
 @pytest.fixture
-def test_client(mock_strip: MagicMock) -> pytest.fixture:
-    """Create a test client for the Flask application."""
-    # Set the Testing configuration prior to creating the Flask application
-    os.environ["FLASK_ENV"] = "testing"
-    flask_app = create_app()
-
-    # Create a test client using the Flask application configured for testing
-    with flask_app.test_client() as testing_client:
-        # Establish an application context
-        with flask_app.app_context():
-            yield testing_client
-
-
-@pytest.fixture
-def init_database(test_client: pytest.fixture) -> None:
+def database(app: pytest.fixture) -> pytest.fixture:
     """Create the database and the database tables.
 
     Args:
     ----
-        test_client (pytest.fixture): Test client for the Flask application
-    """
-    db.create_all()
+        app (pytest.fixture): Test client for the Flask application
 
+    Returns:
+    -------
+        pytest.fixture: Database fixture
+    """
+    with app.app_context():
+        db.create_all()
+        yield db
+        db.drop_all()
+
+
+@pytest.fixture
+def app(mock_strip: MagicMock) -> pytest.fixture:
+    """Create the test Flask application.
+
+    Args:
+    ----
+        mock_strip (MagicMock): Mocked LED strip
+    """
+    # Set the Testing configuration prior to creating the Flask application
+    os.environ["FLASK_ENV"] = "testing"
+    return create_app()
+
+
+@pytest.fixture
+def client(app: pytest.fixture) -> pytest.fixture:
+    """Create a test client for the Flask application.
+
+    Args:
+    ----
+        app (pytest.fixture): Test client for the Flask application
+
+    """
+    with app.app_context():
+        yield app.test_client()
+
+
+@pytest.fixture
+def auth_client(
+    app: pytest.fixture,
+    user: User,
+    database: pytest.fixture,
+) -> pytest.fixture:
+    """Log in as a user.
+
+    Args:
+    ----
+        app (pytest.fixture): Test client for the Flask application
+        user (User): User model
+        database (pytest.fixture): Database fixture
+
+    Returns:
+    -------
+        pytest.fixture: Logged in user
+    """
+    with app.test_request_context():
+        database.session.add(user)
+        database.session.commit()
+        test_user = database.session.query(User).filter_by(id=1).first()
+        yield login_user(test_user, remember=True)
+
+
+@pytest.fixture
+def workouts(database: pytest.fixture) -> None:
+    """Create the database and the database tables.
+
+    Args:
+    ----
+        database (pytest.fixture): Database fixture
+    """
+    # Add workout data
     for workout in WORKOUTS:
-        db.session.add(
+        database.session.add(
             Workout(
                 name=workout["name"],
                 description=workout["description"],
@@ -90,16 +154,21 @@ def init_database(test_client: pytest.fixture) -> None:
                 cons=None if "cons" not in workout else workout["cons"],
             ),
         )
-        db.session.commit()
-
-    yield  # this is where the testing happens!
-
-    db.drop_all()
+    database.session.commit()
 
 
 @pytest.fixture
 def cli_test_client(mock_strip: MagicMock) -> pytest.fixture:
-    """Create a test client for the CLI."""
+    """Create a test client for the CLI.
+
+    Args:
+    ----
+        mock_strip (MagicMock): Mocked LED strip
+
+    Returns:
+    -------
+        pytest.fixture: Test client for the CLI
+    """
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
     flask_app = create_app()
