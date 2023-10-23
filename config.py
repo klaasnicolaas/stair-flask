@@ -17,6 +17,7 @@ class Config:
     SECRET_KEY = environ.get("SECRET_KEY")
     STATIC_FOLDER = "static"
     TEMPLATES_FOLDER = "templates"
+    TEMPLATES_AUTO_RELOAD = True
 
     # MQTT
     MQTT_BROKER_PORT = int(environ.get("MQTT_BROKER_PORT"))
