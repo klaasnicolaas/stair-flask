@@ -44,6 +44,7 @@ workout_id: int = None
 last_triggered_client_id: int = None
 client_counters: list = [1]
 stair_counter: int = 0
+steps_counter: int = 0
 
 sandglass_thread: threading.Thread = None
 
@@ -250,16 +251,16 @@ def workout_counting(client_id: int) -> None:
     """
     global last_triggered_client_id, first_trigger
 
-    print(client_counters)
+    # print(client_counters)
     if client_id in client_counters and client_id != last_triggered_client_id:
         if first_trigger:
             first_trigger = False
         else:
-            update_counter(1)
+            update_counters(1)
         last_triggered_client_id = client_id
 
 
-def update_counter(value: int, reset: ResetCounter = ResetCounter.NO) -> None:
+def update_counters(value: int, reset: ResetCounter = ResetCounter.NO) -> None:
     """Update the counter on the frontend.
 
     Args:
@@ -267,16 +268,32 @@ def update_counter(value: int, reset: ResetCounter = ResetCounter.NO) -> None:
         value: The value to update the counter with.
         reset (ResetCounter): Reset the counter.
     """
-    global stair_counter
+    global stair_counter, steps_counter
     if reset == ResetCounter.YES:
         # reset the counter
         stair_counter = 0
+        steps_counter = 0
     else:
-        # Update the counter
+        # Update the stair counter
         stair_counter += value
-        print(f"Stair counter: {stair_counter}")
+
+        # Update the steps counter
+        steps = {
+            1: 1,
+            2: 3,
+            3: 5,
+            4: 7,
+            5: 9,
+            6: 11,
+        }.get(client_counters[1])
+        steps_counter += steps
+
+        print(f"Stair counter: {stair_counter}, Steps counter: {steps_counter}")
     # Send the counter value to the frontend
-    socketio.emit("counter", stair_counter)
+    socketio.emit(
+        "counter",
+        {"stair_counter": stair_counter, "steps_counter": steps_counter},
+    )
 
 
 def register_mqtt_events(app: Flask) -> None:
@@ -449,7 +466,7 @@ def on_system_control(event: dict) -> None:
             else:
                 led_controller.set_sensor_led(colors.BLUE, end_sensor)
                 led_controller.one_led(colors.GREEN, 103)
-            update_counter(0, ResetCounter.YES)
+            update_counters(0, ResetCounter.YES)
         else:
             mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
     elif event["mode"] == "stop" or event["mode"] == "finished":
