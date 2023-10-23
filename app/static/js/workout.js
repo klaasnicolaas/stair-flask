@@ -38,7 +38,7 @@ system_control = function (event) {
 }
 
 socket.on('counter', function (data) {
-  $('#counter').text(data)
+  $('#counter_stairs').text(data)
 })
 
 // Function to update the alert message
