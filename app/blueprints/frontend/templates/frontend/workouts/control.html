@@ -21,6 +21,7 @@
       <span class="sr-only">Info</span>
       <div><span class="font-medium">Let op!</span> De oefening is gestart!</div>
     </div>
+    {% if workout.id == 2 %}
     <div class="max-w-screen-xl mx-auto mb-6 xl:mb-10">
       <div class="grid grid-cols-1">
         <!-- Column 1 -->
@@ -49,6 +50,7 @@
         </div>
       </div>
     </div>
+    {% endif %}
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 xl:gap-10 lg:space-y-0">
       {% if workout.id == 2 %}
       <!-- Time Card -->
