@@ -69,81 +69,74 @@ $('#input_time').on('input', function () {
 
 // Update the workout show timer
 function updateTimerDisplay() {
-  var inputTime = $('#input_time').val();
-  var timerElement = $('#show_timer');
+  var inputTime = $('#input_time').val()
+  var timerElement = $('#show_timer')
 
-  var timeParts = inputTime.split(':');
-  var hours = parseInt(timeParts[0]) || 0; // Zorg ervoor dat hours altijd een getal is (standaard naar 0)
-  var minutes = parseInt(timeParts[1]) || 0; // Zorg ervoor dat minutes altijd een getal is (standaard naar 0)
-  var seconds = parseInt(timeParts[2]) || 0; // Zorg ervoor dat seconds altijd een getal is (standaard naar 0)
+  var timeParts = inputTime.split(':')
+  var hours = parseInt(timeParts[0]) || 0 // Zorg ervoor dat hours altijd een getal is (standaard naar 0)
+  var minutes = parseInt(timeParts[1]) || 0 // Zorg ervoor dat minutes altijd een getal is (standaard naar 0)
+  var seconds = parseInt(timeParts[2]) || 0 // Zorg ervoor dat seconds altijd een getal is (standaard naar 0)
 
-  var displayHours = hours.toString().padStart(2, '0');
-  var displayMinutes = minutes.toString().padStart(2, '0');
-  var displaySeconds = seconds.toString().padStart(2, '0');
+  var displayHours = hours.toString().padStart(2, '0')
+  var displayMinutes = minutes.toString().padStart(2, '0')
+  var displaySeconds = seconds.toString().padStart(2, '0')
 
-  timerElement.text(displayHours + ':' + displayMinutes + ':' + displaySeconds);
+  timerElement.text(displayHours + ':' + displayMinutes + ':' + displaySeconds)
 }
 
 // Reset de workout-timer
 function resetTimer() {
-  clearInterval(timerInterval); // Stop de timer interval
-  timerInterval = null;
+  clearInterval(timerInterval) // Stop de timer interval
+  timerInterval = null
 
   // Update de timerweergave om de oorspronkelijke tijd te tonen
-  updateTimerDisplay();
+  updateTimerDisplay()
 }
 
-var timerInterval = null; // Variabele om de timerinterval bij te houden
+var timerInterval = null // Variabele om de timerinterval bij te houden
 
 // Calculate the total seconds based on the string input time
 function calculateTotalSeconds(timeString) {
   if (!timeString) {
-    return null;
+    return null
   }
 
-  let timeParts = timeString.split(':');
-  let hours = parseInt(timeParts[0]) || 0;
-  let minutes = parseInt(timeParts[1]) || 0;
-  let totalSeconds = hours * 3600 + minutes * 60;
+  let timeParts = timeString.split(':')
+  let hours = parseInt(timeParts[0]) || 0
+  let minutes = parseInt(timeParts[1]) || 0
+  let totalSeconds = hours * 3600 + minutes * 60
 
-  return totalSeconds;
+  return totalSeconds
 }
 
 function startTimer() {
   // Voorkom dat de timer opnieuw wordt gestart als deze al loopt
   if (timerInterval) {
-    return;
+    return
   }
 
-  var totalSeconds = calculateTotalSeconds($('#input_time').val());
+  var totalSeconds = calculateTotalSeconds($('#input_time').val())
 
   function updateTimer() {
-    var displayHours = Math.floor(totalSeconds / 3600);
-    var remainingSeconds = totalSeconds % 3600;
-    var displayMinutes = Math.floor(remainingSeconds / 60);
-    var displaySeconds = remainingSeconds % 60;
+    var displayHours = Math.floor(totalSeconds / 3600)
+    var remainingSeconds = totalSeconds % 3600
+    var displayMinutes = Math.floor(remainingSeconds / 60)
+    var displaySeconds = remainingSeconds % 60
 
-    $('#show_timer').text(
-      displayHours.toString().padStart(2, '0') +
-        ':' +
-        displayMinutes.toString().padStart(2, '0') +
-        ':' +
-        displaySeconds.toString().padStart(2, '0')
-    );
+    $('#show_timer').text(displayHours.toString().padStart(2, '0') + ':' + displayMinutes.toString().padStart(2, '0') + ':' + displaySeconds.toString().padStart(2, '0'))
 
     if (totalSeconds <= 0) {
-      clearInterval(timerInterval);
-      timerInterval = null; // Verwijder de interval
+      clearInterval(timerInterval)
+      timerInterval = null // Verwijder de interval
       system_control('finished') // Stop de oefening
-
     } else {
-      totalSeconds--;
+      totalSeconds--
     }
   }
 
   // Start de timer en update de timerweergave
-  updateTimer();
-  timerInterval = setInterval(updateTimer, 1000);
+  updateTimer()
+  timerInterval = setInterval(updateTimer, 1000)
 }
 
 $(document).ready(function () {
@@ -156,4 +149,21 @@ $(document).ready(function () {
     // Update the value displayed based on the slider value
     brightnessNumber.text($(this).val()) // Use $(this).val() to get the slider value
   })
+})
+
+// Change the order of the cards based on the orientation
+$(screen.orientation).on('change', function () {
+  console.log('Orientation changed')
+  // Controleer of het scherm in portrait mode is
+  if (screen.orientation.type === 'portrait-primary' || screen.orientation.type === 'portrait-secondary') {
+    // Verander de volgorde van de kaarten voor portrait mode
+    $('#timeCard').css('order', 2)
+    $('#settingsCard').css('order', 3)
+    $('#controlCard').css('order', 1)
+  } else {
+    // Reset de volgorde voor landscape mode
+    $('#timeCard').css('order', '')
+    $('#settingsCard').css('order', '')
+    $('#controlCard').css('order', '')
+  }
 })

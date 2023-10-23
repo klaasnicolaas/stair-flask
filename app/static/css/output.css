@@ -1139,6 +1139,18 @@ input:checked + .toggle-bg {
   z-index: 50;
 }
 
+.order-1 {
+  order: 1;
+}
+
+.order-2 {
+  order: 2;
+}
+
+.order-3 {
+  order: 3;
+}
+
 .m-4 {
   margin: 1rem;
 }
@@ -2135,6 +2147,10 @@ input:checked + .toggle-bg {
   padding: 1.5rem;
 }
 
+.p-8 {
+  padding: 2rem;
+}
+
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -2254,6 +2270,10 @@ input:checked + .toggle-bg {
 
 .pt-5 {
   padding-top: 1.25rem;
+}
+
+.pt-0 {
+  padding-top: 0px;
 }
 
 .text-left {
@@ -2445,6 +2465,11 @@ input:checked + .toggle-bg {
 .text-yellow-800 {
   --tw-text-opacity: 1;
   color: rgb(114 59 19 / var(--tw-text-opacity));
+}
+
+.text-blue-500 {
+  --tw-text-opacity: 1;
+  color: rgb(63 131 248 / var(--tw-text-opacity));
 }
 
 .antialiased {
@@ -3290,6 +3315,10 @@ input:checked + .toggle-bg {
 }
 
 @media (min-width: 640px) {
+  .sm\:order-1 {
+    order: 1;
+  }
+
   .sm\:col-span-2 {
     grid-column: span 2 / span 2;
   }
@@ -3304,6 +3333,14 @@ input:checked + .toggle-bg {
 
   .sm\:h-9 {
     height: 2.25rem;
+  }
+
+  .sm\:w-1\/2 {
+    width: 50%;
+  }
+
+  .sm\:w-auto {
+    width: auto;
   }
 
   .sm\:max-w-md {
@@ -3385,6 +3422,10 @@ input:checked + .toggle-bg {
     inset: 0px;
   }
 
+  .md\:order-1 {
+    order: 1;
+  }
+
   .md\:ml-56 {
     margin-left: 14rem;
   }
@@ -3441,6 +3482,10 @@ input:checked + .toggle-bg {
     width: auto;
   }
 
+  .md\:w-1\/3 {
+    width: 33.333333%;
+  }
+
   .md\:basis-3\/4 {
     flex-basis: 75%;
   }
@@ -3452,6 +3497,10 @@ input:checked + .toggle-bg {
 
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .md\:grid-rows-1 {
@@ -3492,6 +3541,10 @@ input:checked + .toggle-bg {
     --tw-space-y-reverse: 0;
     margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+  }
+
+  .md\:p-8 {
+    padding: 2rem;
   }
 
   .md\:pl-2 {
@@ -3541,6 +3594,10 @@ input:checked + .toggle-bg {
 
   .lg\:w-auto {
     width: auto;
+  }
+
+  .lg\:w-1\/3 {
+    width: 33.333333%;
   }
 
   .lg\:basis-2\/4 {
@@ -3629,6 +3686,11 @@ input:checked + .toggle-bg {
     padding-bottom: 2rem;
   }
 
+  .lg\:px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   .lg\:text-6xl {
     font-size: 3.75rem;
     line-height: 1;
@@ -3668,6 +3730,10 @@ input:checked + .toggle-bg {
     margin-left: 16rem;
   }
 
+  .xl\:mb-10 {
+    margin-bottom: 2.5rem;
+  }
+
   .xl\:w-64 {
     width: 16rem;
   }
@@ -3698,6 +3764,10 @@ input:checked + .toggle-bg {
 
   .xl\:p-8 {
     padding: 2rem;
+  }
+
+  .xl\:p-4 {
+    padding: 1rem;
   }
 
   .xl\:px-48 {
