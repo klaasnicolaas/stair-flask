@@ -132,17 +132,29 @@
           </div>
           <hr class="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
           <div class="mb-4">
-            <h3 class="font-semibold text-gray-900 dark:text-white">De stop sensor</h3>
+            <!-- <h3 class="font-semibold text-gray-900 dark:text-white">De stop sensor</h3> -->
             <p class="font-light text-gray-500 sm:text-md dark:text-gray-400">Tot hoe ver loop je omhoog?</p>
           </div>
           <ul class="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-            {% for sensor in sensors[-4:] %}
+            {% for sensor in sensors[-4:]|reverse %}
             <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
               <div class="flex items-center pl-3">
-                <input id="list-end-{{ sensor.client_id }}" type="radio" value="{{ sensor.client_id }}" name="list-sensor-end" {% if loop.index == 4 %} checked {% endif %} class="w-4 h-4 text-blue-600
+                <input id="list-end-{{ sensor.client_id }}" type="radio" value="{{ sensor.client_id }}" name="list-sensor-end" {% if loop.index == 1 %} checked {% endif %} class="w-4 h-4 text-blue-600
                 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                 />
-                <label for="list-end-{{ sensor.client_id }}" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ sensor.client_id }}</label>
+                <label for="list-end-{{ sensor.client_id }}" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                  {% if sensor.client_id == "sensor-6" %}
+                    Hele trap
+                  {% elif sensor.client_id == "sensor-5" %}
+                    9 treden
+                  {% elif sensor.client_id == "sensor-4" %}
+                    7 treden
+                  {% elif sensor.client_id == "sensor-3" %}
+                    Halve trap
+                  {% else %}
+                    {{ sensor.client_id }}
+                  {% endif %}
+                </label>
               </div>
             </li>
             {% endfor %}
