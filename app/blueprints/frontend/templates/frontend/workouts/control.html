@@ -111,15 +111,26 @@
               <input id="brightness_value" type="range" value="125" min="50" step="25" max="225" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
             </div> -->
             <!-- Color picker -->
-            <div class="mb-4">
-              <label for="color-picker" class="ext-sm font-medium text-gray-900 dark:text-white">Kies een kleur:</label>
+            <div class="mb-6">
+              <button
+                id="colorDropdownButton"
+                data-dropdown-toggle="colorDropdown"
+                class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                type="button"
+              >
+                Kies een kleur
+                <svg class="w-2.5 h-2.5 ml-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                </svg>
+              </button>
+              <!-- <label for="color-picker" class="ext-sm font-medium text-gray-900 dark:text-white">Kies een kleur:</label>
               <input
                 type="color"
                 id="color-picker"
                 name="color-picker"
                 value="#1269b0"
                 class="w-full py-2 px-3 mt-1 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
-              />
+              /> -->
             </div>
             <!-- Toggle -->
             <label class="relative inline-flex items-center cursor-pointer">
@@ -143,17 +154,8 @@
                 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                 />
                 <label for="list-end-{{ sensor.client_id }}" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                  {% if sensor.client_id == "sensor-6" %}
-                    Hele trap
-                  {% elif sensor.client_id == "sensor-5" %}
-                    9 treden
-                  {% elif sensor.client_id == "sensor-4" %}
-                    7 treden
-                  {% elif sensor.client_id == "sensor-3" %}
-                    Halve trap
-                  {% else %}
-                    {{ sensor.client_id }}
-                  {% endif %}
+                  {% if sensor.client_id == "sensor-6" %} Hele trap {% elif sensor.client_id == "sensor-5" %} 9 treden {% elif sensor.client_id == "sensor-4" %} 7 treden {% elif sensor.client_id ==
+                  "sensor-3" %} Halve trap {% else %} {{ sensor.client_id }} {% endif %}
                 </label>
               </div>
             </li>
@@ -202,7 +204,8 @@
     </div>
   </div>
 </section>
-{% include 'includes/info_modals.html' %} {% endblock %} {% block script %}
+
+{% include 'includes/color_dropdown.html' %} {% include 'includes/info_modals.html' %} {% endblock %} {% block script %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/workout.js') }}"></script>
 {% endblock %}

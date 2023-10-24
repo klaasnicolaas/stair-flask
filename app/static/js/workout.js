@@ -9,7 +9,7 @@ system_control = function (event) {
   let end_sensor = $('input[name="list-sensor-end"]:checked').val()
   let led_toggle = $('#led_toggle').is(':checked')
   let brightness = $('#brightness_value').val()
-  let color = $('#color-picker').val()
+  let color = $('input[name="color-picker"]:checked').val()
 
   // Update the workout status
   if (event == 'start') {
@@ -37,10 +37,27 @@ system_control = function (event) {
   }
 }
 
+// Update counters
 socket.on('counter', function (data) {
   $('#counter_stairs').text(data['stair_counter'])
   $('#counter_steps').text(data['steps_counter'])
 })
+
+// Update color of the color dropdown button
+document.addEventListener('DOMContentLoaded', function() {
+  // Get the button and color dropdown elements
+  const button = document.getElementById('colorDropdownButton');
+  const colorDropdown = document.getElementById('colorDropdown');
+
+  // Add a change event listener to the color dropdown
+  colorDropdown.addEventListener('change', function(event) {
+    // Get the selected color value
+    const selectedColor = event.target.value;
+
+    // Change the background color of the button
+    button.style.backgroundColor = selectedColor;
+  });
+});
 
 // Function to update the alert message
 function updateOefeningStatus() {
