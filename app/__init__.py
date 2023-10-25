@@ -429,7 +429,12 @@ def on_system_control(event: dict) -> None:
     ----
         event (dict): The event data.
     """
-    global workout_mode, workout_id, sandglass_thread, last_triggered_client_id, first_trigger
+    global \
+        workout_mode, \
+        workout_id, \
+        sandglass_thread, \
+        last_triggered_client_id, \
+        first_trigger
     colors = Colors()
 
     if event["mode"] == "start":

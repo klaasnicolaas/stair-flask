@@ -4,6 +4,7 @@ import pytest
 from app import db
 from app.blueprints.auth.models import User
 
+
 def test_login_page(client: pytest.fixture) -> None:
     """Test login page.
 
