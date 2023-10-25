@@ -22,8 +22,6 @@ python-dotenv = "^1.0.0"
 rpi-ws281x = "^5.0.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "23.10.1"
-blacken-docs = "1.16.0"
 covdefaults = "2.3.0"
 pre-commit = "3.5.0"
 pre-commit-hooks = "4.5.0"
@@ -125,6 +123,19 @@ ignore = [
   "PLR2004", # Just annoying, not really useful
   "T201", # Allow the use of print()
   "S104", # Allow binding to all interfaces
+  "PLW0603", # Allow global statements
+
+  # Formatter conflicts
+  "COM812",
+  "COM819",
+  "D206",
+  "E501",
+  "ISC001",
+  "Q000",
+  "Q001",
+  "Q002",
+  "Q003",
+  "W191",
 ]
 
 [tool.ruff.flake8-pytest-style]

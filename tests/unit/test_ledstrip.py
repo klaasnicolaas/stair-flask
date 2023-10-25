@@ -85,9 +85,15 @@ def test_led_controller_one_led(mock_strip: MagicMock) -> None:
 
 
 def test_led_controller_set_sensor_led(mock_strip: MagicMock) -> None:
+    """Test the set_sensor_led method of the LEDController class.
+
+    Args:
+    ----
+        mock_strip (MagicMock): The mocked LED strip.
+    """
     # Arrange
     controller = LEDController(
-        count=10,
+        count=mock_strip.numPixels(),
         pin=18,
         freq_hz=800000,
         dma=10,
