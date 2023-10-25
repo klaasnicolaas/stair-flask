@@ -12,3 +12,4 @@ mysql
 .pytest_cache
 .docker
 .github
+nginx
