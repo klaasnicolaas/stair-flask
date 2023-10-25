@@ -68,15 +68,28 @@ services:
         condition: service_healthy
       mysql:
         condition: service_healthy
+      nginx:
+        condition: service_started
     networks:
       - backend
     environment:
       - FLASK_ENV=production
     ports:
-      - 80:5000
+      - 5000:5000
     volumes:
       - .:/app
     privileged: true
+
+  # Nginx
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - 80:80
+    networks:
+      - backend
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
 
 networks:
   backend:
