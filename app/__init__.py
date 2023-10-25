@@ -33,7 +33,7 @@ from app.mqtt_controller import MQTTClient
 
 db = SQLAlchemy()
 mqtt = MQTTClient()
-socketio = SocketIO()
+socketio = SocketIO(engineio_logger=False, logger=False, cors_allowed_origins="*")
 login = LoginManager()
 login.login_view = "auth.login"
 
@@ -398,7 +398,6 @@ def register_routes(app: Flask) -> None:
         app: The Flask application.
     """
 
-    # Routes
     @app.route("/set_color", methods=["GET"])
     def set_color() -> None:
         """Set LED strip color."""
