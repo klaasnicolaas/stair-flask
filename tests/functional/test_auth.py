@@ -15,8 +15,8 @@ def test_login_page(client: pytest.fixture) -> None:
     response = client.get("/login")
     assert response.status_code == 200
     assert b"Inloggen" in response.data
-    assert b"Email" in response.data
-    assert b"Password" in response.data
+    assert b"E-mail" in response.data
+    assert b"Wachtwoord" in response.data
 
 
 def test_valid_login_logout(
@@ -54,5 +54,5 @@ def test_registration_page(client: pytest.fixture) -> None:
     response = client.get("/register")
     assert response.status_code == 200
     assert b"Registreren" in response.data
-    assert b"Email" in response.data
-    assert b"Password" in response.data
+    assert b"E-mail" in response.data
+    assert b"Wachtwoord" in response.data
