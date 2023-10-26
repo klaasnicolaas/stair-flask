@@ -1,6 +1,7 @@
 """Blueprint for the frontend of the application."""
 from flask import Blueprint, render_template
 
+from app import db
 from app.blueprints.backend.models import Sensor, Workout
 
 bp = Blueprint("frontend", __name__, template_folder="templates/frontend")
@@ -23,7 +24,7 @@ def workout_control(workout_id: int) -> None:
     """Render the workout control page."""
     return render_template(
         "workouts/control.html",
-        workout=Workout.query.get(workout_id),
+        workout=db.session.get(Workout, workout_id),
         sensors=Sensor.query.all(),
     )
 
