@@ -54,7 +54,7 @@ def show_sensor(sensor_id: int) -> None:
     return render_template(
         "sensors/show.html",
         user=current_user,
-        sensor=Sensor.query.get(sensor_id),
+        sensor=db.session.get(Sensor, sensor_id),
     )
 
 
@@ -90,7 +90,7 @@ def delete_sensor(sensor_id: str) -> None:
         sensor_id (int): The id of the sensor to delete.
     """
     try:
-        sensor = Sensor.query.get(sensor_id)
+        sensor = db.session.get(Sensor, sensor_id)
         db.session.delete(sensor)
         db.session.commit()
     except SQLAlchemyError as error:
@@ -150,7 +150,7 @@ def update_workout(workout_id: int) -> None:
     """
     if request.form:
         try:
-            workout = Workout.query.get(workout_id)
+            workout = db.session.get(Workout, workout_id)
             workout.name = request.form.get("name")
             workout.description = request.form.get("description")
 
@@ -170,7 +170,7 @@ def delete_workout(workout_id: int) -> None:
         workout_id (int): The id of the workout to delete.
     """
     try:
-        workout = Workout.query.get(workout_id)
+        workout = db.session.get(Workout, workout_id)
         db.session.delete(workout)
         db.session.commit()
     except SQLAlchemyError as error:

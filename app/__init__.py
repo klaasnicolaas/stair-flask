@@ -1,6 +1,6 @@
 """Initialize Stair Challenge app."""
 # ruff: noqa: E402, ARG001
-# pylint: disable=wrong-import-position, ungrouped-imports
+# pylint: disable=wrong-import-position, ungrouped-imports, import-outside-toplevel
 from __future__ import annotations
 
 import getpass
@@ -152,7 +152,7 @@ def initialize_extensions(app: Flask) -> None:
         -------
             User: The current user.
         """
-        return User.query.get(user_id)
+        return db.session.get(User, user_id)
 
     @app.before_request
     def make_session_permanent() -> None:
