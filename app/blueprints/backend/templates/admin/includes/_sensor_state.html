@@ -1,0 +1,4 @@
+<span id="js--{{ sensor.client_id }}_state">
+  {% if sensor.status == 'offline' or sensor.status == 'error' %} 🔴 {% elif sensor.status == 'trigger' %} 🟣 {% elif sensor.status == 'measure' %} 🟡 {% elif sensor.status == 'idle' or sensor.status
+  == 'online' %} 🟢 {% else %} 🔵 {% endif %}
+</span>

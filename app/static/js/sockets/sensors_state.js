@@ -7,7 +7,9 @@ socket.on('sensors_status_all', function (msg) {
     $('#js--sensor-' + msg.client_id + '_state').text('🟣')
   } else if (msg.status == 'measure') {
     $('#js--sensor-' + msg.client_id + '_state').text('🟡')
-  } else {
+  } else if (msg.status == 'idle' || msg.status == 'online') {
     $('#js--sensor-' + msg.client_id + '_state').text('🟢')
+  } else {
+    $('#js--sensor-' + msg.client_id + '_state').text('🔵')
   }
 })
