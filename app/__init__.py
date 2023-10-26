@@ -366,21 +366,10 @@ def register_mqtt_events(app: Flask) -> None:
                     db.session.commit()
                 else:
                     # If the sensor doesn't exist
-                    print(f"Adding new sensor: {data['client_id']}")
-                    sensor = Sensor(
-                        client_id=f"sensor-{data['client_id']}",
-                        ip_address=data["ip_address"],
-                        max_distance=data["max_distance"],
-                        threshold=data["threshold"],
-                        status=data["status"],
-                        last_update=datetime.now(),
+                    print(
+                        f"Sensor: {data['client_id']}, doesn't exist in the database."
                     )
-                    db.session.add(sensor)
-                    db.session.commit()
         except exc.IntegrityError:
-            with app.app_context():
-                db.session.rollback()
-                print("Sensor already exists in the database.")
             print("An error occurred during database operation.")
         except KeyError as error:
             print(f"MQTT data is missing the following key: {error}")
