@@ -34,10 +34,7 @@
             </th>
             <td class="px-6 py-4">
               <div class="flex justify-end">
-                <span id="js--{{ sensor.client_id }}_state">
-                  {% if sensor.status == 'offline' or sensor.status == 'error' %} 🔴 {% elif sensor.status == 'trigger' %} 🟣 {% elif sensor.status == 'measure' %} 🟡 {% else %} 🟢 {% endif %}
-                </span>
-                &nbsp;
+                {% include 'includes/_sensor_state.html' %} &nbsp;
                 <span id="js--{{ sensor.client_id }}_status">{{ sensor.status }}</span>
               </div>
             </td>

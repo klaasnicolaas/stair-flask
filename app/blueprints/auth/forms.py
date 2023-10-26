@@ -8,34 +8,34 @@ class LoginForm(FlaskForm):
     """Login form class."""
 
     email = StringField(
-        "Email",
-        validators=[DataRequired(), Email(message="Enter a valid email.")],
+        "E-mail",
+        validators=[DataRequired(), Email(message="Vul een geldig e-mailadres in.")],
     )
-    password = PasswordField("Password", validators=[DataRequired()])
+    password = PasswordField("Wachtwoord", validators=[DataRequired()])
 
 
 class RegisterForm(FlaskForm):
     """Registration form class."""
 
-    name = StringField("Name", validators=[DataRequired()])
+    name = StringField("Naam", validators=[DataRequired()])
     email = StringField(
-        "Email",
-        validators=[DataRequired(), Email(message="Enter a valid email.")],
+        "E-mail",
+        validators=[DataRequired(), Email(message="Vul een geldig e-mailadres in.")],
     )
     password = PasswordField(
-        "Password",
+        "Wachtwoord",
         validators=[
             DataRequired(),
             Length(
                 min=6,
-                message="Make sure your password is at least 6 characters long.",
+                message="Zorg ervoor dat uw wachtwoord minimaal 6 tekens lang is.",
             ),
         ],
     )
     confirm = PasswordField(
-        "Confirm Password",
+        "Bevestig Wachtwoord",
         validators=[
             DataRequired(),
-            EqualTo("password", message="Passwords must match."),
+            EqualTo("password", message="Wachtwoorden moeten overeenkomen."),
         ],
     )
