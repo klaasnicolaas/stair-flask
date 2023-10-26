@@ -8,11 +8,21 @@
           <h5 class="mr-3 font-semibold dark:text-white">Stair Challenge - Sensors</h5>
           <p class="text-gray-500 dark:text-gray-400">Overview of all sensors</p>
         </div>
-        <div class="flex items-center space-x-3">
+        <div class="w-full md:w-auto flex flex-col md:flex-row space-y-3 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+          <button
+            type="button"
+            data-modal-toggle="addSensorModal"
+            class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-green-600 hover:bg-green-800 focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 mr-2 -ml-1">
+              <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+            </svg>
+            Sensor toevoegen
+          </button>
           <button
             type="button"
             onclick="restart_all_sensors('all_sensors')"
-            class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-accent-700 hover:bg-accent-800 focus:ring-4 focus:ring-accent-300 dark:bg-accent-600 dark:hover:bg-accent-700 focus:outline-none dark:focus:ring-accent-800"
+            class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-accent-600 hover:bg-accent-800 focus:ring-4 focus:ring-accent-300 dark:bg-accent-600 dark:hover:bg-accent-700 focus:outline-none dark:focus:ring-accent-800"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 mr-2 -ml-1">
               <path
@@ -21,13 +31,12 @@
                 clip-rule="evenodd"
               />
             </svg>
-
-            Restart all
+            Herstart allen
           </button>
-          <form action="{{ url_for('backend.delete_all_sensors') }}" method="POST" id="delete-all">
+          <form action="{{ url_for('backend.delete_all_sensors') }}" method="POST" id="delete-all-sensors">
             <button
               type="submit"
-              class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
+              class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-3.5 w-3.5 mr-2 -ml-1">
                 <path
@@ -36,8 +45,7 @@
                   clip-rule="evenodd"
                 />
               </svg>
-
-              Remove all
+              Verwijder alles
             </button>
           </form>
         </div>
@@ -53,9 +61,7 @@
     <div class="relative">
       <a href="{{ url_for('backend.show_sensor', sensor_id=sensor.id) }}">
         <img class="object-cover w-full h-45 rounded-t-lg" src="{{ url_for('static', filename='img/sensor.webp') }}" alt="unsplash image" />
-        <div class="absolute top-2 left-2">
-          {% include 'includes/_sensor_state.html' %}
-        </div>
+        <div class="absolute top-2 left-2">{% include 'includes/_sensor_state.html' %}</div>
         <div class="absolute bottom-2 right-0">
           <span id="js--{{ sensor.client_id }}_status" class="bg-blue-100 text-blue-800 text-lg font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400"
             >{{ sensor.status }}</span
@@ -81,10 +87,11 @@
   </div>
   {% endfor %}
 </div>
-{% endblock %} {% block script %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensors_delete.js') }}"></script>
+
+{% include 'includes/modals/add.html' %} {% endblock %} {% block script %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/sockets/init.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/sensors_state.js') }}"></script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensor_restart.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/sockets/sensors_state.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sweetalerts/sensors_delete.js') }}"></script>
 {% endblock %}
