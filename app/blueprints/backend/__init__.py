@@ -69,6 +69,7 @@ def add_sensor() -> None:
                 client_id=f"sensor-{request.form.get('client_id')}",
                 ip_address=request.form.get("ip_address"),
                 max_distance=0,
+                trigger_distance=0,
                 threshold=0,
                 status="added",
                 last_update=datetime.now(),

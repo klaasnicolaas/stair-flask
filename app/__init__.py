@@ -376,10 +376,15 @@ def register_mqtt_events(app: Flask) -> None:
                 if sensor:
                     # If the sensor already exists
                     sensor.ip_address = data["ip_address"]
-                    sensor.max_distance = data["max_distance"]
+                    sensor.max_distance = data.get("max_distance")
                     sensor.threshold = data["threshold"]
-                    sensor.status = data["status"]
+                    sensor.status = data.get("status")
                     sensor.last_update = datetime.now()
+
+                    # Only update trigger_distance if status is "trigger"
+                    if data["status"] == "trigger":
+                        sensor.trigger_distance = data.get("distance", None)
+
                     db.session.commit()
                 else:
                     # If the sensor doesn't exist
