@@ -90,6 +90,20 @@ To start the application in development mode, you can use the default Flask CLI 
 flask run
 ```
 
+### Run Flask CLI commands
+
+If you want to run Flask CLI commands within a docker container, you should use the following format:
+
+```bash
+docker exec stair_challenge_flask flask init_db
+```
+
+CLI commands:
+
+- `init_db` - Initialize the database
+- `create_admin` - Create an admin user (only works when attached to shell)
+- `seed_workouts` - Seed the workouts table with some default workouts
+
 ## FAQ
 
 ### Temporary failure in name resolution
