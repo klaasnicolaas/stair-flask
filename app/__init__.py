@@ -304,6 +304,21 @@ def register_mqtt_events(app: Flask) -> None:
         app: The Flask application.
     """
 
+    def is_client_id_valid(client_id: str) -> bool:
+        """Run check on valid sensor in database.
+
+        Args:
+        ----
+            client_id (str): The client ID to check.
+
+        Returns:
+        -------
+            bool: True if the client ID is valid, False if not.
+        """
+        with app.app_context():
+            sensor = Sensor.query.filter_by(client_id=f"sensor-{client_id}").first()
+        return sensor is not None
+
     def on_topic_trigger(
         client: MQTTClient,  # pylint: disable=unused-argument
         userdata: dict,  # pylint: disable=unused-argument
@@ -318,7 +333,9 @@ def register_mqtt_events(app: Flask) -> None:
             message: An instance of MQTTMessage.
         """
         data: dict = json.loads(message.payload)
-        if workout_mode:
+        client_id = data["client_id"]
+
+        if workout_mode and is_client_id_valid(client_id):
             match workout_id:
                 case 1:
                     # Kameleon
@@ -326,7 +343,7 @@ def register_mqtt_events(app: Flask) -> None:
                     led_controller.set_color(colors.get_random_unique_color())
                 case 2:
                     # Trap op, trap af
-                    workout_counting(data["client_id"])
+                    workout_counting(client_id)
                 case 3:
                     # Meeloper
                     print("Workout 3")
