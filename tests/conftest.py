@@ -5,6 +5,7 @@ from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
+import pytz
 from flask_login import login_user
 
 from app import create_app, db
@@ -53,22 +54,22 @@ def mock_mqtt() -> MagicMock:
         yield mock
 
 
-@pytest.fixture
-def user() -> User:
+@pytest.fixture(name="user")
+def setup_user() -> User:
     """Create a new user."""
     user = User(
         name="Tester",
         email="test@test.com",
         password="secretPassword",
         is_admin=True,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(pytz.timezone("UTC")),
     )
     user.set_password("secretPassword")
     return user
 
 
-@pytest.fixture
-def database(app: pytest.fixture) -> pytest.fixture:
+@pytest.fixture(name="database")
+def setup_database(app: pytest.fixture) -> pytest.fixture:
     """Create the database and the database tables.
 
     Args:
@@ -85,13 +86,13 @@ def database(app: pytest.fixture) -> pytest.fixture:
         db.drop_all()
 
 
-@pytest.fixture
-def app(mock_strip: MagicMock) -> pytest.fixture:
+@pytest.fixture(name="app")
+def setup_app() -> pytest.fixture:
     """Create the test Flask application.
 
-    Args:
-    ----
-        mock_strip (MagicMock): Mocked LED strip
+    Returns
+    -------
+        pytest.fixture: Test client for the Flask application
     """
     # Set the Testing configuration prior to creating the Flask application
     os.environ["FLASK_ENV"] = "testing"
@@ -136,8 +137,8 @@ def auth_client(
         yield login_user(test_user, remember=True)
 
 
-@pytest.fixture
-def workouts(database: pytest.fixture) -> None:
+@pytest.fixture(name="workouts")
+def _workouts(database: pytest.fixture) -> None:
     """Create the database and the database tables.
 
     Args:
@@ -158,14 +159,10 @@ def workouts(database: pytest.fixture) -> None:
 
 
 @pytest.fixture
-def cli_test_client(mock_strip: MagicMock) -> pytest.fixture:
+def cli_test_client() -> pytest.fixture:
     """Create a test client for the CLI.
 
-    Args:
-    ----
-        mock_strip (MagicMock): Mocked LED strip
-
-    Returns:
+    Returns
     -------
         pytest.fixture: Test client for the CLI
     """

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
+import pytz
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from sqlalchemy.exc import SQLAlchemyError
@@ -72,7 +73,7 @@ def add_sensor() -> None:
                 trigger_distance=0,
                 threshold=0,
                 status="added",
-                last_update=datetime.now(),
+                last_update=datetime.now(pytz.timezone("Europe/Amsterdam")),
             )
             db.session.add(sensor)
             db.session.commit()

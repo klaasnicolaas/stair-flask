@@ -1,6 +1,9 @@
 """Blueprint for the authentication pages."""
+from __future__ import annotations
+
 from datetime import datetime
 
+import pytz
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
@@ -51,7 +54,7 @@ def register() -> None:
                 name=form.name.data,
                 email=form.email.data,
                 password=form.password.data,
-                created_at=datetime.now(),
+                created_at=datetime.now(pytz.timezone("Europe/Amsterdam")),
             )
             db.session.add(user)
             db.session.commit()

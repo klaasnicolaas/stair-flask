@@ -1,6 +1,8 @@
 """Unit tests for auth models."""
 from datetime import datetime
 
+import pytz
+
 from app.blueprints.auth.models import User
 from app.blueprints.backend.models import Sensor, Workout
 
@@ -44,7 +46,9 @@ def test_user_id(user: User) -> None:
 
 def test_sensor_model() -> None:
     """Test sensor model."""
-    sensor = Sensor("sensor-1", "127.0.0.1", 100, 20, 50, "active", datetime.utcnow())
+    sensor = Sensor(
+        "sensor-1", "127.0.0.1", 100, 20, 50, "active", datetime.now(pytz.utc)
+    )
     assert sensor.client_id == "sensor-1"
     assert not isinstance(sensor.client_id, int)
     assert sensor.ip_address == "127.0.0.1"
