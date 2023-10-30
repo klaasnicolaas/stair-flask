@@ -33,7 +33,7 @@ def test_valid_login_logout(
     db.session.add(user)
     response = client.post(
         "/login",
-        data=dict(email=user.email, password="secretPassword"),
+        data={"email": user.email, "password": "secretPassword"},
         follow_redirects=True,
     )
     assert user.is_authenticated is True

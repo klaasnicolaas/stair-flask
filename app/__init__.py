@@ -9,6 +9,7 @@ import os
 import threading
 from datetime import datetime, timedelta
 
+import pytz
 import sqlalchemy as sqla
 from flask import Flask, redirect, request, session, url_for
 from flask_login import LoginManager
@@ -16,6 +17,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from rpi_ws281x import Color
 from sqlalchemy import exc
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.const import (
     MQTT_RESTART_ALL_TOPIC,
@@ -222,7 +224,7 @@ def register_cli_commands(app: Flask) -> None:
         # Validate the password
         if password != confirm_password:
             print("Passwords don't match")
-            return 1
+            return
 
         # Create the user
         try:
@@ -231,15 +233,15 @@ def register_cli_commands(app: Flask) -> None:
                 email=email,
                 password=password,
                 is_admin=IsAdmin.YES.value,
-                created_at=datetime.now(),
+                created_at=datetime.now(pytz.timezone("Europe/Amsterdam")),
             )
             db.session.add(user)
             db.session.commit()
             print(f"Admin with email {email} created successfully!")
-        except Exception as error:
+        except SQLAlchemyError as error:
             print(f"Could not create admin: {error}")
             db.session.rollback()
-            return 1
+            return
 
 
 def workout_counting(client_id: int) -> None:
@@ -379,7 +381,7 @@ def register_mqtt_events(app: Flask) -> None:
                     sensor.max_distance = data.get("max_distance")
                     sensor.threshold = data["threshold"]
                     sensor.status = data.get("status")
-                    sensor.last_update = datetime.now()
+                    sensor.last_update = datetime.now(pytz.timezone("Europe/Amsterdam"))
 
                     # Only update trigger_distance if status is "trigger"
                     if data["status"] == "trigger":

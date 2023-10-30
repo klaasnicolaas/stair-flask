@@ -20,6 +20,7 @@ pymysql = "^1.1.0"
 python = "^3.11"
 python-dotenv = "^1.0.0"
 rpi-ws281x = "^5.0.0"
+pytz = "^2023.3.post1"
 
 [tool.poetry.group.dev.dependencies]
 covdefaults = "2.3.0"
@@ -147,6 +148,9 @@ known-first-party = ["app"]
 
 [tool.ruff.mccabe]
 max-complexity = 25
+
+[tool.ruff.pylint]
+max-args = 8
 
 [build-system]
 requires = ["poetry-core"]

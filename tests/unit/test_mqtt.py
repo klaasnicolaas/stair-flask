@@ -9,8 +9,10 @@ from app.exceptions import StairChallengeMQTTConnectionError
 
 
 class TestMQTTClient:
+    """Test class for the MQTTClient class."""
+
     @pytest.fixture
-    def mqtt_client(self):
+    def mqtt_client(self) -> MQTTClient:
         """MQTTClient fixture."""
         return MQTTClient()
 
@@ -156,7 +158,7 @@ class TestMQTTClient:
     @patch("paho.mqtt.client.Client.connect", side_effect=ConnectionRefusedError)
     def test_connect_failure(
         self,
-        mock_connect: MagicMock,
+        mock_connect: MagicMock,  # noqa: ARG002
         mqtt_client: MQTTClient,
     ) -> None:
         """Test that the connect method raises the correct exception when the connection fails.
