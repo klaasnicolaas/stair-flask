@@ -212,6 +212,7 @@ def register_cli_commands(app: Flask) -> None:
             )
             db.session.commit()
             print(f"Workout {index} added successfully!")
+        print("Workouts table seeded successfully!")
 
     @app.cli.command("create_admin")
     def create_admin() -> None:
