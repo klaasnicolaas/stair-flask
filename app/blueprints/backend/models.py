@@ -18,6 +18,7 @@ class Sensor(db.Model):
     client_id = db.Column(db.String(50), unique=True)
     ip_address = db.Column(db.String(50), unique=True)
     max_distance = db.Column(db.Integer)
+    trigger_distance = db.Column(db.Integer, nullable=True)
     threshold = db.Column(db.Integer)
     status = db.Column(db.String(50))
     last_update = db.Column(db.DateTime)
@@ -27,6 +28,7 @@ class Sensor(db.Model):
         client_id: str,
         ip_address: str,
         max_distance: int,
+        trigger_distance: int | None,
         threshold: int,
         status: str,
         last_update: datetime,
@@ -38,6 +40,7 @@ class Sensor(db.Model):
             client_id (str): Sensor client ID
             ip_address (str): Sensor IP address
             max_distance (int): Sensor max distance
+            trigger_distance (int): Sensor trigger distance
             threshold (int): Sensor threshold
             status (str): Sensor status
             last_update (datetime): Sensor last update
@@ -45,6 +48,7 @@ class Sensor(db.Model):
         self.client_id = client_id
         self.ip_address = ip_address
         self.max_distance = max_distance
+        self.trigger_distance = trigger_distance
         self.threshold = threshold
         self.status = status
         self.last_update = last_update
