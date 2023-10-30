@@ -46,7 +46,9 @@ def test_sensor_model() -> None:
     """Test sensor model."""
     sensor = Sensor("sensor-1", "127.0.0.1", 100, 20, 50, "active", datetime.utcnow())
     assert sensor.client_id == "sensor-1"
+    assert not isinstance(sensor.client_id, int)
     assert sensor.ip_address == "127.0.0.1"
+    assert isinstance(sensor.ip_address, str)
     assert sensor.max_distance == 100
     assert sensor.trigger_distance == 20
     assert sensor.threshold == 50
