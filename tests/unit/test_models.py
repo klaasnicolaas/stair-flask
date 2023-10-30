@@ -44,10 +44,11 @@ def test_user_id(user: User) -> None:
 
 def test_sensor_model() -> None:
     """Test sensor model."""
-    sensor = Sensor(1, "127.0.0.1", 100, 50, "active", datetime.utcnow())
-    assert sensor.client_id == 1
+    sensor = Sensor("sensor-1", "127.0.0.1", 100, 20, 50, "active", datetime.utcnow())
+    assert sensor.client_id == "sensor-1"
     assert sensor.ip_address == "127.0.0.1"
     assert sensor.max_distance == 100
+    assert sensor.trigger_distance == 20
     assert sensor.threshold == 50
     assert sensor.status == "active"
     assert isinstance(sensor.last_update, datetime)
