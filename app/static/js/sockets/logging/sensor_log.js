@@ -4,7 +4,16 @@ var eventName = 'sensor_status_' + sensorID;
 socket.on(eventName, function (msg) {
   append_to_status_log(msg)
   $('#js--sensor_status').text(msg.status);
+  $('#js--sensor_trigger_distance').text(msg.distance);
+  $('.sensor-threshold').text(msg.threshold);
+  $('#js--sensor_max_distance').text(msg.max_distance);
+  $('#js--threshold_progress_bar').css('width', calculatePercentage(msg.threshold, msg.max_distance) + '%');
 })
+
+// Function to calculate the percentage of the threshold
+function calculatePercentage(distance, maxDistance) {
+  return (distance / maxDistance) * 100;
+}
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -25,7 +34,7 @@ function append_to_status_log(jsonData) {
     const distance = jsonData.distance
     listItem = $('<li>').html(time + ' - <strong>' + capitalizeFirstLetter(status) + '</strong> - Distance: ' + distance + ' mm')
   } else {
-    listItem = $('<li>').html(time + ' - <strong>' + capitalizeFirstLetter(status) + '</strong> - T: ' + threshold + ' mm - Md: ' + maxDistance + ' mm');
+    listItem = $('<li>').html(time + ' - <strong>' + capitalizeFirstLetter(status) + '</strong> - Thres: ' + threshold + ' mm - MaxDist: ' + maxDistance + ' mm');
   }
   $('#log-list').prepend(listItem);
   limitLogItems();

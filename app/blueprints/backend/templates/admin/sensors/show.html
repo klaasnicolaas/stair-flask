@@ -122,10 +122,10 @@
     <div class="m-4">
       <div class="flex justify-between mb-1">
         <span class="text-base font-medium text-primary-700 dark:text-white">Kalibratie</span>
-        <span class="text-sm font-medium text-primary-700 dark:text-white">{{ sensor.threshold }} mm</span>
+        <span class="text-sm font-medium text-primary-700 dark:text-white"><span class="sensor-threshold">{{ sensor.threshold }}</span> mm</span>
       </div>
       <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-        <div class="bg-primary-600 h-2.5 rounded-full" style="width: {{ (sensor.threshold / 1300) * 100 }}%"></div>
+        <div id="js--threshold_progress_bar" class="bg-primary-600 h-2.5 rounded-full" style="width: {{ (sensor.threshold / 1300) * 100 }}%"></div>
       </div>
     </div>
 
@@ -144,15 +144,15 @@
           </tr>
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Trigger distance</th>
-            <td class="px-6 py-4" id="js--sensor-trigger-distance">{{ sensor.trigger_distance }} mm</td>
+            <td class="px-6 py-4"><span id="js--sensor_trigger_distance">{{ sensor.trigger_distance }}</span> mm</td>
           </tr>
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Threshold</th>
-            <td class="px-6 py-4">{{ sensor.threshold }} mm</td>
+            <td class="px-6 py-4"><span class="sensor-threshold">{{ sensor.threshold }}</span> mm</td>
           </tr>
           <tr class="bg-white dark:bg-gray-800">
             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">Max distance</th>
-            <td class="px-6 py-4">{{ sensor.max_distance }} mm</td>
+            <td class="px-6 py-4"><span id="js--sensor_max_distance">{{ sensor.max_distance }}</span> mm</td>
           </tr>
         </tbody>
       </table>
