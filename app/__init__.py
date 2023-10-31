@@ -245,6 +245,122 @@ def register_cli_commands(app: Flask) -> None:
             return
 
 
+def control_workout(event: dict) -> None:
+    """General function to control the workouts.
+
+    Args:
+    ----
+        event (dict): The event data.
+    """
+    global workout_mode, workout_id, first_trigger
+    colors = Colors()
+
+    if event["mode"] == "start":
+        print(f"Starting workout - nr: {event['workout_id']}")
+        workout_id = event["workout_id"]
+        workout_mode = True
+
+        if workout_id == 2:
+            first_trigger = True
+            handle_workout_id_2(event, colors, start=True)
+        else:
+            mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
+
+    elif event["mode"] == "stop" or event["mode"] == "finished":
+        print(f"Stopping workout - nr: {event['workout_id']}")
+        mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
+
+        workout_mode = False
+
+        if workout_id == 2:
+            handle_workout_id_2(event, colors, start=False)
+
+        workout_id = None
+        led_controller.color_wipe(Color(0, 0, 0), 10)
+
+
+def handle_workout_id_2(event: dict, colors: Colors, start: bool) -> None:  # noqa: FBT001
+    """Handle the workout with ID 2.
+
+    Args:
+    ----
+        event (dict): The event data.
+        colors (Colors): The Colors class.
+        start (bool): True if the workout should start, False if not.
+    """
+    global last_triggered_client_id
+
+    end_sensor = int(event["end_sensor"][7:])
+
+    if start:
+        if end_sensor not in client_counters:
+            client_counters.append(end_sensor)
+
+        activate_sensors_via_mqtt()
+        start_sandglass_thread(event, colors)
+    else:
+        client_counters.remove(end_sensor)
+        last_triggered_client_id = None
+
+        stop_sandglass_thread(event, colors)
+
+        if event["mode"] == "finished" and event["led_toggle"]:
+            led_controller.rainbow()
+            led_controller.color_wipe(Color(0, 0, 0), 10)
+
+
+def activate_sensors_via_mqtt() -> None:
+    """Activate the sensors via MQTT."""
+    for client in client_counters:
+        print(f"Activate sensor: {client}")
+        mqtt.send(f"{MQTT_WORKOUT}/{client}/control", "start")
+
+
+def start_sandglass_thread(event: dict, colors: Colors) -> None:
+    """Start the sandglass thread.
+
+    Args:
+    ----
+        event (dict): The event data.
+        colors (Colors): The Colors class.
+    """
+    global sandglass_thread
+
+    if sandglass_thread is not None and sandglass_thread.is_alive():
+        led_controller.stop_sandglass_thread()
+        sandglass_thread.join()
+        sandglass_thread = None
+
+    if event["led_toggle"]:
+        sandglass_thread = threading.Thread(
+            target=led_controller.sandglass,
+            args=(event["time"], colors.hex_to_rgb(event["color"])),
+        )
+        sandglass_thread.start()
+    else:
+        led_controller.set_sensor_led(colors.BLUE, int(event["end_sensor"][7:]))
+        led_controller.one_led(colors.GREEN, 103)
+        update_counters(0, ResetCounter.YES)
+
+
+def stop_sandglass_thread(event: dict, colors: Colors) -> None:
+    """Stop the sandglass thread.
+
+    Args:
+    ----
+        event (dict): The event data.
+        colors (Colors): The Colors class.
+    """
+    global sandglass_thread
+
+    if event["led_toggle"]:
+        led_controller.stop_sandglass_thread()
+        sandglass_thread = None
+        print(f"thread stopped: {led_controller.stop_sandglass_thread()}")
+    else:
+        led_controller.one_led(colors.RED, 103)
+
+
 def workout_counting(client_id: int) -> None:
     """Start the counter for the workout.
 
@@ -443,77 +559,7 @@ def on_system_control(event: dict) -> None:
     ----
         event (dict): The event data.
     """
-    global \
-        workout_mode, \
-        workout_id, \
-        sandglass_thread, \
-        last_triggered_client_id, \
-        first_trigger
-    colors = Colors()
-
-    if event["mode"] == "start":
-        print(f"Starting workout - nr: {event['workout_id']}")
-
-        # Start workout mode and reset the counter
-        workout_id = event["workout_id"]
-        workout_mode = True
-
-        if workout_id == 2:
-            first_trigger = True
-            end_sensor = int(event["end_sensor"][7:])
-            if end_sensor not in client_counters:
-                client_counters.append(int(event["end_sensor"][7:]))
-
-            # Activate the sensors via MQTT
-            for client in client_counters:
-                print(f"Activate sensor: {client}")
-                mqtt.send(f"{MQTT_WORKOUT}/{client}/control", "start")
-
-            # Start the sandglass thread
-            if sandglass_thread is not None and sandglass_thread.is_alive():
-                led_controller.stop_sandglass_thread()
-                sandglass_thread.join()
-                sandglass_thread = None
-
-            if event["led_toggle"] is True:
-                sandglass_thread = threading.Thread(
-                    target=led_controller.sandglass,
-                    args=(event["time"], colors.hex_to_rgb(event["color"])),
-                )
-                sandglass_thread.start()
-            else:
-                led_controller.set_sensor_led(colors.BLUE, end_sensor)
-                led_controller.one_led(colors.GREEN, 103)
-            update_counters(0, ResetCounter.YES)
-        else:
-            mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
-    elif event["mode"] == "stop" or event["mode"] == "finished":
-        print(f"Stopping workout - nr: {event['workout_id']}")
-        mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
-
-        # Stop workout mode and reset variables
-        workout_mode = False
-
-        if workout_id == 2:
-            client_counters.remove(int(event["end_sensor"][7:]))
-            last_triggered_client_id = None
-
-            if event["led_toggle"] is True:
-                led_controller.stop_sandglass_thread()  # Stop the sandglass thread
-                sandglass_thread = None
-                print(
-                    f"thread stopped: {led_controller.stop_sandglass_thread()}",
-                )
-            else:
-                led_controller.one_led(colors.RED, 103)
-
-            if event["mode"] == "finished" and event["led_toggle"] is True:
-                # Pary mode!
-                led_controller.rainbow()  # Turn on the rainbow
-                led_controller.color_wipe(Color(0, 0, 0), 10)  # Turn off the LEDs
-
-        workout_id = None
-        led_controller.color_wipe(Color(0, 0, 0), 10)
+    control_workout(event)
 
 
 @socketio.on("restart_sensors")
