@@ -26,6 +26,7 @@ from app.const import (
     MQTT_TRIGGER_TOPIC,
     MQTT_WORKOUT,
     MQTT_WORKOUT_CONTROL_ALL_TOPIC,
+    SENSOR_LOCATION,
     WORKOUTS,
     IsAdmin,
     ResetCounter,
@@ -451,6 +452,7 @@ def register_mqtt_events(app: Flask) -> None:
             userdata: The private user data as set in Client() or userdata_set().
             message: An instance of MQTTMessage.
         """
+        colors = Colors()
         data: dict = json.loads(message.payload)
         client_id = data["client_id"]
 
@@ -458,7 +460,6 @@ def register_mqtt_events(app: Flask) -> None:
             match workout_id:
                 case 1:
                     # Kameleon
-                    colors = Colors()
                     led_controller.set_color(colors.get_random_unique_color())
                 case 2:
                     # Trap op, trap af
@@ -466,6 +467,13 @@ def register_mqtt_events(app: Flask) -> None:
                 case 3:
                     # Meeloper
                     print("Workout 3")
+                case 4:
+                    # Waterdruppels
+                    led_controller.ripple_effect(
+                        start_position=SENSOR_LOCATION.get(client_id),
+                        ripple_length=12,
+                        color=colors.BLUE,
+                    )
                 case _:
                     print("Workout not found")
         print(f"Message Received from Others: {message.payload.decode()}")
