@@ -293,7 +293,9 @@ class LEDController:
             case _:
                 print(f"Invalid sensor ID: {sensor_id}")
 
-    def ripple_effect(self, start_position, ripple_length, color, wait_ms=50) -> None:
+    def ripple_effect(
+        self, start_position: int, ripple_length: int, color: Color, wait_ms: int = 50
+    ) -> None:
         """Wipe color across display a pixel at a time.
 
         Args:

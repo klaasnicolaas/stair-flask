@@ -111,3 +111,32 @@ def test_led_controller_set_sensor_led(mock_strip: MagicMock) -> None:
     with patch("builtins.print") as mock_print:
         controller.set_sensor_led(color, invalid_sensor_id)
         mock_print.assert_called_once_with(f"Invalid sensor ID: {invalid_sensor_id}")
+
+
+def test_led_controller_ripple_effect(mock_strip: MagicMock):
+    """Test the ripple_effect method of the LEDController class.
+
+    Args:
+    ----
+        mock_strip (MagicMock): The mocked LED strip.
+    """
+    controller = LEDController(
+        count=mock_strip.numPixels(),
+        pin=18,
+        freq_hz=800000,
+        dma=10,
+        brightness=255,
+        invert=False,
+        channel=1,
+    )
+    controller.start()
+
+    start_position = 5
+    ripple_length = 3
+    color = Color(255, 0, 0)
+    wait_ms = 10
+
+    controller.ripple_effect(start_position, ripple_length, color, wait_ms)
+
+    assert mock_strip.setPixelColor.call_count == 2 * ripple_length * 2  # Both directions on and off
+    assert mock_strip.show.call_count == 2 * ripple_length
