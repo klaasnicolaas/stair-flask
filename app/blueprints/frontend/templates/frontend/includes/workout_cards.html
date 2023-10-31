@@ -4,7 +4,7 @@
     <h3 class="mb-4 text-2xl font-semibold">{{ workout.name }}</h3>
     <p class="font-light text-gray-500 sm:text-lg dark:text-gray-400">{{ workout.description }}</p>
     <ul role="list" class="mt-4 mb-8 space-y-4 text-left">
-      {% for key, value in workout.pros.items() %}
+      {% if workout.pros is iterable %} {% for key, value in workout.pros.items() %}
       <li class="flex items-center space-x-3">
         <!-- Icon -->
         <svg class="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -12,7 +12,7 @@
         </svg>
         <span>{{ value }}</span>
       </li>
-      {% endfor %}
+      {% endfor %} {% endif %}
     </ul>
 
     <div class="flex justify-center mt-auto">
