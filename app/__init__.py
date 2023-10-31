@@ -7,6 +7,7 @@ import getpass
 import json
 import os
 import threading
+import time
 from datetime import datetime, timedelta
 
 import pytz
@@ -263,6 +264,8 @@ def control_workout(event: dict) -> None:
         if workout_id == 2:
             first_trigger = True
             handle_workout_id_2(event, colors, start=True)
+        if workout_id == 3:
+            handle_workout_id_3(colors, start=True)
         else:
             mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
 
@@ -274,6 +277,8 @@ def control_workout(event: dict) -> None:
 
         if workout_id == 2:
             handle_workout_id_2(event, colors, start=False)
+        if workout_id == 3:
+            handle_workout_id_3(colors, start=False)
 
         workout_id = None
         led_controller.color_wipe(Color(0, 0, 0), 10)
@@ -415,6 +420,24 @@ def update_counters(value: int, reset: ResetCounter = ResetCounter.NO) -> None:
     )
 
 
+def handle_workout_id_3(colors: Colors, start: bool) -> None:
+    """Handle the workout with ID 3.
+
+    Args:
+    ----
+        colors (Colors): The Colors class.
+        start (bool): True if the workout should start, False if not.
+    """
+    if start:
+        mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
+        led_controller.set_led_range(colors.GREEN, 98, 104)
+    else:
+        mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
+        led_controller.set_led_range(colors.RED, 98, 104)
+        time.sleep(3)
+        led_controller.color_wipe(Color(0, 0, 0), 10)
+
+
 def register_mqtt_events(app: Flask) -> None:
     """Register the MQTT events.
 
@@ -465,7 +488,9 @@ def register_mqtt_events(app: Flask) -> None:
                     workout_counting(client_id)
                 case 3:
                     # Meeloper
-                    print("Workout 3")
+                    # direction = Direction.TOP_TO_BOTTOM if client_id == 6 else Direction.BOTTOM_TO_TOP
+                    # led_controller.color_wipe(color=Color(0, 0, 255), direction=direction)
+                    print("Workout 3 - Meeloper")
                 case _:
                     print("Workout not found")
         print(f"Message Received from Others: {message.payload.decode()}")
