@@ -7,7 +7,7 @@ import time
 
 from rpi_ws281x import Color, PixelStrip
 
-from app.const import THREAD_STOP_EVENT, Direction, SensorLedLocation
+from app.const import THREAD_STOP_EVENT, Direction, SensorLedZone
 from app.exceptions import StairChalllengeInitializationError
 
 
@@ -269,26 +269,26 @@ class LEDController:
             case 3:
                 self.set_led_range(
                     color,
-                    SensorLedLocation.SENSOR_3.value["start"],
-                    SensorLedLocation.SENSOR_3.value["end"],
+                    SensorLedZone.SENSOR_3.value["start"],
+                    SensorLedZone.SENSOR_3.value["end"],
                 )
             case 4:
                 self.set_led_range(
                     color,
-                    SensorLedLocation.SENSOR_4.value["start"],
-                    SensorLedLocation.SENSOR_4.value["end"],
+                    SensorLedZone.SENSOR_4.value["start"],
+                    SensorLedZone.SENSOR_4.value["end"],
                 )
             case 5:
                 self.set_led_range(
                     color,
-                    SensorLedLocation.SENSOR_5.value["start"],
-                    SensorLedLocation.SENSOR_5.value["end"],
+                    SensorLedZone.SENSOR_5.value["start"],
+                    SensorLedZone.SENSOR_5.value["end"],
                 )
             case 6:
                 self.set_led_range(
                     color,
-                    SensorLedLocation.SENSOR_6.value["start"],
-                    SensorLedLocation.SENSOR_6.value["end"],
+                    SensorLedZone.SENSOR_6.value["start"],
+                    SensorLedZone.SENSOR_6.value["end"],
                 )
             case _:
                 print(f"Invalid sensor ID: {sensor_id}")

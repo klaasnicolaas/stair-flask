@@ -27,7 +27,7 @@ class Direction(Enum):
     BOTTOM_TO_TOP = False
 
 
-class SensorLedLocation(Enum):
+class SensorLedZone(Enum):
     """Enum for the sensor LEDs."""
 
     SENSOR_3: tuple = {"start": 56, "end": 59}
