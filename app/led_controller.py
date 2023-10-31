@@ -7,7 +7,7 @@ import time
 
 from rpi_ws281x import Color, PixelStrip
 
-from app.const import THREAD_STOP_EVENT, Direction, SensorLedLocation
+from app.const import THREAD_STOP_EVENT, Direction, SensorLedZone
 from app.exceptions import StairChalllengeInitializationError
 
 
@@ -269,29 +269,70 @@ class LEDController:
             case 3:
                 self.set_led_range(
                     color,
-                    SensorLedLocation.SENSOR_3.value["start"],
-                    SensorLedLocation.SENSOR_3.value["end"],
+                    SensorLedZone.SENSOR_3.value["start"],
+                    SensorLedZone.SENSOR_3.value["end"],
                 )
             case 4:
                 self.set_led_range(
                     color,
-                    SensorLedLocation.SENSOR_4.value["start"],
-                    SensorLedLocation.SENSOR_4.value["end"],
+                    SensorLedZone.SENSOR_4.value["start"],
+                    SensorLedZone.SENSOR_4.value["end"],
                 )
             case 5:
                 self.set_led_range(
                     color,
-                    SensorLedLocation.SENSOR_5.value["start"],
-                    SensorLedLocation.SENSOR_5.value["end"],
+                    SensorLedZone.SENSOR_5.value["start"],
+                    SensorLedZone.SENSOR_5.value["end"],
                 )
             case 6:
                 self.set_led_range(
                     color,
-                    SensorLedLocation.SENSOR_6.value["start"],
-                    SensorLedLocation.SENSOR_6.value["end"],
+                    SensorLedZone.SENSOR_6.value["start"],
+                    SensorLedZone.SENSOR_6.value["end"],
                 )
             case _:
                 print(f"Invalid sensor ID: {sensor_id}")
+
+    def ripple_effect(
+        self, start_position: int, ripple_length: int, color: Color, wait_ms: int = 50
+    ) -> None:
+        """Wipe color across display a pixel at a time.
+
+        Args:
+        ----
+            start_position: Startpositie van het ripple-effect
+            ripple_length: Lengte van het ripple-effect
+            color: Kleur van het ripple-effect
+            wait_ms: Wachttijd tussen het aansturen van de leds
+        """
+        num_pixels = self.strip.numPixels()
+
+        for i in range(ripple_length):
+            # Bereken de positie van de leds voor het ripple-effect
+            left_led = start_position - i
+            right_led = start_position + i
+
+            # Zorg ervoor dat de leds binnen de grenzen vallen
+            if 0 <= left_led < num_pixels:
+                self.strip.setPixelColor(left_led, color)
+            if 0 <= right_led < num_pixels:
+                self.strip.setPixelColor(right_led, color)
+
+            self.strip.show()
+            time.sleep(wait_ms / 1000.0)
+
+        # Wis de pixels na het voltooien van het ripple-effect
+        for i in range(ripple_length):
+            left_led = start_position - i
+            right_led = start_position + i
+
+            if 0 <= left_led < num_pixels:
+                self.strip.setPixelColor(left_led, Color(0, 0, 0))
+            if 0 <= right_led < num_pixels:
+                self.strip.setPixelColor(right_led, Color(0, 0, 0))
+
+            self.strip.show()
+            time.sleep(wait_ms / 1000.0)
 
     def set_led_range(self, color: Color, start: int, end: int) -> None:
         """Set the color of a range of LEDs.

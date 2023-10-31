@@ -27,7 +27,7 @@ class Direction(Enum):
     BOTTOM_TO_TOP = False
 
 
-class SensorLedLocation(Enum):
+class SensorLedZone(Enum):
     """Enum for the sensor LEDs."""
 
     SENSOR_3: tuple = {"start": 56, "end": 59}
@@ -50,6 +50,15 @@ class ResetCounter(Enum):
     NO = False
 
 
+SENSOR_LOCATION: Final = {
+    1: 97,
+    2: 77,
+    3: 57,
+    4: 37,
+    5: 17,
+    6: 0,
+}
+
 WORKOUTS = [
     {
         "name": "Kameleon",
@@ -69,5 +78,10 @@ WORKOUTS = [
         "name": "Meeloper",
         "description": "Bij elke stap die je zet, zal de LED verlichting jouw tempo volgen.",
         "pros": {"pro1": "Rustige oefening", "pro2": "Open eigen tempo"},
+    },
+    {
+        "name": "Waterdruppel",
+        "description": "Sta op een treden en activeer de water rimpeleffect.",
+        "pros": {"pro1": "Enorm interactief", "pro2": "Open eigen tempo"},
     },
 ]
