@@ -296,27 +296,27 @@ def handle_workout_id_2(event: dict, colors: Colors, start: bool) -> None:  # no
         if end_sensor not in client_counters:
             client_counters.append(end_sensor)
 
-        activate_sensors_via_mqtt()
-        start_sandglass_thread(event, colors)
+        activate_specific_sensors()
+        start_workout_2_thread(event, colors)
     else:
         client_counters.remove(end_sensor)
         last_triggered_client_id = None
 
-        stop_sandglass_thread(event, colors)
+        stop_workout_2_thread(event, colors)
 
         if event["mode"] == "finished" and event["led_toggle"]:
             led_controller.rainbow()
             led_controller.color_wipe(Color(0, 0, 0), 10)
 
 
-def activate_sensors_via_mqtt() -> None:
+def activate_specific_sensors() -> None:
     """Activate the sensors via MQTT."""
     for client in client_counters:
         print(f"Activate sensor: {client}")
         mqtt.send(f"{MQTT_WORKOUT}/{client}/control", "start")
 
 
-def start_sandglass_thread(event: dict, colors: Colors) -> None:
+def start_workout_2_thread(event: dict, colors: Colors) -> None:
     """Start the sandglass thread.
 
     Args:
@@ -343,7 +343,7 @@ def start_sandglass_thread(event: dict, colors: Colors) -> None:
         update_counters(0, ResetCounter.YES)
 
 
-def stop_sandglass_thread(event: dict, colors: Colors) -> None:
+def stop_workout_2_thread(event: dict, colors: Colors) -> None:
     """Stop the sandglass thread.
 
     Args:
