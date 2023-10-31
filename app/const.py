@@ -36,6 +36,16 @@ class SensorLedLocation(Enum):
     SENSOR_6: tuple = {"start": 0, "end": 3}
 
 
+class LedZones(Enum):
+    """Enum for the LED zones."""
+
+    ZONE_5: tuple = {"start": 0, "end": 18}
+    ZONE_4: tuple = {"start": 18, "end": 38}
+    ZONE_3: tuple = {"start": 38, "end": 58}
+    ZONE_2: tuple = {"start": 58, "end": 78}
+    ZONE_1: tuple = {"start": 78, "end": 98}
+
+
 class IsAdmin(Enum):
     """Enum for the admin status."""
 
