@@ -28,4 +28,4 @@ COPY --from=builder /app/static /app/static
 
 # CMD ["python", "run.py"]
 # CMD ["flask", "run"]
-CMD ["gunicorn", "--worker-class", "eventlet", "-w", "3", "--bind", "0.0.0.0:5000", "run:app"]
+CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "--bind", "0.0.0.0:5000", "run:app"]
