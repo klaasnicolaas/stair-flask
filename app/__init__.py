@@ -469,11 +469,15 @@ def register_mqtt_events(app: Flask) -> None:
                     print("Workout 3")
                 case 4:
                     # Waterdruppels
-                    led_controller.ripple_effect(
-                        start_position=SENSOR_LOCATION.get(client_id),
-                        ripple_length=12,
-                        color=colors.BLUE,
+                    thread = threading.Thread(
+                        target=led_controller.ripple_effect,
+                        args=(
+                            SENSOR_LOCATION.get(client_id),
+                            12,
+                            colors.BLUE,
+                        ),
                     )
+                    thread.start()
                 case _:
                     print("Workout not found")
         print(f"Message Received from Others: {message.payload.decode()}")
