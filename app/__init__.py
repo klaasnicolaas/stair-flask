@@ -27,6 +27,7 @@ from app.const import (
     MQTT_WORKOUT,
     MQTT_WORKOUT_CONTROL_ALL_TOPIC,
     SENSOR_LOCATION,
+    WORKOUT_MODE,
     WORKOUTS,
     IsAdmin,
     ResetCounter,
@@ -40,7 +41,6 @@ socketio = SocketIO(engineio_logger=False, logger=False, cors_allowed_origins="*
 login = LoginManager()
 login.login_view = "auth.login"
 
-workout_mode: bool = False
 first_trigger: bool = True
 workout_id: int = None
 
@@ -253,13 +253,13 @@ def control_workout(event: dict) -> None:
     ----
         event (dict): The event data.
     """
-    global workout_mode, workout_id, first_trigger
+    global WORKOUT_MODE, workout_id, first_trigger
     colors = Colors()
 
     if event["mode"] == "start":
         print(f"Starting workout - nr: {event['workout_id']}")
         workout_id = event["workout_id"]
-        workout_mode = True
+        WORKOUT_MODE = True
 
         if workout_id == 2:
             first_trigger = True
@@ -271,7 +271,7 @@ def control_workout(event: dict) -> None:
         print(f"Stopping workout - nr: {event['workout_id']}")
         mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
 
-        workout_mode = False
+        WORKOUT_MODE = False
 
         if workout_id == 2:
             handle_workout_id_2(event, colors, start=False)
@@ -456,7 +456,7 @@ def register_mqtt_events(app: Flask) -> None:
         data: dict = json.loads(message.payload)
         client_id = data["client_id"]
 
-        if workout_mode and is_client_id_valid(client_id):
+        if WORKOUT_MODE and is_client_id_valid(client_id):
             match workout_id:
                 case 1:
                     # Kameleon

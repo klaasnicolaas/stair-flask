@@ -7,6 +7,7 @@ from typing import Final
 MQTT_SENSOR: Final = "sensor"
 MQTT_WORKOUT: Final = "workout"
 
+WORKOUT_MODE: bool = False
 THREAD_STOP_EVENT = threading.Event()
 
 # MQTT topics - Subscribed
