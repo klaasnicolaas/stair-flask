@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "stair-flask"
+name = "stair-dashboard"
 version = "0.1.0"
 description = "Management environment of the stair challenge project"
 authors = ["Klaas Schoute <hello@student-techlife.com>"]

@@ -7,7 +7,7 @@
 
 # Stair Challenge
 
-In this repository you will find the code for the overall operation of the Stair Challenge, a project by [Basalt][basalt] - Smartlab and designed to allow rehabilitation patients to practice climbing stairs in a fun and interactive way.
+In this repository you will find the code for the overall operation of the Stair Challenge, a project by [Basalt][basalt] - Smartlab and designed to allow rehabilitation patients to practice climbing stairs in a fun and interactive way. Made by @klaasnicolaas.
 
 ## Get Started
 
@@ -119,9 +119,9 @@ This error may indicate that the IP address of your MQTT server is incorrect.
 
 [basalt]: https://basaltrevalidatie.nl
 
-[build-shield]: https://github.com/klaasnicolaas/stair-flask/actions/workflows/tests.yaml/badge.svg
-[build-url]: https://github.com/klaasnicolaas/stair-flask/actions/workflows/tests.yaml
-[codecov-shield]: https://codecov.io/gh/klaasnicolaas/stair-flask/branch/main/graph/badge.svg?token=CC2PRKJGQ9
-[codecov-url]: https://codecov.io/gh/klaasnicolaas/stair-flask
+[build-shield]: https://github.com/Basalt-Revalidatie/stair-dashboard/actions/workflows/tests.yaml/badge.svg
+[build-url]: https://github.com/Basalt-Revalidatie/stair-dashboard/actions/workflows/tests.yaml
+[codecov-shield]: https://codecov.io/gh/Basalt-Revalidatie/stair-dashboard/branch/main/graph/badge.svg?token=CC2PRKJGQ9
+[codecov-url]: https://codecov.io/gh/Basalt-Revalidatie/stair-dashboard
 [maintenance-shield]: https://img.shields.io/maintenance/yes/2023.svg
 [project-stage-shield]: https://img.shields.io/badge/project%20stage-experimental-yellow.svg
