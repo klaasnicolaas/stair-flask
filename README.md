@@ -7,7 +7,7 @@
 
 # Stair Challenge
 
-In this repository you will find the code for the overall operation of the Stair Challenge, a project by [Basalt][basalt] - Smartlab and designed to allow rehabilitation patients to practice climbing stairs in a fun and interactive way. Made by @klaasnicolaas.
+In this repository you will find the code for the overall operation of the Stair Challenge, a project by [Basalt][basalt] - Smartlab and designed to allow rehabilitation patients to practice climbing stairs in a fun and interactive way. Made by [klaasnicolaas](https://github.com/klaasnicolaas).
 
 ## Get Started
 
