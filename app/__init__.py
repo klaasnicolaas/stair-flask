@@ -27,7 +27,7 @@ from app.const import (
     MQTT_WORKOUT,
     MQTT_WORKOUT_CONTROL_ALL_TOPIC,
     SENSOR_LOCATION,
-    WORKOUT_MODE,
+    WORKOUT_SETTINGS,
     WORKOUTS,
     IsAdmin,
     ResetCounter,
@@ -50,6 +50,7 @@ stair_counter: int = 0
 steps_counter: int = 0
 
 sandglass_thread: threading.Thread = None
+christmas_colors: list = [Colors.RED, Colors.GREEN]
 
 
 # ----------------------------------------------------------------------------#
@@ -257,17 +258,21 @@ def control_workout(event: dict) -> None:
     ----
         event (dict): The event data.
     """
-    global WORKOUT_MODE, workout_id, first_trigger
-    colors = Colors()
+    global WORKOUT_SETTINGS, workout_id, first_trigger
 
     if event["mode"] == "start":
         print(f"Starting workout - nr: {event['workout_id']}")
         workout_id = event["workout_id"]
-        WORKOUT_MODE = True
+
+        WORKOUT_SETTINGS = {
+            "active": True,
+            "color": event.get("color", None),
+            "christmas_mode": event.get("christmas_mode", False),
+        }
 
         if workout_id == 2:
             first_trigger = True
-            handle_workout_id_2(event, colors, start=True)
+            handle_workout_id_2(event, start=True)
         else:
             mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "start")
 
@@ -275,22 +280,25 @@ def control_workout(event: dict) -> None:
         print(f"Stopping workout - nr: {event['workout_id']}")
         mqtt.send(MQTT_WORKOUT_CONTROL_ALL_TOPIC, "stop")
 
-        WORKOUT_MODE = False
+        WORKOUT_SETTINGS = {
+            "active": False,
+            "color": None,
+            "christmas_mode": False,
+        }
 
         if workout_id == 2:
-            handle_workout_id_2(event, colors, start=False)
+            handle_workout_id_2(event, start=False)
 
         workout_id = None
         led_controller.color_wipe(Color(0, 0, 0), 10)
 
 
-def handle_workout_id_2(event: dict, colors: Colors, start: bool) -> None:  # noqa: FBT001
+def handle_workout_id_2(event: dict, start: bool) -> None:  # noqa: FBT001
     """Handle the workout with ID 2.
 
     Args:
     ----
         event (dict): The event data.
-        colors (Colors): The Colors class.
         start (bool): True if the workout should start, False if not.
     """
     global last_triggered_client_id
@@ -302,12 +310,12 @@ def handle_workout_id_2(event: dict, colors: Colors, start: bool) -> None:  # no
             client_counters.append(end_sensor)
 
         activate_specific_sensors()
-        start_workout_2_thread(event, colors)
+        start_workout_2_thread(event)
     else:
         client_counters.remove(end_sensor)
         last_triggered_client_id = None
 
-        stop_workout_2_thread(event, colors)
+        stop_workout_2_thread(event)
 
         if event["mode"] == "finished" and event["led_toggle"]:
             led_controller.rainbow()
@@ -321,15 +329,15 @@ def activate_specific_sensors() -> None:
         mqtt.send(f"{MQTT_WORKOUT}/{client}/control", "start")
 
 
-def start_workout_2_thread(event: dict, colors: Colors) -> None:
+def start_workout_2_thread(event: dict) -> None:
     """Start the sandglass thread.
 
     Args:
     ----
         event (dict): The event data.
-        colors (Colors): The Colors class.
     """
     global sandglass_thread
+    colors = Colors()
 
     if sandglass_thread is not None and sandglass_thread.is_alive():
         led_controller.stop_sandglass_thread()
@@ -348,15 +356,15 @@ def start_workout_2_thread(event: dict, colors: Colors) -> None:
         update_counters(0, ResetCounter.YES)
 
 
-def stop_workout_2_thread(event: dict, colors: Colors) -> None:
+def stop_workout_2_thread(event: dict) -> None:
     """Stop the sandglass thread.
 
     Args:
     ----
         event (dict): The event data.
-        colors (Colors): The Colors class.
     """
     global sandglass_thread
+    colors = Colors()
 
     if event["led_toggle"]:
         led_controller.stop_sandglass_thread()
@@ -460,7 +468,7 @@ def register_mqtt_events(app: Flask) -> None:
         data: dict = json.loads(message.payload)
         client_id = data["client_id"]
 
-        if WORKOUT_MODE and is_client_id_valid(client_id):
+        if WORKOUT_SETTINGS["active"] and is_client_id_valid(client_id):
             match workout_id:
                 case 1:
                     # Kameleon
@@ -473,12 +481,23 @@ def register_mqtt_events(app: Flask) -> None:
                     print("Workout 3")
                 case 4:
                     # Waterdruppels
+                    # Define the color effect
+                    if WORKOUT_SETTINGS["christmas_mode"]:
+                        christmas_colors[0], christmas_colors[1] = (
+                            christmas_colors[1],
+                            christmas_colors[0],
+                        )
+                        color_effect = christmas_colors[1]
+                    else:
+                        color_effect = colors.hex_to_rgb(WORKOUT_SETTINGS["color"])
+
+                    # Start the thread
                     thread = threading.Thread(
                         target=led_controller.ripple_effect,
                         args=(
                             SENSOR_LOCATION.get(client_id),
                             12,
-                            colors.BLUE,
+                            color_effect,
                         ),
                     )
                     thread.start()

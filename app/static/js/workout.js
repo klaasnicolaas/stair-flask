@@ -7,9 +7,12 @@ system_control = function (event) {
   let workout_id = $('#workout_id').data('name')
   let time = calculateTotalSeconds($('#input_time').val())
   let end_sensor = $('input[name="list-sensor-end"]:checked').val()
-  let led_toggle = $('#led_toggle').is(':checked')
   let brightness = $('#brightness_value').val()
   let color = $('input[name="color-picker"]:checked').val()
+
+  // Toggle values
+  let led_toggle = $('#led_toggle').is(':checked')
+  let christmas_toggle = $('#christmas_toggle').is(':checked')
 
   // Update the workout status
   if (event == 'start') {
@@ -27,14 +30,19 @@ system_control = function (event) {
     updateOefeningStatus()
   }
 
-  // Send data to server based on workout_id
-  if (workout_id == 2) {
-    console.log(event, workout_id, time, end_sensor, led_toggle, brightness, color)
-    socket.emit('system_control', { mode: event, workout_id: workout_id, time: time, end_sensor: end_sensor, led_toggle: led_toggle, brightness: brightness, color: color })
-  } else {
-    console.log(event, workout_id)
-    socket.emit('system_control', { mode: event, workout_id: workout_id })
+  // Prepare data for socket emit
+  let socketData = { mode: event, workout_id }
+
+  // Add workout-specific data
+  if (workout_id === 2) {
+    Object.assign(socketData, { time, end_sensor, led_toggle, brightness, color })
+  } else if (workout_id === 4) {
+    Object.assign(socketData, { color, christmas_mode: christmas_toggle })
   }
+
+  // Log and emit socket data
+  console.log(socketData)
+  socket.emit('system_control', socketData)
 }
 
 // Update counters

@@ -82,10 +82,10 @@
           />
         </div>
       </div>
+      {% endif %} {% if workout.id == 2 or workout.id == 4 %}
       <!-- Settings Card -->
       <div id="settingsCard" class="w-full relative">
         <div class="p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white h-auto">
-          {% if workout.id == 2 %}
           <div class="flex flex-col space-y-3 justify-center gap-1">
             <!-- Header -->
             <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Instellingen</h5>
@@ -102,15 +102,6 @@
               </svg>
             </div>
 
-            <!-- Slider -->
-            <!-- <div class="my-4">
-              <label for="brightness_value" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Lichtsterkte</label>
-              <div class="flex justify-between mb-1">
-                <span class="text-base font-medium text-primary-700 dark:text-white">Waarde</span>
-                <span class="text-sm font-medium text-primary-700 dark:text-white" id="brightness_number">125</span>
-              </div>
-              <input id="brightness_value" type="range" value="125" min="50" step="25" max="225" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
-            </div> -->
             <!-- Color picker -->
             <div class="mb-6">
               <button
@@ -134,6 +125,7 @@
               /> -->
             </div>
             <!-- Toggle -->
+            {% if workout.id == 2 %}
             <label class="relative inline-flex items-center cursor-pointer">
               <input id="led_toggle" type="checkbox" value="" checked class="sr-only peer" />
               <div
@@ -141,7 +133,18 @@
               ></div>
               <span class="ml-3 text-sm font-medium text-gray-900 dark:text-white">Zandloper</span>
             </label>
+            {% endif %}
+            {% if workout.id == 4 %}
+            <label for="christmas_toggle" class="relative inline-flex items-center cursor-pointer">
+              <input id="christmas_toggle" type="checkbox" value="" class="sr-only peer" />
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+              ></div>
+              <span class="ml-3 text-sm font-medium text-gray-900 dark:text-white">Christmas party!</span>
+            </label>
+            {% endif %}
           </div>
+          {% if workout.id == 2 %}
           <hr class="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
           <div class="mb-4">
             <!-- <h3 class="font-semibold text-gray-900 dark:text-white">De stop sensor</h3> -->
