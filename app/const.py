@@ -7,7 +7,6 @@ from typing import Final
 MQTT_SENSOR: Final = "sensor"
 MQTT_WORKOUT: Final = "workout"
 
-WORKOUT_MODE: bool = False
 THREAD_STOP_EVENT = threading.Event()
 
 # MQTT topics - Subscribed
@@ -18,6 +17,13 @@ MQTT_STATUS_TOPIC: Final = f"{MQTT_SENSOR}/+/status"
 # MQTT topics - Published
 MQTT_RESTART_ALL_TOPIC: Final = f"{MQTT_SENSOR}/restart_all"
 MQTT_WORKOUT_CONTROL_ALL_TOPIC: Final = f"{MQTT_WORKOUT}/control_all"
+
+# Workout settings
+WORKOUT_SETTINGS = {
+    "active": False,
+    "color": None,
+    "christmas_mode": False,
+}
 
 
 # Enum classes
