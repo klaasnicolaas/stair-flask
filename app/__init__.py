@@ -1,6 +1,6 @@
 """Initialize Stair Challenge app."""
 # ruff: noqa: E402, ARG001
-# pylint: disable=wrong-import-position, ungrouped-imports, import-outside-toplevel
+# pylint: disable=wrong-import-position, ungrouped-imports, import-outside-toplevel, global-statement
 from __future__ import annotations
 
 import getpass
@@ -117,6 +117,10 @@ def create_app() -> Flask:
             app.logger.info("Initialized the database!")
     else:
         app.logger.info("Database already contains the users table.")
+
+    # Show visual feedback that the app is ready
+    led_controller.rainbow()
+    led_controller.color_wipe(Color(0, 0, 0), 10)
 
     return app
 
