@@ -39,7 +39,7 @@ jobs:
           poetry config virtualenvs.create true
           poetry config virtualenvs.in-project true
       - name: 🏗 Install dependencies
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --no-root
       - name: 🚀 Run pytest
         run: poetry run pytest --cov app tests
         env:
@@ -78,7 +78,7 @@ jobs:
           poetry config virtualenvs.create true
           poetry config virtualenvs.in-project true
       - name: 🏗 Install dependencies
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --no-root
       - name: 🚀 Process coverage results
         run: |
           poetry run coverage combine coverage*/.coverage*

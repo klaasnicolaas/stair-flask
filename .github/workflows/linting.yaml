@@ -30,7 +30,7 @@ jobs:
           poetry config virtualenvs.create true
           poetry config virtualenvs.in-project true
       - name: 🏗 Install Python dependencies
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --no-root
       - name: 🚀 Run ruff linter
         run: poetry run ruff check --output-format=github .
       - name: 🚀 Run ruff formatter
@@ -55,7 +55,7 @@ jobs:
           poetry config virtualenvs.create true
           poetry config virtualenvs.in-project true
       - name: 🏗 Install Python dependencies
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --no-root
       - name: 🚀 Check Python AST
         run: poetry run pre-commit run check-ast --all-files
       - name: 🚀 Check for case conflicts
@@ -96,7 +96,7 @@ jobs:
   #         poetry config virtualenvs.create true
   #         poetry config virtualenvs.in-project true
   #     - name: 🏗 Install Python dependencies
-  #       run: poetry install --no-interaction
+  #       run: poetry install --no-interaction --no-root
   #     - name: 🚀 Run pylint
   #       run: poetry run pre-commit run pylint --all-files
 
@@ -119,6 +119,6 @@ jobs:
           poetry config virtualenvs.create true
           poetry config virtualenvs.in-project true
       - name: 🏗 Install Python dependencies
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --no-root
       - name: 🚀 Run yamllint
         run: poetry run yamllint .
