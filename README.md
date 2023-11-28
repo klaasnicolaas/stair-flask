@@ -82,6 +82,12 @@ manually, using the following command:
 poetry run pre-commit run --all-files
 ```
 
+### Building an Docker image
+
+```bash
+docker-compose build flask
+```
+
 ### Starting the application
 
 To start the application in development mode, you can use the default Flask CLI command:
@@ -95,7 +101,13 @@ flask run
 If you want to run Flask CLI commands within a docker container, you should use the following format:
 
 ```bash
-docker exec stair_challenge_flask flask init_db
+docker exec stair_challenge_dashboard flask init_db
+```
+
+Or attach to the shell of the container (in VSCode) and run the command:
+
+```bash
+flask init_db
 ```
 
 CLI commands:
