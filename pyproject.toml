@@ -89,6 +89,11 @@ good-names = [
   "wv",
 ]
 
+[tool.pylint.MASTER]
+ignore-paths = [
+  "leds_test",
+]
+
 [tool.pylint."MESSAGES CONTROL"]
 disable= [
   "too-few-public-methods",
