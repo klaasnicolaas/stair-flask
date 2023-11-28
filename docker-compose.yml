@@ -29,7 +29,7 @@ services:
       - 8883:8883
       - 18083:18083
     volumes:
-      - $PWD/emqx_data:/opt/emqx/data
+      - ./emqx_data:/opt/emqx/data
 
   # MySQL Service
   mysql:
@@ -61,7 +61,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: stair_challenge_flask
+    container_name: stair_challenge_dashboard
     restart: unless-stopped
     depends_on:
       emqx:
