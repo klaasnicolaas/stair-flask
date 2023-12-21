@@ -213,19 +213,22 @@ idna = ">=2.0.0"
 
 [[package]]
 name = "eventlet"
-version = "0.33.3"
+version = "0.34.1"
 description = "Highly concurrent networking library"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 files = [
-    {file = "eventlet-0.33.3-py2.py3-none-any.whl", hash = "sha256:e43b9ae05ba4bb477a10307699c9aff7ff86121b2640f9184d29059f5a687df8"},
-    {file = "eventlet-0.33.3.tar.gz", hash = "sha256:722803e7eadff295347539da363d68ae155b8b26ae6a634474d0a920be73cfda"},
+    {file = "eventlet-0.34.1-py3-none-any.whl", hash = "sha256:70370e61abb5488afc2a80391f3b32f2d5b224871071d54bc66d6808161fd055"},
+    {file = "eventlet-0.34.1.tar.gz", hash = "sha256:0087763f3ae18a571a5cc60fdd06ceb02fdb9f006693e9ee1e8e8044ae3b470b"},
 ]
 
 [package.dependencies]
 dnspython = ">=1.15.0"
-greenlet = ">=0.3"
+greenlet = ">=1.0"
 six = ">=1.10.0"
+
+[package.extras]
+dev = ["black", "build", "commitizen", "isort", "pip-tools", "pre-commit", "twine"]
 
 [[package]]
 name = "filelock"
@@ -1263,4 +1266,4 @@ dev = ["doc8", "flake8", "flake8-import-order", "rstcheck[sphinx]", "sphinx"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "cb610553729cba39344bc1e6121536bdb4df637a91983c1d4b27bded0994d735"
+content-hash = "a8e31886b22edeab5be9b61482e2605930a4cacdf2e60147ab5c9527801dfce4"
