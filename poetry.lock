@@ -213,13 +213,13 @@ idna = ">=2.0.0"
 
 [[package]]
 name = "eventlet"
-version = "0.34.1"
+version = "0.34.2"
 description = "Highly concurrent networking library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "eventlet-0.34.1-py3-none-any.whl", hash = "sha256:70370e61abb5488afc2a80391f3b32f2d5b224871071d54bc66d6808161fd055"},
-    {file = "eventlet-0.34.1.tar.gz", hash = "sha256:0087763f3ae18a571a5cc60fdd06ceb02fdb9f006693e9ee1e8e8044ae3b470b"},
+    {file = "eventlet-0.34.2-py3-none-any.whl", hash = "sha256:eca0114398d3133f94d16590d205bbb010668a3bc7453fddadb51d63e8c1bac2"},
+    {file = "eventlet-0.34.2.tar.gz", hash = "sha256:2115c7c6742e6893bf1347f82915572f8895c911cb5abaad4d3596a7daa847cc"},
 ]
 
 [package.dependencies]
